@@ -82,8 +82,8 @@ void StdoutListener::println(const U8 level, const char* msg)
 
     switch(level)
     {
-    case FT_ERR_LEVEL: doPrint(fail, msg); break;
     case FT_FATAL_LEVEL: doPrint(fail, msg); break;
+    ON_LEVEL(FT_ERR_LEVEL,   fail)
     ON_LEVEL(FT_DEBUG_LEVEL, debug)
     ON_LEVEL(FT_INFO_LEVEL,  info)
     ON_LEVEL(FT_WARN_LEVEL,  warn)
