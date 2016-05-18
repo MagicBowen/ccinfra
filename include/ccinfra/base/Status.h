@@ -5,7 +5,12 @@
 
 typedef U32 Status;
 
+const U16 INVALID_U16 = 0xFFFF;
+const U16 INVALID_U32 = 0xFFFFFFFF;
+
 const Status SUCCESS = 0;
-const Status FAILURE = 0xFFFFFFFF;
+const Status FAILURE = INVALID_U32;
+
+#define __FAILED(result)  (result != SUCCESS)
 
 #endif

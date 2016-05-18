@@ -11,3 +11,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 add_subdirectory("src")
 
 install(DIRECTORY include/ccinfra DESTINATION include)
+
+if(GTEST_ROOT)
+    add_subdirectory("test")
+endif()
