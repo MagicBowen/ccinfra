@@ -92,7 +92,7 @@ private:
         }
         else
         {
-            CMAC_ASSERT_VALID_PTR_VOID(freeTail);
+            CCINFRA_ASSERT_VALID_PTR_VOID(freeTail);
             freeTail->next = &entity;
         }
 
