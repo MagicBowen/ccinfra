@@ -4,7 +4,7 @@
 
 - [x]: add trans data 
 - [x]: add and test auto msg
-- [ ]: test trans data 
+- [x]: test trans data 
 - [ ]: add and test map
 - [ ]: test smart ptr
 - [ ]: test bound
