@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include <ccinfra/memory/LinkedAllocator.h>
-#include <ccinfra/utils/ArraySize.h>
+#include <ccinfra/container/array/ArraySize.h>
 
 namespace
 {

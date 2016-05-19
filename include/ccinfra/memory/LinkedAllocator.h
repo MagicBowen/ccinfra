@@ -5,7 +5,7 @@
 #include "ccinfra/container/list/ListElem.h"
 #include "ccinfra/base/BaseTypes.h"
 #include "ccinfra/base/Assertions.h"
-#include "ccinfra/utils/max_min.h"
+#include <ccinfra/algo/max_min.h>
 
 template<typename T> 
 struct AllocatorVisitor
