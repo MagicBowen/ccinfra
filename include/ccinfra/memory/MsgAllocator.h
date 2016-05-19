@@ -7,6 +7,7 @@ struct MsgAllocator
 {
     static void* alloc(size_t size);
     static void  free(void* p);
+    static bool withIn(void* p);
 };
 
 #endif

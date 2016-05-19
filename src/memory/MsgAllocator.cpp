@@ -5,12 +5,12 @@
 
 namespace
 {
+    const static U32 MEM_POOL_SIZE = 4*1024*1024;
+    U32 index = 0;
+    U8 pool[MEM_POOL_SIZE+201];
+
     void* memPoolAlloc(size_t size)
     {
-        const static U32 MEM_POOL_SIZE = 4*1024*1024;
-        static U32 index = 0;
-        static U8 pool[MEM_POOL_SIZE+201];
-
         if((size>(MEM_POOL_SIZE - index)) || (index > MEM_POOL_SIZE))
         {
             index = 0;
@@ -31,6 +31,11 @@ void* MsgAllocator::alloc(size_t size)
 void  MsgAllocator::free(void* p)
 {
     return;
+}
+
+bool MsgAllocator::withIn(void* p)
+{
+    return (pool <= p) && (p < pool + MEM_POOL_SIZE);
 }
 
 #else
@@ -65,8 +70,6 @@ namespace
             PTR_VALUE lower_bound = (PTR_VALUE)(&allocator);
             PTR_VALUE upper_bound = lower_bound + MEM_BLOCK_SIZE*BLOCK_NUM;
             return (lower_bound <= (PTR_VALUE)p) && ((PTR_VALUE)p < upper_bound);
-
-            return false;
         }
 
     private:
@@ -120,6 +123,19 @@ void  MsgAllocator::free(void* p)
     DBG_LOG("The freed pointer(%x) is not in any MsgAllocator!", p);
 
     return;
+}
+
+#define WITH_IN(n) if(__BLOCK_NAME(n)::tryFree(p))  return true;
+
+bool MsgAllocator::withIn(void* p)
+{
+    WITH_IN(32);
+    WITH_IN(64);
+    WITH_IN(128);
+    WITH_IN(256);
+    WITH_IN(512);
+
+    return false;
 }
 
 #endif

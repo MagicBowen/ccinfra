@@ -12,5 +12,6 @@ namespace
 TEST(AutoMsgTest, should_alloc_auto_msg_not_in_stack)
 {
     AutoMsg<LargeMsg> msg;
-    msg.getPointer();
+
+    ASSERT_TRUE(MsgAllocator::withIn(msg.getPointer()));
 }

@@ -1,11 +1,11 @@
 #ifndef CCINFRA_MEMORY_AUTO_MSG_H
 #define CCINFRA_MEMORY_AUTO_MSG_H
 
-#include "ccinfra/memory/MsgNew.h"
+#include "ccinfra/memory/MsgNewOperator.h"
 #include "ccinfra/memory/MsgAllocator.h"
 
 template <typename MSG, typename MSG_ALLOCATOR>
-struct GenericMsg : MSG, Message<MSG_ALLOCATOR>
+struct GenericMsg : MSG, MsgNewOperator<MSG_ALLOCATOR>
 {
 };
 

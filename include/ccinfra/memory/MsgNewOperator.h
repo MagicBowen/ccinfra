@@ -6,7 +6,7 @@
 #include "ccinfra/base/Assertions.h"
 
 template<typename MSG_ALLOCATOR>
-struct Message
+struct MsgNewOperator
 {
     void* operator new(size_t size) throw()
     {
@@ -24,7 +24,7 @@ struct Message
         MSG_ALLOCATOR::free(p);
     }
 
-    virtual ~Message() {}
+    virtual ~MsgNewOperator() {}
 };
 
 #endif
