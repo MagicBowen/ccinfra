@@ -238,7 +238,7 @@ public:
 
         state = MODIFIED;
 
-        return SUCCESS;
+        return CCINFRA_SUCCESS;
    }
 
    void touch()

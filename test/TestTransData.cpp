@@ -67,7 +67,7 @@ namespace
             if (rhs.info == 0) rhs.info = new ObjectInfo(*info);
             else *rhs.info = *info;
 
-            return SUCCESS;
+            return CCINFRA_SUCCESS;
         }
 
         void reset()
@@ -200,7 +200,7 @@ TEST_F(TestInitTransData, reset_should_have_no_effect)
 
 TEST_F(TestInitTransData, should_not_allow_to_modify)
 {
-    ASSERT_NE(SUCCESS, data.modify());
+    ASSERT_NE(CCINFRA_SUCCESS, data.modify());
 
     assertInit();
 }
@@ -298,7 +298,7 @@ TEST_F(TestActiveTransData, should_not_be_changed_after_updating_a_identical_val
 
 TEST_F(TestActiveTransData, should_be_able_to_modify)
 {
-    ASSERT_EQ(SUCCESS, data.modify());
+    ASSERT_EQ(CCINFRA_SUCCESS, data.modify());
 
     ASSERT_FALSE(data.isStable());
 
@@ -419,7 +419,7 @@ TEST_F(TestTouchTransData, should_be_in_shadow_state)
 
 TEST_F(TestTouchTransData, should_not_allow_modify)
 {
-    ASSERT_NE(SUCCESS, data.modify());
+    ASSERT_NE(CCINFRA_SUCCESS, data.modify());
 
     ASSERT_FALSE(data.isStable());
 
@@ -660,7 +660,7 @@ TEST_F(TestReleaseTransData, should_in_ACTIVE_state_after_updating_and_reverting
 
 TEST_F(TestReleaseTransData, should_not_allow_modify)
 {
-    ASSERT_NE(SUCCESS, data.modify());
+    ASSERT_NE(CCINFRA_SUCCESS, data.modify());
 }
 
 TEST_F(TestReleaseTransData, should_have_no_effect_for_touching)

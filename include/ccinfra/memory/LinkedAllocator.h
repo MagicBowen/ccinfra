@@ -60,14 +60,14 @@ struct LinkedAllocator
 
         if(!linkNodes[index].isUsed)
         {
-            return FAILURE;
+            return CCINFRA_FAILURE;
         }
 
         busyList.remove(linkNodes[index]);
         freeList.pushBack(linkNodes[index]);
         linkNodes[index].isUsed = false;      
         
-        return SUCCESS;
+        return CCINFRA_SUCCESS;
     }
 
     bool isBusyListEmpty() const
@@ -98,7 +98,7 @@ private:
         {
             CCINFRA_ASSERT_SUCC_CALL(visitor.visit(elements[&(*node) - &linkNodes[0]]));
         }
-        return SUCCESS;
+        return CCINFRA_SUCCESS;
     }
 
 private:

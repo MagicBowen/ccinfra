@@ -6,7 +6,7 @@
 #include "ccinfra/core/NullPtr.h"
 
 #define __FAILED_BOOL_ACTION      return false
-#define __FAILED_STATUS_ACTION    return FAILURE;
+#define __FAILED_STATUS_ACTION    return CCINFRA_FAILURE;
 #define __STATUS_ACTION           return __status;
 #define __VOID_ACTION             return;
 #define __NIL_ACTION              return 0;
@@ -107,7 +107,7 @@ do {                                        \
 #define __CCINFRA_EXPECT_SUCC_CALL(call, action)\
 do {                                            \
     Status __status = call;                     \
-    if (__FAILED(__status))                     \
+    if (__CCINFRA_FAILED(__status))             \
     {                                           \
         __WARNING_CALL(call, __status);         \
         action;                                 \
@@ -136,7 +136,7 @@ do {                                            \
 #define __CCINFRA_ASSERT_SUCC_CALL(call, action)\
 do {                                            \
     Status __status = call;                     \
-    if (__FAILED(__status))                     \
+    if (__CCINFRA_FAILED(__status))             \
     {                                           \
         __FAIL_CALL(call, __status);            \
         action;                                 \
@@ -167,7 +167,7 @@ do {                                            \
 #define __CCINFRA_ASSERT_SUCC_CALL_FINALLY(call, action, returnAction)  \
 do {                                                \
     Status __status = call;                         \
-    if (__FAILED(__status))                         \
+    if (__CCINFRA_FAILED(__status))                 \
     {                                               \
         __FAIL_CALL(call, __status);                \
         action;                                     \
@@ -186,7 +186,7 @@ do {                                                 \
     {                                                \
         return CCINFRA_SUCCESS;                      \
     }                                                \
-    else if (__FAILED(__status))                     \
+    else if (__CCINFRA_FAILED(__status))             \
     {                                                \
         __FAIL_CALL(call, __status);                 \
         action;                                      \

@@ -8,9 +8,9 @@ typedef U32 Status;
 const U16 INVALID_U16 = 0xFFFF;
 const U32 INVALID_U32 = 0xFFFFFFFF;
 
-const Status SUCCESS = 0;
-const Status FAILURE = INVALID_U32;
+const Status CCINFRA_SUCCESS = 0;
+const Status CCINFRA_FAILURE = INVALID_U32;
 
-#define __FAILED(result)  (result != SUCCESS)
+#define __CCINFRA_FAILED(result)  (result != CCINFRA_SUCCESS)
 
 #endif

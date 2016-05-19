@@ -35,7 +35,7 @@ struct PlainObject
    Status copyTo(PlainObject& rhs)
    {
       ::memcpy((void*)&(rhs.object), (void*)&object, sizeof(object));
-      return SUCCESS;
+      return CCINFRA_SUCCESS;
    }
 
    T* getObject()

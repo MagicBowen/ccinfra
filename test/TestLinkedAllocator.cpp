@@ -46,7 +46,7 @@ TEST_F(LinkedAllocatorTest, should_alloc_ok_when_free_slots)
     const int *y = allocator.alloc();
     ASSERT_TRUE(__null__(y));
 
-    ASSERT_TRUE(SUCCESS == allocator.dealloc(*x));
+    ASSERT_TRUE(CCINFRA_SUCCESS == allocator.dealloc(*x));
 
     y = allocator.alloc();
     ASSERT_TRUE(__notnull__(y));

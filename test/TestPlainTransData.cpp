@@ -138,7 +138,7 @@ TEST_F(PlainTransDataTest, an_unstable_data_should_not_be_able_to_be_modified)
 {
     intData.update(10);
 
-    ASSERT_NE(SUCCESS, intData.modify());
+    ASSERT_NE(CCINFRA_SUCCESS, intData.modify());
 }
 
 TEST_F(PlainTransDataTest, a_stable_data_should_be_able_to_be_modified)
@@ -146,7 +146,7 @@ TEST_F(PlainTransDataTest, a_stable_data_should_be_able_to_be_modified)
     intData.update(10);
     intData.confirm();
 
-    ASSERT_EQ(SUCCESS, intData.modify());
+    ASSERT_EQ(CCINFRA_SUCCESS, intData.modify());
 }
 
 TEST_F(PlainTransDataTest, after_clone_for_modification_it_is_value_keep_unchanged)
