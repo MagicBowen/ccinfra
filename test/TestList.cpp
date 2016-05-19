@@ -4,9 +4,9 @@
 
 namespace
 {
-    struct Elem : ListElem<Elem>
+    struct Foo : ListElem<Foo>
     {
-        Elem(int a) : x(a)
+        Foo(int a) : x(a)
         {
         }
 
@@ -23,7 +23,7 @@ namespace
 struct ListTest : testing::Test
 {
 protected:
-    List<Elem> elems;
+    List<Foo> elems;
 };
 
 TEST_F(ListTest, should_be_empty_when_init)
@@ -34,28 +34,28 @@ TEST_F(ListTest, should_be_empty_when_init)
 
 TEST_F(ListTest, should_be_get_elem_when_list_is_not_empty)
 {
-    Elem elem(1);
+    Foo elem(1);
 
     elems.pushBack(elem);
 
     ASSERT_FALSE(elems.isEmpty());
     ASSERT_EQ(1, elems.size());
 
-    Elem* first = elems.popFront();
+    Foo* first = elems.popFront();
     ASSERT_EQ(1, first->getValue());
     ASSERT_TRUE(elems.isEmpty());
 }
 
 TEST_F(ListTest, should_travel_the_list)
 {
-    Elem elem1(1), elem2(2), elem3(3);
+    Foo elem1(1), elem2(2), elem3(3);
 
     elems.pushBack(elem1);
     elems.pushBack(elem2);
     elems.pushBack(elem3);
 
     int i = 1;
-    LIST_FOREACH(Elem, elem, elems)
+    LIST_FOREACH(Foo, elem, elems)
     {
         ASSERT_EQ(i++, elem->getValue());
     }
