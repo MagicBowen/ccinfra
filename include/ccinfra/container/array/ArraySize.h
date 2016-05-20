@@ -15,4 +15,16 @@ inline T* end_a(T(&arr)[N])
     return arr + N;
 }
 
+template <class T, size_t N>
+inline size_t length(T(&arr)[N])
+{
+    return N;
+}
+
+template <class T, size_t N>
+inline size_t position(T(&arr)[N], const T* p)
+{
+    return p - arr;
+}
+
 #endif

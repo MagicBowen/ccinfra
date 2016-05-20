@@ -41,7 +41,7 @@ U32 ccinfra_lower_bound(const  T array[], U32 len, T key)
 }
 
 template<typename T>
-U32 ccifra_upper_bound(const  T array[], U32 len, T key)
+U32 ccinfra_upper_bound(const  T array[], U32 len, T key)
 {
     U32 low  = 0;
     U32 high = len - 1;
