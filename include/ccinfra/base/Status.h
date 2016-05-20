@@ -12,5 +12,6 @@ const Status CCINFRA_SUCCESS = 0;
 const Status CCINFRA_FAILURE = INVALID_U32;
 
 #define __CCINFRA_FAILED(result)  (result != CCINFRA_SUCCESS)
+#define __CCINFRA_SUCCESS(result)  (result == CCINFRA_SUCCESS)
 
 #endif

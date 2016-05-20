@@ -8,4 +8,6 @@
 - [x]: test smart ptr
 - [x]: test bound
 - [x]: test search
-- [ ]: add and test map
+- [x]: add map
+- [ ]: more tests for map
+- [ ]: could_visit map
