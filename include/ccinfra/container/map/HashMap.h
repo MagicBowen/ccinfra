@@ -8,11 +8,12 @@
 #include "ccinfra/core/static_assert.h"
 #include "ccinfra/memory/ObjectAllocator.h"
 #include "ccinfra/algo/foreach.h"
+#include "ccinfra/container/map/MapVisitor.h"
 
 template < typename KEY
          , typename VALUE
-         , unsigned int ELEM_SIZE = 1024
-         , unsigned int HASH_SIZE = 1024
+         , size_t   ELEM_SIZE = 1024
+         , size_t   HASH_SIZE = 1024
          , typename HASH_FN = HashFn<KEY>
          , typename EQUAL_FN = EqualFn<KEY> >
 struct HashMap
@@ -118,8 +119,32 @@ struct HashMap
         num = 0;
     }
 
+    Status visit(MapVisitor<KEY, VALUE>& visitor)
+    {
+        return access(visitor);
+    }
+
+    Status visit(ConstMapVisitor<KEY, VALUE>& visitor) const
+    {
+        return const_cast<HashMap&>(*this).access(visitor);
+    }
+
 private:
-    unsigned int getIndex(const KEY &key) const
+    template<typename VISITOR>
+    Status access(VISITOR& visitor)
+    {
+        FOR_EACH_0(i, HASH_SIZE)
+        {
+            LIST_FOREACH(Node, node, buckets[i])
+            {
+                CCINFRA_ASSERT_SUCC_CALL(visitor.visit(node->key, node->value));
+            }
+        }
+
+        return CCINFRA_SUCCESS;
+    }
+
+    size_t getIndex(const KEY &key) const
     {
         return hashFn(key) % HASH_SIZE;
     }

@@ -1,6 +1,8 @@
 #include "gtest/gtest.h"
 #include <ccinfra/container/map/HashMap.h>
 #include <ccinfra/core/EqHelper.h>
+#include <ccinfra/core/Keywords.h>
+#include <string>
 
 TEST(HashMapTest, should_be_empty_when_init)
 {
@@ -122,6 +124,70 @@ TEST(HashMapTest, should_put_and_get_when_hash_string)
 
 namespace
 {
+    struct MultipleValueMapVisitor : MapVisitor<int, int>
+    {
+        MultipleValueMapVisitor(int times) : times(times)
+        {
+        }
+
+    private:
+        OVERRIDE(Status visit(const int& key, int& value))
+        {
+            value = times * key;
+            return CCINFRA_SUCCESS;
+        }
+
+    private:
+        const int times;
+    }multipleVisitor(3);
+}
+
+TEST(HashMapTest, shoud_double_all_value_through_visitor)
+{
+    HashMap<int, int> map;
+
+    map[1] = 1;
+    map[2] = 2;
+
+    map.visit(multipleVisitor);
+
+    ASSERT_EQ(3, map[1]);
+    ASSERT_EQ(6, map[2]);
+}
+
+
+namespace
+{
+    struct PrintMapVisitor : ConstMapVisitor<int, const char*>
+    {
+        std::string result;
+
+    private:
+        OVERRIDE(Status visit(const int& key, const char* const& value))
+        {
+            std::stringstream ss;
+            ss << "map[" << key <<"] = " << value << " \n";
+            result += ss.str();
+            return CCINFRA_SUCCESS;
+        }
+    }printVisitor;
+}
+
+TEST(HashMapTest, should_dump_map_through_const_visitor)
+{
+    HashMap<int, const char*> map;
+
+    map[1] = "one";
+    map[2] = "two";
+    map[3] = "three";
+
+    map.visit(printVisitor);
+
+    ASSERT_EQ("map[1] = one \nmap[2] = two \nmap[3] = three \n", printVisitor.result);
+}
+
+namespace
+{
     const size_t MAX_HASH_SIZE = 10;
 
     struct Key
@@ -203,6 +269,7 @@ TEST(HashMapTest, should_store_the_pointer_to_value)
     ASSERT_EQ(&v2, *map.get(Key(1, 1)));
     ASSERT_EQ(__null_ptr__,  map.get(Key(2, 4)));
 }
+
 
 
 

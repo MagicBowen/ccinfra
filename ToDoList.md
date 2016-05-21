@@ -9,5 +9,4 @@
 - [x]: test bound
 - [x]: test search
 - [x]: add map
-- [ ]: more tests for map
-- [ ]: could_visit map
+- [x]: could_visit map
