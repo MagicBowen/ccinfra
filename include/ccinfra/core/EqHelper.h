@@ -1,5 +1,5 @@
-#ifndef H05B2224D_B926_4FC0_A936_97B52B8A99DB
-#define H05B2224D_B926_4FC0_A936_97B52B8A99DB
+#ifndef H05B2224D_B927_4FC0_A936_97B52B8A99DB
+#define H05B2224D_B927_4FC0_A936_97B52B8A99DB
 
 //////////////////////////////////////////////////////////////
 #define __DECL_EQUALS(cls)                \

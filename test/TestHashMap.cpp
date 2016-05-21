@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include <ccinfra/container/map/HashMap.h>
+#include <ccinfra/core/EqHelper.h>
 
 TEST(HashMapTest, should_be_empty_when_init)
 {
@@ -106,5 +107,102 @@ TEST(HashMapTest, should_put_already_in_success_when_map_is_full)
     ASSERT_EQ(1, map.size());
     ASSERT_EQ(4, map[1]);
 }
+
+TEST(HashMapTest, should_put_and_get_when_hash_string)
+{
+    HashMap<const char*, int> map;
+
+    map["hello"] = 5;
+    map["ni hao ma"] = 9;
+
+    ASSERT_EQ(2, map.size());
+    ASSERT_EQ(5, map["hello"]);
+    ASSERT_EQ(9, map["ni hao ma"]);
+}
+
+namespace
+{
+    const size_t MAX_HASH_SIZE = 10;
+
+    struct Key
+    {
+        Key(int x, int y)
+        : x(x), y(y)
+        {
+        }
+
+        size_t hash() const
+        {
+            return (x + y) % MAX_HASH_SIZE;
+        }
+
+        __INLINE_EQUALS(Key)
+        {
+            return (x == rhs.x) && (y == rhs.y);
+        }
+
+    private:
+        int x;
+        int y;
+    };
+
+    struct Value
+    {
+        Value() : value(__null_ptr__){}
+        Value(const char* v) : value(v)
+        {
+        }
+
+        const char* getValue() const
+        {
+            return value;
+        }
+
+        bool operator==(const Value& rhs) const
+        {
+            return strcmp(value, rhs.value) == 0;
+        }
+
+    private:
+        const char* value;
+    };
+}
+
+template<>
+struct HashFn<Key>
+{
+    size_t operator()(const Key& key) const
+    {
+        return key.hash();
+    }
+};
+
+TEST(HashMapTest, should_work_with_user_defined_hash_and_equal_function)
+{
+    HashMap<Key, Value> map;
+
+    map.put(Key(1, 3), Value("four"));
+    map[Key(2, 3)] = Value("five");
+
+    ASSERT_EQ(Value("four"), map[Key(1, 3)]);
+    ASSERT_EQ(Value("five"), *map.get(Key(2, 3)));
+    ASSERT_EQ(__null_ptr__,  map.get(Key(2, 4)));
+}
+
+TEST(HashMapTest, should_store_the_pointer_to_value)
+{
+    Value v1("one");
+    Value v2("two");
+
+    HashMap<Key, Value*> map;
+
+    map.put(Key(0, 1), &v1);
+    map[Key(1, 1)] = &v2;
+
+    ASSERT_EQ(&v1, map[Key(0, 1)]);
+    ASSERT_EQ(&v2, *map.get(Key(1, 1)));
+    ASSERT_EQ(__null_ptr__,  map.get(Key(2, 4)));
+}
+
 
 
