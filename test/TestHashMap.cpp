@@ -110,6 +110,63 @@ TEST(HashMapTest, should_put_already_in_success_when_map_is_full)
     ASSERT_EQ(4, map[1]);
 }
 
+TEST(HashMapTest, should_point_to_correct_node_by_iterator_when_map_is_empty)
+{
+    HashMap<int, int> map;
+
+    ASSERT_TRUE(map.begin().isNull());
+    ASSERT_TRUE(map.end().isNull());
+}
+
+TEST(HashMapTest, should_point_to_correct_node_by_iterator_when_map_has_valid_elem)
+{
+    HashMap<int, int> map;
+
+    map.put(1, 2);
+
+    ASSERT_FALSE(map.begin().isNull());
+    ASSERT_EQ(1, map.begin()->key);
+    ASSERT_EQ(2, map.begin()->value);
+    ASSERT_TRUE(map.end().isNull());
+}
+
+TEST(HashMapTest, should_point_to_correct_node_when_iterator_forward)
+{
+    HashMap<int, int> map;
+
+    map.put(1, 2);
+    map.put(3, 6);
+
+    auto p = map.begin();
+    ASSERT_EQ(map.begin(), p++);
+    ASSERT_EQ(3, p.getValue()->key);
+    ASSERT_EQ(6, p.getValue()->value);
+    ASSERT_EQ(map.end(), ++p);
+}
+
+TEST(HashMapTest, should_travel_the_map_by_iterator)
+{
+    typedef HashMap<int, int, 5, 5> ThisMap;
+    ThisMap map;
+
+    map.put(1, 2);
+    map.put(3, 6);
+    map.put(8, 16);
+    map.put(5, 10);
+
+    int keySum = 0;
+    int valueSum = 0;
+
+    MAP_FOREACH(ThisMap, i, map)
+    {
+        keySum += i->key;
+        valueSum += i->value;
+    }
+
+    ASSERT_EQ(1 + 3 + 8 + 5, keySum);
+    ASSERT_EQ(2 + 6 + 16 + 10, valueSum);
+}
+
 TEST(HashMapTest, should_put_and_get_when_hash_string)
 {
     HashMap<const char*, int> map;

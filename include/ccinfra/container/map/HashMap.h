@@ -3,12 +3,13 @@
 
 #include "ccinfra/container/map/HashFn.h"
 #include "ccinfra/container/map/EqualFn.h"
+#include "ccinfra/container/map/MapVisitor.h"
 #include "ccinfra/container/list/ListElem.h"
 #include "ccinfra/container/list/List.h"
 #include "ccinfra/core/static_assert.h"
+#include "ccinfra/core/EqHelper.h"
 #include "ccinfra/memory/ObjectAllocator.h"
 #include "ccinfra/algo/foreach.h"
-#include "ccinfra/container/map/MapVisitor.h"
 
 template < typename KEY
          , typename VALUE
@@ -32,10 +33,144 @@ struct HashMap
 
     typedef HashNode<KEY, VALUE> Node;
 
+    struct Iterator
+    {
+        Iterator()
+        : elem(0), index(0), nodeList(0)
+        {
+        }
+
+        Iterator(Node* elem, size_t index, const List<Node>* nodeList)
+        : elem(elem), index(index), nodeList(nodeList)
+        {
+        }
+
+        Iterator(const Iterator& rhs)
+        : elem(rhs.elem), index(rhs.index), nodeList(nodeList)
+        {
+        }
+
+        Iterator& operator=(const Iterator& rhs)
+        {
+            elem = rhs.elem;
+            index = rhs.index;
+            nodeList = rhs.nodeList;
+
+            return *this;
+        }
+
+        __INLINE_EQUALS(Iterator)
+        {
+            return (elem == rhs.elem) &&
+                   (index == rhs.index) &&
+                   (nodeList == rhs.nodeList);
+        }
+
+        void reset()
+        {
+            elem = 0;
+            index = 0;
+            nodeList = 0;
+        }
+
+        bool isNull() const
+        {
+            return elem == 0;
+        }
+
+        Node* operator->()
+        {
+            return elem;
+        }
+
+        Node& operator*()
+        {
+            return *elem;
+        }
+
+        Node* getValue() const
+        {
+            return elem;
+        }
+
+        Iterator operator++(int)
+        {
+            Iterator i = *this;
+
+            goNext();
+
+            return i;
+        }
+
+        Iterator& operator++()
+        {
+            goNext();
+
+            return *this;
+        }
+
+    private:
+        void goNext()
+        {
+            if(elem == 0) return;
+
+            isNeighborValid() ? goNeighbor(): goNextValid();
+        }
+
+        bool isNeighborValid() const
+        {
+            typename List<Node>::Iterator current(elem);
+            typename List<Node>::Iterator next = nodeList[index].getNext(current);
+
+            return next != nodeList[index].end();
+        }
+
+        void goNeighbor()
+        {
+            typename List<Node>::Iterator current(elem);
+            elem = nodeList[index].getNext(current).getValue();
+        }
+
+        void goNextValid()
+        {
+            while(++index < HASH_SIZE)
+            {
+                if(!nodeList[index].isEmpty())
+                {
+                    elem = nodeList[index].getFirst();
+                    return;
+                }
+            }
+
+            elem = 0;
+        }
+
+    private:
+        Node* elem;
+        size_t index;
+        const List<Node>* nodeList;
+    };
+
     HashMap() : num(0)
     {
         STATIC_ASSERT(ELEM_SIZE > 0);
         STATIC_ASSERT(HASH_SIZE > 0);
+    }
+
+    Iterator begin() const
+    {
+        FOR_EACH_0(i, HASH_SIZE)
+        {
+            if(!buckets[i].isEmpty())
+                return Iterator(buckets[i].getFirst(), i, buckets);
+        }
+
+        return Iterator(0, HASH_SIZE, buckets);
+    }
+
+    Iterator end() const
+    {
+        return Iterator(0, HASH_SIZE, buckets);
     }
 
     size_t size() const
@@ -184,5 +319,13 @@ private:
     HASH_FN  hashFn;
     EQUAL_FN equalFn;
 };
+
+/////////////////////////////////////////////////////////////
+#define MAP_FOREACH_FROM(map_type, i, from, items) \
+   for(typename map_type::Iterator i=from; i != items.end(); ++i)
+
+#define MAP_FOREACH(map_type, i, items) \
+   MAP_FOREACH_FROM(map_type, i, items.begin(), items)
+
 
 #endif
