@@ -9,9 +9,14 @@ namespace
 
 struct LinkedAllocatorTest : testing::Test
 {
+    LinkedAllocatorTest()
+    : allocator(array, MAX_ALLOC_NUM)
+    {
+    }
+
 protected:
     const static int MAX_ALLOC_NUM = 3;
-    LinkedAllocator<int, ARR_SIZE(array)> allocator{array, MAX_ALLOC_NUM};
+    LinkedAllocator<int, ARR_SIZE(array)> allocator;
 };
 
 TEST_F(LinkedAllocatorTest, should_has_free_slot_num_when_init)

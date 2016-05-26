@@ -6,6 +6,10 @@ namespace
 {
     DEFINE_ROLE(Foo) EXTENDS(SharedObject)
     {
+        Foo() : destroyedNum(0)
+        {
+        }
+
         int getDestroyNum() const
         {
             return destroyedNum;
@@ -24,7 +28,7 @@ namespace
         }
 
     private:
-        int destroyedNum{0};
+        int destroyedNum;
     };
 }
 

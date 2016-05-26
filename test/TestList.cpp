@@ -73,6 +73,6 @@ TEST_F(ListTest, should_point_to_the_correct_addr_when_get_next)
 
     ASSERT_EQ(&elem, elems.begin().getValue());
     ASSERT_NE(&elem, elems.end().getValue());
-    auto p = elems.begin();
+    List<Foo>::Iterator p = elems.begin();
     ASSERT_EQ(elems.end(), elems.getNext(p));
 }

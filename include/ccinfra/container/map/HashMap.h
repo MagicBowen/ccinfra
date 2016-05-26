@@ -14,8 +14,8 @@
 template < typename KEY
          , typename VALUE
          , size_t   ELEM_SIZE = 1024
-         , size_t   HASH_SIZE = 1024
-         , typename HASH_FN = HashFn<KEY>
+         , size_t   HASH_SIZE = ELEM_SIZE
+         , typename HASH_FN = HashFn<KEY, HASH_SIZE>
          , typename EQUAL_FN = EqualFn<KEY> >
 struct HashMap
 {
@@ -299,7 +299,7 @@ private:
 
     Node* find(const KEY& key) const
     {
-        Node* node = buckets[getIndex(key)].search([&](const Node& node){ return equalFn(node.key, key);});
+        Node* node = buckets[getIndex(key)].search(NodePred(key));
         if(__null__(node))
         {
             return __null_ptr__;
@@ -307,6 +307,28 @@ private:
 
         return node;
     }
+
+private:
+    struct NodePred
+    {
+        NodePred(const KEY& key)
+        : key(key)
+        {
+        }
+
+        NodePred(const NodePred& other)
+        : key(other.key)
+        {
+        }
+
+        bool operator()(const Node& node) const
+        {
+            return EQUAL_FN()(node.key, key);
+        }
+
+    private:
+        const KEY& key;
+    };
 
 private:
     typedef List<Node> Bucket;

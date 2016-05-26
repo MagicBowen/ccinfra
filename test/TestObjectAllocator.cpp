@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "ccinfra/memory/ObjectAllocator.h"
+#include "ccinfra/algo/foreach.h"
 
 namespace
 {
@@ -44,9 +45,9 @@ TEST(ObjectAllocatorTest, should_not_alloc_when_has_no_free_slot)
 {
     Foo* foos[MAX_SLOT_NUM] = {__null_ptr__};
 
-    for(auto& foo : foos)
+    FOR_EACH_0(i, MAX_SLOT_NUM)
     {
-        foo = new Foo(0);
+        foos[i] = new Foo(0);
     }
 
     Foo* foo = new Foo(0);

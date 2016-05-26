@@ -132,12 +132,13 @@ TEST(HashMapTest, should_point_to_correct_node_by_iterator_when_map_has_valid_el
 
 TEST(HashMapTest, should_point_to_correct_node_when_iterator_forward)
 {
-    HashMap<int, int> map;
+    typedef HashMap<int, int> ThisMap;
+    ThisMap map;
 
     map.put(1, 2);
     map.put(3, 6);
 
-    auto p = map.begin();
+    ThisMap::Iterator p(map.begin());
     ASSERT_EQ(map.begin(), p++);
     ASSERT_EQ(3, p.getValue()->key);
     ASSERT_EQ(6, p.getValue()->value);
@@ -245,8 +246,6 @@ TEST(HashMapTest, should_dump_map_through_const_visitor)
 
 namespace
 {
-    const size_t MAX_HASH_SIZE = 10;
-
     struct Key
     {
         Key(int x, int y)
@@ -256,7 +255,7 @@ namespace
 
         size_t hash() const
         {
-            return (x + y) % MAX_HASH_SIZE;
+            return (x + y);
         }
 
         __INLINE_EQUALS(Key)
@@ -291,8 +290,8 @@ namespace
     };
 }
 
-template<>
-struct HashFn<Key>
+template<size_t HASH_SIZE>
+struct HashFn<Key, HASH_SIZE>
 {
     size_t operator()(const Key& key) const
     {
