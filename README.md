@@ -60,4 +60,4 @@ The "~/project/gtest" should be replaced to your gtest installed path.
 
 ## Finally
 
-The ccinfra now only be supported on Linux platform, all the tests run passed on Unbuntu14.04. The ccinfra need some C++11 feature support, my gcc version is 4.8.4, other version below 4.8.4 has not been tested!
+The ccinfra now only be supported on Linux platform, all the tests run passed on Unbuntu14.04. Other OS such as Windows or Mac has not been tested!

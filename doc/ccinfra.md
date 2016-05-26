@@ -41,7 +41,7 @@ make
 ~~~
 
 如果所有测试运行通过，则说明ccinfra测试一切正常。
-在ubuntu14.04系统下，gcc版本4.8.4，ccinfra测试一切OK。别的linux系统理论上应该可以正常运行ccinfra，windows和mac系统未经测试。另外，ccinfra的HashMap和对其的测试需要`C++11`特性的支持，确保你的编译选项中开启了`C++11`.
+在ubuntu14.04系统下，gcc版本4.8.4，ccinfra测试一切OK。别的linux系统理论上应该可以正常运行ccinfra，windows和mac系统未经测试。
 
 ## Usage
 
