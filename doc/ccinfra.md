@@ -40,10 +40,22 @@ make
 ./test/ccinfra-test
 ~~~
 
-如果所有测试运行通过，则说明ccinfra测试一切正常。
 在ubuntu14.04系统下，gcc版本4.8.4，ccinfra测试一切OK。别的linux系统理论上应该可以正常运行ccinfra，windows和mac系统未经测试。
 
 ## Usage
+
+ccinfra由主要的几个组件组成：
+- Base ： 提供基本类型封装，状态码以及完备的断言机制。
+- Core ： 利用宏扩展`C++`的关键字，提供语法糖。有些关键字后来`C++11`已经支持，但是ccinfra将其进行了封装，使得使用的时候无需区分当前gcc版本是否支持某一`C++11`特性。
+- DCI ： 基于C++的[DCI](https://en.wikipedia.org/wiki/Data,_context_and_interaction)框架。利用其可以低成本的在C++中实现组合式编程，支持DCI架构。同时里面包含一个可以替代RTTI的机制，可以在许多不能打开RTTI特性的场合作为替代手段。
+- Memory ： 提供自定义内存管理的一些组件。包括针对不同场景的内存分配器、针对嵌入式内存特征的智能指针、单例和一些辅助工具。
+- Container ： 提供适合嵌入式内存特征需求的Array、List、HashMap和一些辅助类。
+- Algorithm ： 一些循环、排序算法的封装。
+- Concurrency ： 提供嵌入式下多线程编程可以使用的一些辅助类。
+- Log ： 封装了一套简单的Log机制，作为ccinfra的log的默认选项。
+- Other ： ccinfra还提供了一些辅助的宏以及对函数式编程的辅助粹取类。
+
+上述组件中，Base、Core、DCI、Memory、Container相对比较完整，其余各个组件还在不断完善中...
 
 ### Base
 
