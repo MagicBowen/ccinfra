@@ -13,15 +13,7 @@
 
 To learn more, visit the doc folder! View the source code of tests of ccinfra in the test folder for learning how to use every library elements in details!
 
-## Test and Install
-
-To test ccinfra, you need install [gtest](https://github.com/google/googletest). Gtest do not support auto installation now, so you need compile gtest, and manually put the include folder and lib like below:
-
-> 1. Download gtest source code, and compile to generate the gtest library.
-> 2. Select a path for manually installation of gtest. For example choose to manually install gtest to folder "/home/shared", enter "/home/shared" and create a folder named "gtest";
-> 3. Copy the "gtest/incude" to "/home/shared/gtest", the folder will like "/home/shared/gtest/include/gtest";
-> 4. Copy the "libgtest.a" which you compiled out before to "/home/shared/gtest/lib"
-> 5. Now the path "/home/shared/gtest" will be your gtest root path.
+## Install and Test
 
 - Get ccinfra
 
@@ -48,6 +40,14 @@ sudo make install
 You can also install ccinfra manually, just copy "ccinfra/include" and "ccinfra/build/src/libccinfra.a" to your special installation path.
 
 - Test ccinfra
+
+To test ccinfra, you need install [gtest](https://github.com/google/googletest). Gtest do not support auto installation now, so you need compile gtest, and manually put the include folder and lib like below:
+
+> 1. Download gtest source code, and compile to generate the gtest library.
+> 2. Select a path for manually installation of gtest. For example choose to manually install gtest to folder "/home/shared", enter "/home/shared" and create a folder named "gtest";
+> 3. Copy the "gtest/incude" to "/home/shared/gtest", the folder will like "/home/shared/gtest/include/gtest";
+> 4. Copy the "libgtest.a" which you compiled out before to "/home/shared/gtest/lib"
+> 5. Now the path "/home/shared/gtest" will be your gtest root path.
 
 ~~~ bash
 cd build
