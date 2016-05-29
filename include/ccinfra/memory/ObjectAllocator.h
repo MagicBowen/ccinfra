@@ -3,7 +3,7 @@
 
 #include "ccinfra/base/BaseTypes.h"
 #include "ccinfra/base/Assertions.h"
-#include "ccinfra/core/NullPtr.h"
+#include <ccinfra/base/NullPtr.h>
 
 template<typename T, U16 MAX_NUM>
 struct ObjectAllocator

@@ -6,8 +6,8 @@
 #include "ccinfra/container/map/MapVisitor.h"
 #include "ccinfra/container/list/ListElem.h"
 #include "ccinfra/container/list/List.h"
-#include "ccinfra/core/static_assert.h"
-#include "ccinfra/core/EqHelper.h"
+#include "ccinfra/base/static_assert.h"
+#include "ccinfra/base/EqHelper.h"
 #include "ccinfra/memory/ObjectAllocator.h"
 #include "ccinfra/algo/foreach.h"
 

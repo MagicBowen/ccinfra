@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "ccinfra/container/list/List.h"
 #include "ccinfra/container/list/ListElem.h"
-#include "ccinfra/core/NullPtr.h"
+#include <ccinfra/base/NullPtr.h>
 
 namespace
 {

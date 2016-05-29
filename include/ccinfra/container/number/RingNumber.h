@@ -2,7 +2,7 @@
 #define CCINFRA_RINGNUMBER_H_
 
 #include "ccinfra/base/BaseTypes.h"
-#include "ccinfra/core/EqHelper.h"
+#include <ccinfra/base/EqHelper.h>
 
 template <typename VALUE_TYPE, VALUE_TYPE MAX_VALUE>
 struct RingNumber

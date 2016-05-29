@@ -1,6 +1,6 @@
 #include <ccinfra/log/log.h>
 #include <ccinfra/base/BaseTypes.h>
-#include <ccinfra/core/NullPtr.h>
+#include <ccinfra/base/NullPtr.h>
 #include <stdarg.h>
 #include <string.h>
 #include <stdio.h>

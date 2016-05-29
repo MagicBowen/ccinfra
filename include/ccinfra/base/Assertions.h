@@ -3,7 +3,7 @@
 
 #include "ccinfra/base/Status.h"
 #include "ccinfra/log/log.h"
-#include "ccinfra/core/NullPtr.h"
+#include <ccinfra/base/NullPtr.h>
 
 #define __FAILED_BOOL_ACTION      return false
 #define __FAILED_STATUS_ACTION    return CCINFRA_FAILURE;

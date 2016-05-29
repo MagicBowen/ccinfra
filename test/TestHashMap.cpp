@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 #include <ccinfra/container/map/HashMap.h>
-#include <ccinfra/core/EqHelper.h>
-#include <ccinfra/core/Keywords.h>
+#include <ccinfra/base/Keywords.h>
 #include <string>
 
 TEST(HashMapTest, should_be_empty_when_init)

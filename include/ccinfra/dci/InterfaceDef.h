@@ -1,7 +1,7 @@
 #ifndef H05B2224D_B926_4FC0_A936_67B52B8A98DD
 #define H05B2224D_B926_4FC0_A936_67B52B8A98DD
 
-#include "ccinfra/core/Keywords.h"
+#include <ccinfra/base/Keywords.h>
 
 typedef unsigned int InterfaceId;
 

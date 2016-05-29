@@ -1,8 +1,8 @@
 #ifndef H05B2224D_B926_4FC0_A936_97B52B8A98DB
 #define H05B2224D_B926_4FC0_A936_97B52B8A98DB
 
-#include <ccinfra/core/Default.h>
-#include <ccinfra/core/Config.h>
+#include <ccinfra/base/Default.h>
+#include <ccinfra/base/Config.h>
 
 #define ABSTRACT(...) virtual __VA_ARGS__ = 0
 

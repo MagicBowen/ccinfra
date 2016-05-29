@@ -2,7 +2,7 @@
 #define CCINFRA_MEMORY_TRANS_DATA_H
 
 #include "ccinfra/base/Status.h"
-#include "ccinfra/core/Uncloneable.h"
+#include <ccinfra/base/Uncloneable.h>
 #include "ccinfra/base/Assertions.h"
 
 //

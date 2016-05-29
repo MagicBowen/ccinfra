@@ -1,7 +1,7 @@
 #ifndef H671141B2_B247_440B_8E83_476558110FFF
 #define H671141B2_B247_440B_8E83_476558110FFF
 
-#include <ccinfra/core/Uncloneable.h>
+#include <ccinfra/base/Uncloneable.h>
 
 template<typename T>
 struct Singleton
