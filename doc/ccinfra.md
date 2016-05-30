@@ -4,7 +4,7 @@
 
 ## Introduction
 
-ccinfra是一套`C++`的基础库，目的是降低嵌入式下使用`C++`进行开发的难度。基于ccinfra可以低成本地写出漂亮、健壮的C++代码。虽然ccinfra中的很多元素是为了解决嵌入式下的问题，但是ccinfra的使用绝不仅限于嵌入式，它的很多元素是通用的，可以根据你的场景选择使用ccinfra的不同部分来帮助你。 本文后面每讲到一个组件，都会说明其适用场景，你可以根据自己的需求酌情选择。
+ccinfra是一套C\++的基础库，目的是降低嵌入式下使用C\++进行开发的难度。基于ccinfra可以低成本地写出漂亮、健壮的C++代码。虽然ccinfra中的很多元素是为了解决嵌入式下的问题，但是ccinfra的使用绝不仅限于嵌入式，它的很多元素是通用的，可以根据你的场景选择使用ccinfra的不同部分来帮助你。
 
 ## Install
 
@@ -45,10 +45,10 @@ make
 ## Usage
 
 ccinfra由主要的几个组件组成：
-- Base ： 提供基本类型封装，状态码以及各种断言机制。另外利用宏扩展`C++`的关键字，提供语法糖。有些关键字后来`C++11`已经支持，但是ccinfra将其进行了封装，使得使用的时候无需区分当前编译器版本是否支持某一`C++11`特性。
+- Base ： 提供基本类型封装，状态码以及各种断言机制。另外利用宏扩展C\++的关键字，提供语法糖。有些关键字后来C\++11已经支持，但是ccinfra将其进行了封装，使得使用的时候无需区分当前编译器版本是否支持某一C\++11特性。
 	适用场景： 广泛适用
 
-- DCI ： 基于`C++`的[DCI](https://en.wikipedia.org/wiki/Data,_context_and_interaction)框架。利用其可以低成本的在C++中实现组合式编程以支持DCI架构。同时里面包含一个可以替代RTTI的机制，可以在许多不能打开RTTI特性的场合作为替代手段。
+- DCI ： 基于C\++的[DCI](https://en.wikipedia.org/wiki/Data,_context_and_interaction)框架。利用其可以低成本的在C++中实现组合式编程以支持DCI架构。同时里面包含一个可以替代RTTI的机制，可以在许多不能打开RTTI特性的场合作为替代手段。
 	适用场景： 广泛适用
 
 - Memory ： 提供自定义内存管理的一些组件。包括针对不同场景的内存分配器、针对嵌入式内存特征的智能指针、单例和一些辅助工具。
@@ -77,7 +77,7 @@ ccinfra由主要的几个组件组成：
 
 #### 基本类型和状态码
 
-首先在`BaseTypes.h`中对基本类型进行了封装，提供了 `U8`，`U16`，`U32`以及`U64`这几种常用的无符号整形，以及`S8`，`S16`，`S32`以及`S64`等几种常用的有符号整形。最后提供了一个针对指针的类型`PTR_VALUE`，用于将地址转为一个无符号整形，经常用在对地址的值进行比较的场合。`PTR_VALUE`会根据当前系统是32位还是64位，自动决定将地址存为`U32`还是`U64`。
+首先在"ccinfra/base/BaseTypes.h"中对基本类型进行了封装，提供了 `U8`，`U16`，`U32`以及`U64`这几种常用的无符号整形，以及`S8`，`S16`，`S32`以及`S64`等几种常用的有符号整形。最后提供了一个针对指针的类型`PTR_VALUE`，用于将地址转为一个无符号整形，经常用在对地址的值进行比较的场合。`PTR_VALUE`会根据当前系统是32位还是64位，自动决定将地址存为`U32`还是`U64`。
 
 ~~~cpp
 // BaseTypes.h
@@ -106,7 +106,7 @@ static bool tryFree(void *p)
 }
 ~~~
 
-`Status.h`定义了ccinfra的基本成功和错误码：`CCINFRA_SUCCESS`和`CCINFRA_FAILURE`，另外提供了两个辅助宏：
+"ccinfra/base/Status.h"定义了ccinfra的基本成功和错误码：`CCINFRA_SUCCESS`和`CCINFRA_FAILURE`，另外提供了两个辅助宏：
 
 ~~~cpp
 // Status.h
@@ -125,7 +125,7 @@ if(__CCINFRA_FAILED(map.put(2, 2)))
 
 #### 断言
 
-`Assertions.h`提供了各种断言机制。这里的断言都是运行时断言，分为两大类，expect和assert。expect类型的在断言失败后，会用`WARN_LOG`进行输出，而assert类型断言失败后则会用`ERR_LOG`进行错误输出。对于两种类型断言都支持三大类行判断： 1）对bool是否为true进行判断； 2）对指针有效性进行判断； 3）对函数返回值是否成功进行判断。每一类断言失败后的返回值都支持返回void，bool，错误码， 或者自定义返回值。具体见`Assertions.h`文件实现。 断言的使用非常简单，如下实例：
+"ccinfra/base/Assertions.h"提供了各种断言机制。这里的断言都是运行时断言，分为两大类，expect和assert。expect类型的在断言失败后，会用`WARN_LOG`进行输出，而assert类型断言失败后则会用`ERR_LOG`进行错误输出。对于两种类型断言都支持三大类行判断： 1）对bool是否为true进行判断； 2）对指针有效性进行判断； 3）对函数返回值是否成功进行判断。每一类断言失败后的返回值都支持返回void，bool，错误码， 或者自定义返回值。具体见`Assertions.h`文件实现。 断言的使用非常简单，如下实例：
 
 ~~~cpp
 // TransData.h
@@ -141,7 +141,7 @@ Status modify()
 }
 ~~~
 
-`static_assert.h`提供了静态断言`STATIC_ASSERT`。在支持C++11的场景下，`STATIC_ASSERT`被映射成关键字`static_assert`，否则被映射成自定义实现。
+"ccinfra/base/static_assert.h"提供了静态断言`STATIC_ASSERT`。在支持C++11的场景下，`STATIC_ASSERT`被映射成关键字`static_assert`，否则被映射成自定义实现。
 
 ~~~cpp
 // static_assert.h
@@ -178,7 +178,7 @@ struct HashMap
 
 #### 关键字与语法糖
 
-ccinfra提供了`DEF_INTERFACE`、`ABSTRACT`、`OVERRIDE`、`DEFAULT`、`EXTENDS`、`IMPLEMENTS`等关键字封装，让C\++ 预言可以更有表达力。这些封装无关gcc的版本是否支持 C\++11，它会根据gcc的版本自动做适配。
+ccinfra提供了`DEF_INTERFACE`、`ABSTRACT`、`OVERRIDE`、`DEFAULT`、`EXTENDS`、`IMPLEMENTS`等关键字封装，让C\++ 语言更有表达力。这些封装无关gcc的版本是否支持 C\++11，它会根据gcc的版本自动做适配。
 
 ~~~cpp
 DEF_INTERFACE(Shape)
@@ -283,6 +283,86 @@ TEST(...)
 - ABSTRACT：定义一个抽象接口，对应C\++一个纯虚方法。如果一个方法定义为`ABSTRACT`，那么该类的所有子类必须实现该接口，可以用关键字`OVERRIDE`进行显示复写。
 - OVERRIDE：复写一个虚方法。C\++11下，如果`OVERRIDE`中对应的方法原型在父类中找不到对应的虚方法声明，则会编译错误。
 - DEFAULT：定义一个具有默认实现的虚方法。一旦一个方法被定义为`DEFAULT`，该方法在子类中可以不需要`OVERRIDE`。对于有返回值的函数，`DEFAULT`定义的默认实现中会自动返回默认值。对于bool类型返回false，对于数型和指针都返回0。如果默认实现不能满足你的要求，需要显示在子类中用`OVERRIDE`进行具体实现定义。
+
+“ccinfra/base/NullPtr.h”中对空指针进行了封装，统一用`__null_ptr__`表示空地址。该定义在支持C\++11的场景下会映射为关键字`nullptr`，否则为数字0。同时提供对空指针进行判断的两个宏。
+
+~~~cpp
+#if __SUPPORT_NULL_PTR
+#define __null_ptr__ nullptr
+#else
+#define __null_ptr__ 0
+#endif
+
+#define __notnull__(ptr) ptr != __null_ptr__
+#define __null__(ptr) ptr == __null_ptr__
+
+#endif
+~~~
+
+用法如下：
+
+~~~cpp
+// HashMaps.h
+Status put(const KEY& key, const VALUE& value)
+{
+    const VALUE* v = get(key);
+
+    if(__notnull__(v))
+    {
+        // ...
+        return CCINFRA_SUCCESS;
+    }
+
+    return __null__(insert(key ,value)) ? CCINFRA_FAILURE : CCINFRA_SUCCESS;
+}
+~~~
+
+"ccinfra/base/EqHelper.h"定义了辅助类内定义比较运算符的宏。这些辅助宏在你定义了`==`的实现后，会自动扩展出`！=`的实现，在你定了`==`和`<`的实现后，会自动扩展出其它所有比较运算符的实现。具体用法如下：
+
+~~~cpp
+// Complex.h
+struct Complex
+{
+    Complex(int r, int i) : real(r), image(i)
+    {
+    }
+
+    __DECL_COMP(Complex);
+
+private:
+    int real;
+    int image;
+};
+~~~
+
+~~~cpp
+// Complex.cpp
+__DEF_EQUALS(Complex)
+{
+    return (real == rhs.real) && (image == rhs.image);
+}
+
+__DEF_COMP(Complex)
+{
+    if(real == rhs.real) return image < rhs.image;
+    return real < rhs.real;
+}
+~~~
+
+~~~cpp
+//TestComplex.h
+TEST(...)
+{
+    ASSERT_TRUE(Complex(3, 1) == Complex(3, 1));
+    ASSERT_TRUE(Complex(3, 0) != Complex(3, 1));
+    ASSERT_TRUE(Complex(3, 0) < Complex(3, 1));
+    ASSERT_TRUE(Complex(2, 8) < Complex(3, 0));
+    ASSERT_TRUE(Complex(2, 8) <= Complex(3, 0));
+    ASSERT_TRUE(Complex(2, 8) > Complex(1, 10));
+    ASSERT_TRUE(Complex(2, 8) >= Complex(2, 7));
+    ASSERT_TRUE(Complex(2, 8) >= Complex(2, 8));
+}
+~~~
 
 ### DCI
 
