@@ -4,6 +4,17 @@
 #include <ccinfra/base/Default.h>
 #include <ccinfra/base/Config.h>
 
+namespace details
+{
+   template<typename T>
+   struct Interface
+   {
+      virtual ~Interface() {}
+   };
+}
+
+#define DEF_INTERFACE(Intf)  struct Intf : ::details::Interface<Intf>
+
 #define ABSTRACT(...) virtual __VA_ARGS__ = 0
 
 #if __SUPPORT_VIRTUAL_OVERRIDE
