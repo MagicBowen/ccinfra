@@ -1,8 +1,6 @@
 #ifndef H05B2224D_B926_4FC0_A936_67B52B8A98DD
 #define H05B2224D_B926_4FC0_A936_67B52B8A98DD
 
-#include <ccinfra/base/Keywords.h>
-
 typedef unsigned int InterfaceId;
 
 namespace dci {
@@ -57,11 +55,8 @@ namespace details
 
 }
 
-#define DEF_INTERFACE(iface, iid, ...) \
+#define DCI_INTERFACE(iface, iid, ...) \
 struct iface : dci::details::Interface<iid, ##__VA_ARGS__>
-
-#define IS_INTERFACE(iid, ...) , dci::details::Interface<iid, ##__VA_ARGS__>
-
 
 #endif
 

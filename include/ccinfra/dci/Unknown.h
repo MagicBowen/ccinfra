@@ -6,7 +6,7 @@
 
 namespace dci {
 
-DEF_INTERFACE(Unknown, 0xFFFFFFFE)
+DCI_INTERFACE(Unknown, 0xFFFFFFFE)
 {
     virtual void* castTo(const InterfaceId iid) const = 0;
 };
@@ -73,7 +73,6 @@ TO* unknown_cast(const Unknown* from)
     }
 
 #define __IMPL_CONTEXT_ROLE(role)                           \
-    DCM_PEEK_VALID_PTR(role);                               \
     return *role;
 
 #define IMPL_CONTEXT_ROLE(object, role)                     \
