@@ -1,12 +1,11 @@
 #ifndef H05B2224D_B926_4FC0_A936_67B52B8A98DF
 #define H05B2224D_B926_4FC0_A936_67B52B8A98DF
 
-#include "ccinfra/dci/InterfaceDef.h"
-#include "ccinfra/dci/Role.h"
+#include <ccinfra/dci/InterfaceDef.h>
 
 namespace dci {
 
-DCI_INTERFACE(Unknown, 0xFFFFFFFE)
+UNKNOWN_INTERFACE(Unknown, 0xFFFFFFFE)
 {
     virtual void* castTo(const InterfaceId iid) const = 0;
 };

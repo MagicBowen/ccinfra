@@ -46,17 +46,17 @@ namespace details
              , typename T_B1 = Dummy
              , typename T_B2 = Dummy
              , typename T_B3 = Dummy>
-    struct Interface : BaseTraits<T_B1, T_B2, T_B3>::Base
+    struct UnknownInterface : BaseTraits<T_B1, T_B2, T_B3>::Base
     {
         enum { E_IID = I_IID };
-        virtual ~Interface() {}
+        virtual ~UnknownInterface() {}
     };
 }
 
 }
 
-#define DCI_INTERFACE(iface, iid, ...) \
-struct iface : dci::details::Interface<iid, ##__VA_ARGS__>
+#define UNKNOWN_INTERFACE(iface, iid, ...) \
+struct iface : dci::details::UnknownInterface<iid, ##__VA_ARGS__>
 
 #endif
 
