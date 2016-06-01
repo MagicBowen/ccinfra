@@ -381,11 +381,11 @@ TEST(...)
 
 > 面向对象建模面临的一个棘手问题是数据边界和行为边界往往不一致。遵循模块化的思想，我们通过类将行为和其紧密耦合的数据封装在一起。但是在复杂的业务场景下，行为往往跨越多个领域对象，这样的行为放在某一个对象中必然导致别的对象需要向该对象暴漏其内部状态。所以面向对象发展的后来，领域建模出现两种派别之争，一种倾向于将跨越多个领域对象的行为建模在所谓的service中（见DDD中所描述的service建模元素）。这种做法使用过度经常导致领域对象变成只提供一堆get方法的哑对象，这种建模导致的结果被称之为贫血模型。而另一派则坚定的认为方法应该属于领域对象，所以所有的业务行为仍然被放在领域对象中，这样导致领域对象随着支持的业务场景变多而变成上帝类，而且类内部方法的抽象层次很难一致。另外由于行为边界很难恰当，导致对象之间数据访问关系也比较复杂。这种建模导致的结果被称之为充血模型。
 
-在DCI架构中，如何将role和领域对象进行绑定，根据语言特点做法不同。对于动态语言，可以在运行时进行绑定。而对于静态语言，领域对象和role的关系在编译阶段就得确定。对于C++，DCI的论文[www.artima.com/articles/dci_vision.html](www.artima.com/articles/dci_vision.html)中介绍了采用模板Trait的技巧。但是正如我们前面所讲，role主要对复杂多变的业务行为进行建模，所以role需要更加关注于系统的可扩展性，更加贴近软件工程，对role的建模会更多地站在类的视角。由于在复杂场景下会出现复杂的行为依赖和交织，如果采用模板技术会产生复杂的模板交织代码从而让工程层面变得过于复杂，而面向对象的多态和依赖注入则可以相对更轻松地解决此类问题。另外，由于一个领域对象可能会在不同的context下扮演多种角色，这时领域对象要能够组合进来不同的role。对于所有这些问题，ccinfra提供的DCI框架采用了多重继承来进行领域对象和其支持的role之间的关系描述，采用了在多重继承树内进行关系交织来进行role之间的依赖关系描述。
+在DCI架构中，如何将role和领域对象进行绑定，根据语言特点做法不同。对于动态语言，可以在运行时进行绑定。而对于静态语言，领域对象和role的关系在编译阶段就得确定。DCI的论文[www.artima.com/articles/dci_vision.html](www.artima.com/articles/dci_vision.html)中介绍了C\++采用模板Trait的技巧进行role和领域对象的绑定。但是由于复杂场景经常出现role之间复杂的行为依赖和交织，如果采用模板技术会产生复杂的模板交织代码从而让工程层面变得过于复杂。正如我们前面所讲，role主要对复杂多变的业务行为进行建模，所以role需要更加关注于系统的可扩展性，更加贴近软件工程，对role的建模应该更多地站在类的视角，而面向对象的多态和依赖注入则可以相对更轻松地解决此类问题。另外，由于一个领域对象可能会在不同的context下扮演多种角色，这时领域对象要能够和多种不同类的role进行绑定。对于所有这些问题，ccinfra提供的DCI框架采用了多重继承来描述领域对象和其支持的role之间的绑定关系，同时采用了在多重继承树内进行关系交织来进行role之间的依赖关系描述。这种方式在C\++中比采用传统的依赖注入的方式更加简单高效。
 
-对于DCI的理论介绍，以及如何利用DCI框架进行领域建模，本文就介绍这些。后面主要介绍如何利用ccinfra中的DCI框架实现和拼装role以完成一种组合式编程。
+对于DCI的理论介绍，以及如何利用DCI框架进行领域建模，本文就介绍这些。后面主要介绍如何利用ccinfra中的DCI框架来实现和拼装role以完成这种组合式编程。
 
-下面假设一种场景：模拟人和机器人工作制造产品。人制造产品会消耗吃饭得到的能量，缺乏能量后需要再吃饭补充；而机器人制造产品会消耗电能，缺乏能量后需要再充电。这里人和机器人在工作时都是一名worker（扮演的角色），工作的流程是一样的，但是区别在于依赖的能量消耗和获取方式不同。
+下面假设一种场景：模拟人和机器人制造产品。人制造产品会消耗吃饭得到的能量，缺乏能量后需要再吃饭补充；而机器人制造产品会消耗电能，缺乏能量后需要再充电。这里人和机器人在工作时都是一名worker（扮演的角色），工作的流程是一样的，但是区别在于依赖的能量消耗和获取方式不同。
 
 ~~~cpp
 DEFINE_ROLE(EnergyCarrier)
@@ -489,8 +489,8 @@ private:
 ~~~
 
 上面代码中使用了DCI框架中三个主要的语法糖：
-- `DEFINE_ROLE`：用于定义role，一个role在这里就是一个普通的类。`DEFINE_ROLE`的实现和前面介绍的`DEF_INTERFACE`一模一样，但是在DCI框架里面使用这个命名更具有语义。`DEFINE_ROLE`定义的类中需要至少包含一个虚方法或者使用了`USE_ROLE`声明依赖另外一个ROLE。
-- `USE_ROLE`：在一个类里面声明自己的实现依赖另外一个ROLE。
+- `DEFINE_ROLE`：用于定义role，一个role在这里就是一个普通的类。`DEFINE_ROLE`的实现和前面介绍的`DEF_INTERFACE`一模一样，但是在DCI框架里面使用这个命名更具有语义。`DEFINE_ROLE`定义的类中需要至少包含一个虚方法或者使用了`USE_ROLE`声明依赖另外一个role。
+- `USE_ROLE`：在一个类里面声明自己的实现依赖另外一个role。
 - `ROLE`：当一个类声明中使用了`USE_ROLE`声明依赖另外一个类XXX后，则在类的实现代码里面就可以调用 `ROLE(XXX)`来引用这个类去调用它的成员方法。
 
 在上面的例子中，`Worker`类被定义为一个role，它依赖于一个抽象类`EnergyCarrier`。在它的实现中调用`ROLE(EnergyCarrier)`访问它提供的接口方法。`EnergyCarrier`有两个子类`HumanEnergy`和`ChargeEnergy`分别对应于人和机器人的能量特征。上面只是以类的形式定义了各种role，下面我们需要将role和领域对象关联并将role之间的依赖关系在领域对象内完成正确的交织后，软件才能工作。
@@ -513,7 +513,7 @@ private:
 
 通过上面的代码可以看到，实际上用多重继承完成了领域对象对role的组合。在上例中`Human`组合了`Worker`和`HumanEnergy`，而`Robot`组合了`Worker`和`ChargeEnergy`。最后在领域对象的类内还需要完成role之间的关系交织。由于`Worker`中声明了`USE_ROLE(EnergyCarrier)`，所以当`Human`和`Robot`继承了`Worker`之后就需要显示化`EnergyCarrier`从哪里来。有如下几种主要的交织方式：
 - `IMPL_ROLE`： 对上例，如果`EnergyCarrier`的某一个子类也被继承的话，那么就直接在交织类中声明`IMPL_ROLE(EnergyCarrier)`。于是当`Worker`工作时所找到的`ROLE(EnergyCarrier)`就是在交织类中所继承的具体`EnergyCarrier`子类。
-- `IMPL_ROLE_WITH_OBJ`： 当持有被依赖role的一个引用或者成员的时候，使用`IMPL_ROLE_WITH_OBJ`进行关系交织。例如假如上例中`Human`类中有一个成员是`HumanEnergy energy`那么就可以用`IMPL_ROLE_WITH_OBJ(EnergyCarrier, energy)`来声明交织关系。该场景同样适用于类内持有的是被依赖role的指针、引用的场景。
+- `IMPL_ROLE_WITH_OBJ`： 当持有被依赖role的一个引用或者成员的时候，使用`IMPL_ROLE_WITH_OBJ`进行关系交织。假如上例中`Human`类中有一个成员：`HumanEnergy energy`，那么就可以用`IMPL_ROLE_WITH_OBJ(EnergyCarrier, energy)`来声明交织关系。该场景同样适用于类内持有的是被依赖role的指针、引用的场景。
 - `DECL_ROLE` ： 自定义交织关系。例如对上例在`Human`中定义一个方法`DECL_ROLE(EnergyCarrier){ // function implementation}`，自定义`EnergyCarrier`的来源，完成交织。
 
 当正确完成role的依赖交织工作后，领域对象类就可以被实例化了。如果没有交织正确，一般会出现编译错误。
@@ -535,7 +535,7 @@ TEST(...)
 }
 ~~~
 
-如上使用`SELF`将领域对象cast到对应的role上访问对应的方法。注意只有被public继承的role才可以从领域对象上cast过去。private继承的role往往是作为领域对象内部依赖的，不能从领域对象显示cast去使用（上例中`human`不能做`SELF(human, EnergyCarrier)`转换，会编译错误）。
+如上使用`SELF`将领域对象cast到对应的role上访问其接口方法。注意只有被public继承的role才可以从领域对象上cast过去。private继承的role往往是作为领域对象内部依赖的，不能从领域对象显示cast去使用（上例中`human`不能做`SELF(human, EnergyCarrier)`转换，会编译错误）。
 
 ### Memory
 
