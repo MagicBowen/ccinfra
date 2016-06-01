@@ -381,9 +381,159 @@ TEST(...)
 
 在DCI架构中，如何将role和领域对象进行绑定，根据语言特点做法不同。对于动态语言，可以在运行时进行这种绑定。对于静态语言，领域对象和role的关系在编译阶段就必须确定。对于C++，DCI的论文[www.artima.com/articles/dci_vision.html](www.artima.com/articles/dci_vision.html)中介绍了采用模板Trait的技巧。但是正如我们前面所讲，role主要对复杂多变的业务行为进行建模，所以role需要更加关注于系统的可扩展性，更加贴近软件工程，对role的建模会更多地站在类的视角。由于在复杂场景下会出现复杂的行为依赖和交织，如果采用模板技术会产生复杂的模板交织代码从而让工程层面变得过于复杂，而面向对象的多态和依赖注入则可以相对更轻松地解决此类问题。另外，由于一个领域对象可能会在不同的context下扮演多种角色，这时领域对象要能够组合进来不同的role。对于所有这些问题，ccinfra提供的DCI框架采用了多重继承来进行领域对象和其支持的role之间的关系描述，采用了在多重继承树内进行关系交织来进行role之间的依赖关系描述。
 
-对于DCI的理论介绍，以及如何利用DCI框架进行领域建模，我们就介绍这些。本文后面主要介绍如何利用ccinfra中的DCI框架进行role的实现和拼装以及完成行为间的组合式编程。
+对于DCI的理论介绍，以及如何利用DCI框架进行领域建模，本文就介绍这些。后面主要介绍如何利用ccinfra中的DCI框架实现和拼装role以完成一种组合式编程。
 
+下面假设一种场景：模拟人和机器人工作制造产品。人制造产品会消耗吃饭得到的能量，缺乏能量后需要再吃饭补充；而机器人制造产品会消耗电能，缺乏能量后需要再充电。这里人和机器人在工作时都是一名worker（扮演的角色），工作的流程是一样的，但是区别在于依赖的能量消耗和获取方式不同。
 
+~~~cpp
+DEFINE_ROLE(EnergyCarrier)
+{
+    ABSTRACT(void consume());
+    ABSTRACT(bool isExhausted() const);
+};
+
+struct HumanEnergy : EnergyCarrier
+{
+    HumanEnergy()
+    : isHungry(false), consumeTimes(0)
+    {
+    }
+
+private:
+    OVERRIDE(void consume())
+    {
+        consumeTimes++;
+
+        if(consumeTimes >= MAX_CONSUME_TIME)
+        {
+            isHungry = true;
+        }
+    }
+
+    OVERRIDE(bool isExhausted() const)
+    {
+        return isHungry;
+    }
+
+private:
+	enum
+    {
+        MAX_CONSUME_TIME = 10,
+    }；
+
+    bool isHungry;
+    U8 consumeTimes;
+};
+
+struct ChargeEnergy : EnergyCarrier
+{
+    ChargeEnergy() : percent(0)
+    {
+    }
+
+    void charge()
+    {
+        percent = FULL_PERCENT;
+    }
+
+private:
+    OVERRIDE(void consume())
+    {
+    	if(percent > 0)
+            percent -= CONSUME_PERCENT;
+    }
+
+    OVERRIDE(bool isExhausted() const)
+    {
+        return percent == 0;
+    }
+
+private:
+    enum
+    {
+        FULL_PERCENT = 100,
+        CONSUME_PERCENT = 1
+    };
+
+    U8 percent;
+};
+
+DEFINE_ROLE(Worker)
+{
+    Worker() : produceNum(0)
+    {
+    }
+
+    void produce()
+    {
+        if(ROLE(EnergyCarrier).isExhausted()) return;
+
+        produceNum++;
+
+        ROLE(EnergyCarrier).consume();
+    }
+
+    U32 getProduceNum() const
+    {
+        return produceNum;
+    }
+
+private:
+    U32 produceNum;
+
+private:
+    USE_ROLE(EnergyCarrier);
+};
+~~~
+
+上面代码中使用了DCI框架中三个主要的语法糖：
+- `DEFINE_ROLE`：用于定义role，一个role在这里就是一个普通的类。`DEFINE_ROLE`的实现和前面介绍的`DEF_INTERFACE`一模一样，但是在DCI框架里面使用这个命名更有语义。`DEFINE_ROLE`定义的类中需要至少包含一个虚方法或者使用了`USE_ROLE`声明依赖另外一个ROLE。
+- `USE_ROLE`：在一个类里面声明自己的实现依赖另外一个ROLE。
+- `ROLE`：当一个类声明中使用了`USE_ROLE`声明依赖另外一个类XXX后，则在类的实现代码里面就可以调用 `ROLE(XXX)`来引用这个类，使用它的成员方法。
+
+在上面的例子中，`Worker`类被定义为一个role，它依赖于一个抽象类`EnergyCarrier`。在它的实现中调用`ROLE(EnergyCarrier)`访问它提供的接口方法。`EnergyCarrier`有两个子类`HumanEnergy`和`ChargeEnergy`分别对应于人和机器人的能量特征。上面只是以类的形式定义了各种role，下面我们需要将role和领域对象关联并将role之间的依赖关系在领域对象内完成正确的交织后，软件才能工作。
+
+~~~cpp
+struct Human : Worker
+             , private HumanEnergy
+{
+private:
+    IMPL_ROLE(EnergyCarrier);
+};
+
+struct Robot : Worker
+             , ChargeEnergy
+{
+private:
+    IMPL_ROLE(EnergyCarrier);
+};
+~~~
+
+通过上面的代码可以看到，实际上用多重继承完成了领域对象的类对role的组合。在上例中`Human`组合了`Worker`和`HumanEnergy`，而`Robot`组合了`Worker`和`ChargeEnergy`。最后在领域对象的类内还需要完成role之间的关系编织。由于`Worker`中声明了`USE_ROLE(EnergyCarrier)`，所以当`Human`和`Robot`继承了`Worker`之后就需要显示化`EnergyCarrier`从哪里来。有如下几种主要的编织方式：
+- `IMPL_ROLE`： 对上例，如果`EnergyCarrier`的某一个子类也被继承的话，那么就直接在编织类中声明`IMPL_ROLE(EnergyCarrier)`。那么当`Worker`工作时所找到的`ROLE(EnergyCarrier)`就是在编织类中所继承的具体`EnergyCarrier`子类。
+- `IMPL_ROLE_WITH_OBJ`： 当持有被依赖role的一个引用或者成员的时候，使用`IMPL_ROLE_WITH_OBJ`进行关系交织。例如假如上例中`Human`类中有一个成员是`HumanEnergy energy`那么就可以用`IMPL_ROLE_WITH_OBJ(EnergyCarrier, energy)`来声明编织关系。该场景适用于类内持有的是被依赖role的指针，引用的场景。
+- `DECL_ROLE` ： 自定义编织关系。例如对上例在`Human`中定义一个方法`DECL_ROLE(EnergyCarrier){ // function implementation}`，自定义`EnergyCarrier`的来源，完成编织。
+
+当正确完成role的依赖编织工作后，领域对象类就可以实例化领域对象了。如果没有编织正确的化，一般都会出现编译错误。使用`SELF`将领域对象cast到对应的role上访问对应的方法。注意只有被public继承的role才可以从领域对象上cast过去。private继承的role往往是作为领域对象内部依赖的，不能从领域对象显示cast去使用（下例中`human`不能做`SELF(human, EnergyCarrier)`转换，会编译错误）。
+
+~~~cpp
+TEST(...)
+{
+    Human human;
+    SELF(human, Worker).produce();
+    ASSERT_EQ(1, SELF(human, Worker).getProduceNum());
+
+    Robot robot;
+    SELF(robot, ChargeEnergy).charge();
+    while(!SELF(robot, EnergyCarrier).isExhausted())
+    {
+        SELF(robot, Worker).produce();
+    }
+    ASSERT_EQ(100, SELF(robot, Worker).getProduceNum());
+}
+~~~
+
+仔细分析上例，
 
 ### Memory
 

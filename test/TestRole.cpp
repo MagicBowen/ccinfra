@@ -4,13 +4,13 @@
 
 namespace
 {
-    DEFINE_ROLE(Energy)
+    DEFINE_ROLE(EnergyCarrier)
     {
         ABSTRACT(void consume());
         ABSTRACT(bool isExhausted() const);
     };
 
-    struct HumanEnergy : Energy
+    struct HumanEnergy : EnergyCarrier
     {
         enum
         {
@@ -49,7 +49,7 @@ namespace
         U8 consumeTimes;
     };
 
-    struct ChargeEnergy : Energy
+    struct ChargeEnergy : EnergyCarrier
     {
         enum
         {
@@ -57,7 +57,7 @@ namespace
             CONSUME_PERCENT = 1
         };
 
-        ChargeEnergy() : percent(FULL_PERCENT)
+        ChargeEnergy() : percent(0)
         {
         }
 
@@ -69,7 +69,8 @@ namespace
     private:
         OVERRIDE(void consume())
         {
-            percent -= CONSUME_PERCENT;
+            if(percent > 0)
+                percent -= CONSUME_PERCENT;
         }
 
         OVERRIDE(bool isExhausted() const)
@@ -89,11 +90,11 @@ namespace
 
         void produce()
         {
-            if(ROLE(Energy).isExhausted()) return;
+            if(ROLE(EnergyCarrier).isExhausted()) return;
 
             produceNum++;
 
-            ROLE(Energy).consume();
+            ROLE(EnergyCarrier).consume();
         }
 
         U32 getProduceNum() const
@@ -105,21 +106,21 @@ namespace
         U32 produceNum;
 
     private:
-        USE_ROLE(Energy);
+        USE_ROLE(EnergyCarrier);
     };
 
     struct Human : Worker
                  , HumanEnergy
     {
     private:
-        IMPL_ROLE(Energy);
+        IMPL_ROLE(EnergyCarrier);
     };
 
     struct Robot : Worker
                  , ChargeEnergy
     {
     private:
-        IMPL_ROLE(Energy);
+        IMPL_ROLE(EnergyCarrier);
     };
 }
 
@@ -127,27 +128,26 @@ TEST(RoleTest, should_cast_to_the_public_role_correctly_for_human)
 {
     Human human;
 
-    while(!SELF(human, Energy).isExhausted())
+    while(!SELF(human, EnergyCarrier).isExhausted())
     {
         SELF(human, Worker).produce();
     }
     ASSERT_EQ(Human::MAX_CONSUME_TIMES, SELF(human, Worker).getProduceNum());
 
     human.eat();
-    ASSERT_FALSE(SELF(human, Energy).isExhausted());
+    ASSERT_FALSE(SELF(human, EnergyCarrier).isExhausted());
 }
 
 TEST(RoleTest, should_cast_to_the_public_role_correctly_for_robot)
 {
     Robot robot;
 
-    while(!SELF(robot, Energy).isExhausted())
+    SELF(robot, ChargeEnergy).charge();
+
+    while(!SELF(robot, EnergyCarrier).isExhausted())
     {
         SELF(robot, Worker).produce();
     }
     ASSERT_EQ(ChargeEnergy::FULL_PERCENT / ChargeEnergy::CONSUME_PERCENT,
               SELF(robot, Worker).getProduceNum());
-
-    SELF(robot, ChargeEnergy).charge();
-    ASSERT_FALSE(SELF(robot, Energy).isExhausted());
 }
