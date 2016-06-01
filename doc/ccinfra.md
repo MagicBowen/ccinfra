@@ -535,7 +535,7 @@ TEST(...)
 }
 ~~~
 
-如上使用`SELF`将领域对象cast到对应的role上访问其接口方法。注意只有被public继承的role才可以从领域对象上cast过去。private继承的role往往是作为领域对象内部依赖的，不能从领域对象显示cast去使用（上例中`human`不能做`SELF(human, EnergyCarrier)`转换，会编译错误）。
+如上使用`SELF`将领域对象cast到对应的role上访问其接口方法。注意只有被public继承的role才可以从领域对象上cast过去，private继承的role往往是作为领域对象的内部依赖，不能从显示cast去使用（上例中`human`不能做`SELF(human, EnergyCarrier)`转换，会编译错误）。
 
 ### Memory
 
