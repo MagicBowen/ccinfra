@@ -123,10 +123,31 @@ namespace
     };
 }
 
-TEST(RoleTest, should_cast_to_the_public_role_correctly)
+TEST(RoleTest, should_cast_to_the_public_role_correctly_for_human)
 {
     Human human;
-    SELF(human, Worker).produce();
-    ASSERT_EQ(1, SELF(human, Worker).getProduceNum());
+
+    while(!SELF(human, Energy).isExhausted())
+    {
+        SELF(human, Worker).produce();
+    }
+    ASSERT_EQ(Human::MAX_CONSUME_TIMES, SELF(human, Worker).getProduceNum());
+
+    human.eat();
     ASSERT_FALSE(SELF(human, Energy).isExhausted());
+}
+
+TEST(RoleTest, should_cast_to_the_public_role_correctly_for_robot)
+{
+    Robot robot;
+
+    while(!SELF(robot, Energy).isExhausted())
+    {
+        SELF(robot, Worker).produce();
+    }
+    ASSERT_EQ(ChargeEnergy::FULL_PERCENT / ChargeEnergy::CONSUME_PERCENT,
+              SELF(robot, Worker).getProduceNum());
+
+    SELF(robot, ChargeEnergy).charge();
+    ASSERT_FALSE(SELF(robot, Energy).isExhausted());
 }
