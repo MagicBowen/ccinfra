@@ -553,7 +553,7 @@ TEST(...)
 
 - 多重继承关系让一个领域对象可以支持哪些角色（role），以及一个角色可由哪些领域对象扮演变得显示化。这种显示化关系对于理解代码和静态检查都非常有帮助。
 
-上述通过多重继承来实现DCI架构的方式，也存在一个缺点，就是物理依赖问题。由于C++中要求一个类如果继承了另一个类，当前类的文件里必须包含被继承类的头文件。这就导致了领域对象类的声明文件里面事实上包含了所有它继承下来的role的头文件。在context中使用领域对象需要包含领域对象类的头文件。那么当领域对象某一个role的头文件发生了修改，所有包含领域对象头文件的context对应的文件都得要重新编译。解决该问题的一个方法就是再建立一个抽象层专门来做物理依赖隔离。例如对上例中的`Human`，可以修改如下：
+上述通过多重继承来实现DCI架构的方式，也存在一个缺点，就是物理依赖污染问题。由于C++中要求一个类如果继承了另一个类，当前类的文件里必须包含被继承类的头文件。这就导致了领域对象类的声明文件里面事实上包含了所有它继承下来的role的头文件。在context中直接使用领域对象需要包含领域对象类的头文件。那么当领域对象某一个role的头文件发生了修改，所有包含该领域对象头文件的context都得要重新编译，无关该context是否真的使用了被修改的role。解决该问题的一个方法就是再建立一个抽象层专门来做物理依赖隔离。例如对上例中的`Human`，可以修改如下：
 
 ~~~cpp
 DEFINE_ROLE(Human)
@@ -590,7 +590,98 @@ TEST(...)
 }
 ~~~
 
-为了屏蔽物理依赖，我们把`Human`变成了一个
+为了屏蔽物理依赖，我们把`Human`变成了一个纯接口类，它里面声明了该领域对象可被context访问的所有role，由于在这里只用前置声明，所以无需包含任何role的头文件。而对真正继承了所有role的领域对象`HumanObject`的构造隐藏在工厂里面。Context中持有从工厂中创建返回的`Human`指针，于是context中只用包含`Human`的头文件和它实际要使用的role的头文件，这样和它无关的role的修改不会引起该context的重新编译。
+
+事实上C\++语言的RTTI特性同样可以解决上述问题。该方法需要领域对象额外继承一个公共的虚接口类。Context持有这个公共的接口，利用`dynamic_cast`从公共接口往自己想要使用的role上去尝试cast。这时context只用包含该公共接口以及它仅使用的role的头文件即可。修改后的代码如下：
+
+~~~cpp
+DEFINE_ROLE(Actor)
+{
+};
+
+struct HumanObject : Actor
+                   , Worker
+                   , private HumanEnergy
+{
+private:
+    IMPL_ROLE(EnergyCarrier);
+};
+
+struct HumanFactory
+{
+    static Actor* create()
+    {
+        return new HumanObject;
+    }
+};
+
+TEST(...)
+{
+    Actor* actor = HumanFactory::create();
+
+    Worker* worker = dynamic_cast<Worker*>(actor);
+
+    ASSERT_TRUE(__notnull__(worker));
+
+    worker->produce();
+
+    ASSERT_EQ(1, worker->getProduceNum());
+
+    delete actor;
+}
+~~~
+
+上例中我们定义了一个公共类`Actor`，它没有任何代码，但是至少得有一个虚函数（RTTI要求），使用`DEFINE_ROLE`定义的类会自动为其增加一个虚析构函数，所以`Actor`满足要求。最终领域对象继承`Actor`，而context仅需持有领域对象工厂返回的`Actor`的指针。Context中通过`dynamic_cast`将`actor`指针转化领域对象身上其它有效的公开role（public继承的role），`dynamic_cast`会自动识别这种转换是否可以完成，如果在当前`Actor`的指针对应的对象的继承树上找不到目标类，`dynamic_cast`会返回空指针。上例中为了简单把所有代码写到了一起。真实场景下，使用`Actor`和`Worker`的context的实现文件中仅需要包含`Actor`和`Worker`的头文件即可，不会被`HumanObject`继承的其它role物理依赖污染。
+
+通过上例可以看到使用`RTTI`的解决方法是比较简单的，可是这种简单是有成本的。首先编译器需要在虚表中增加很多类型信息，以便可以完成转换，这会增加目标版本的大小。其次`dynamic_cast`会随着对象继承关系的复杂变得性能底下。所以C\++编译器对于是否开启`RTTI`是有专门的编译选项开关的，由程序员自行进行取舍。
+
+最后我们介绍ccinfra的DCI框架中提供的一种`RTTI`的替代工具，它可以模仿完成类似`dynamic_cast`的功能，但是无需在编译选项中开启`RTTI`功能。这样当我们想要在代码中小范围使用该特性的时候，却不用承担整个版本都因`RTTI`带来的性能损耗。利用这种替代技术，可以让程序员精确地在开发效率和运行效率上进行控制和平衡。
+
+~~~cpp
+UNKNOWN_INTERFACE(Worker, 0x1234)
+{
+// Original implementation codes of Worker!
+};
+
+struct HumanObject : dci::Unknown
+                   , Worker
+                   , private HumanEnergy
+{
+    BEGIN_INTERFACE_TABLE()
+        __HAS_INTERFACE(Worker)
+    END_INTERFACE_TABLE()
+
+private:
+    IMPL_ROLE(EnergyCarrier);
+};
+
+struct HumanFactory
+{
+    static dci::Unknown* create()
+    {
+        return new HumanObject;
+    }
+};
+
+TEST(...)
+{
+    dci::Unknown* unknown = HumanFactory::create();
+
+    Worker* worker = dci::unknown_cast<Worker>(unknown);
+
+    ASSERT_TRUE(__notnull__(worker));
+
+    worker->produce();
+
+    ASSERT_EQ(1, worker->getProduceNum());
+
+    delete unknown;
+}
+~~~
+
+通过上面的代码，可以看到ccinfra的dci框架中提供了一个公共的接口类`dci::Unknown`，所有需要支持动态转化的领域对象类最终都需要继承一个`dci::Unknown`。可以从`dci::Unknown`被转化到的目标类需要用`UNKNOWN_INTERFACE`来定义，参数是类名以及一个32位的随机数。这个随机数需要程序员自行提供，保证全局不重复（可以写一个脚本自动产生不重复的随机数，并且自动校验代码中已有的是否存在重复，可以把校验脚本作为版本编译构建检查的一部分）。领域对象类继承的所有由`UNKNOWN_INTERFACE`定义的接口类都需要在`BEGIN_INTERFACE_TABLE()`和`END_INTERFACE_TABLE()`中由`__HAS_INTERFACE`显示注册一下，参考上面代码`HumanObject`中的写法。最后，context持有领域对象工厂返回的`dci::Unknown`的指针，通过`dci::unknown_cast`将其转化为领域对象身上有效的role，至此这种机制和`dynamic_cast`的用法基本一致，在无法完成转化的情况下会返回空指针，所以安全起见需要对返回的指针进行校验。
+
+上述提供的RTTI替代手段，虽然比直接使用RTTI略显复杂，但是增加的手工编码成本并不大，带来的好处却是明显的。例如对经常禁止RTTI特性的嵌入式开发，这种机制让程序员可以在版本大小不增加的情况下使用类似RTTI的特性。
 
 ### Memory
 
