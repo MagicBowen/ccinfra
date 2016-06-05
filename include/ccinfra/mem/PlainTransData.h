@@ -1,7 +1,7 @@
 #ifndef CCINFRA_MEMORY_PLAIN_TRANS_DATA_H
 #define CCINFRA_MEMORY_PLAIN_TRANS_DATA_H
 
-#include "ccinfra/memory/TransData.h"
+#include <ccinfra/mem/TransData.h>
 #include <memory.h>
 
 template <typename T>

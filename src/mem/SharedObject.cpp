@@ -1,4 +1,4 @@
-#include "ccinfra/memory/SharedObject.h"
+#include <ccinfra/mem/SharedObject.h>
 
 SharedObject::SharedObject() : count(0)
 {

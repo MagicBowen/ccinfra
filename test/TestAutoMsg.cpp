@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <ccinfra/memory/AutoMsg.h>
+#include <ccinfra/mem/AutoMsg.h>
 
 namespace
 {

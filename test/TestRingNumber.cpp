@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <ccinfra/container/number/RingNumber.h>
+#include <ccinfra/ctnr/number/RingNumber.h>
 
 TEST(RingNumberTest, should_compare_equal_when_ring_number_init_equal)
 {

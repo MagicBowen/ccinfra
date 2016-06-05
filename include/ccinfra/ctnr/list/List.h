@@ -1,7 +1,7 @@
 #ifndef INCL_CCINFRA_LIST_H
 #define INCL_CCINFRA_LIST_H
 
-#include <ccinfra/container/list/apr_ring.h>
+#include <ccinfra/ctnr/list/apr_ring.h>
 
 template<typename T>
 struct List

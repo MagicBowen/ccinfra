@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "ccinfra/concurrency/MultiThreadWrapper.h"
+#include <ccinfra/sched/ThreadData.h>
 
 namespace
 {
@@ -24,13 +24,13 @@ namespace
     unsigned int ThreadInfo::index = 0;
 }
 
-struct MultiThreadInfoTest : testing::Test
+struct ThreadDataTest : testing::Test
 {
 protected:
-    MultiThreadWrapper<int, ThreadInfo> data;
+    ThreadData<int, ThreadInfo> data;
 };
 
-TEST_F(MultiThreadInfoTest, should_write_the_correct_thread_data_when_default_thread_id)
+TEST_F(ThreadDataTest, should_write_the_correct_thread_data_when_default_thread_id)
 {
     *data = 2;
 
@@ -38,7 +38,7 @@ TEST_F(MultiThreadInfoTest, should_write_the_correct_thread_data_when_default_th
     ASSERT_EQ(2, data[0]);
 }
 
-TEST_F(MultiThreadInfoTest, should_write_the_correct_thread_data_when_change_the_current_thread_id)
+TEST_F(ThreadDataTest, should_write_the_correct_thread_data_when_change_the_current_thread_id)
 {
     ThreadInfo::setCurrentId(1);
 

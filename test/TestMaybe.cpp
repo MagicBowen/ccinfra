@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <ccinfra/memory/Maybe.h>
+#include <ccinfra/mem/Maybe.h>
 
 TEST(MaybeTest, should_be_unpresent_when_init)
 {

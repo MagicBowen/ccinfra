@@ -2,7 +2,7 @@
 #define CCINFRA_MEMORY_SMART_PTR_H
 
 #include "ccinfra/dci/Role.h"
-#include "ccinfra/memory/SharedObject.h"
+#include <ccinfra/mem/SharedObject.h>
 
 template <typename OBJ>
 struct SmartPtr

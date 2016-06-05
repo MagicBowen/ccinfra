@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include <ccinfra/algo/search.h>
-#include <ccinfra/container/array/ArraySize.h>
+#include <ccinfra/ctnr/array/ArraySize.h>
 
 namespace
 {

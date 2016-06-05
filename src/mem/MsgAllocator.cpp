@@ -1,5 +1,5 @@
-#include "ccinfra/memory/MsgAllocator.h"
-#include "ccinfra/memory/ObjectAllocator.h"
+#include <ccinfra/mem/MsgAllocator.h>
+#include <ccinfra/mem/ObjectAllocator.h>
 
 #if PERFORMANCE_OPTIMIZE
 

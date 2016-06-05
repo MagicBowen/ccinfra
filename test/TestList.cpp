@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
-#include "ccinfra/container/list/List.h"
-#include "ccinfra/container/list/ListElem.h"
+#include <ccinfra/ctnr/list/List.h>
+#include <ccinfra/ctnr/list/ListElem.h>
 #include <ccinfra/base/NullPtr.h>
 
 namespace

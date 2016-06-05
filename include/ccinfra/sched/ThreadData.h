@@ -5,15 +5,15 @@
 #include "ccinfra/log/log.h"
 
 template<typename T> 
-struct ConstThreadElemVisitor
+struct ConstThreadDataVisitor
 {
     virtual Status visit(const T&) = 0;
-    virtual ~ConstThreadElemVisitor(){}
+    virtual ~ConstThreadDataVisitor(){}
 };
 
 ///////////////////////////////////////////////////////////
 template <typename T, typename THREAD_INFO>
-struct MultiThreadWrapper
+struct ThreadData
 {
     enum{ THREAD_NUM = THREAD_INFO::MAX_THREAD_NUM };
 
@@ -47,7 +47,7 @@ struct MultiThreadWrapper
         return getValue(index);
     }
 
-    Status visitAllThreadElems(ConstThreadElemVisitor<T>& visitor)
+    Status visitAllThreadElems(ConstThreadDataVisitor<T>& visitor)
     {
         for(unsigned int index = 0; index < THREAD_NUM; index++)
         {

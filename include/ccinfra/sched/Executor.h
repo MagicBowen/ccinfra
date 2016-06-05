@@ -2,7 +2,7 @@
 #define H441EB5A0_2E97_4187_AA21_FAB5C70470C0
 
 #include "ccinfra/base/BaseTypes.h"
-#include "ccinfra/concurrency/Synchronization.h"
+#include <ccinfra/sched/Synchronization.h>
 #include "ccinfra/algo/loop.h"
 #include <condition_variable>
 #include <vector>

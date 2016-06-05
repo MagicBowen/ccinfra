@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "ccinfra/memory/PlainTransData.h"
+#include <ccinfra/mem/PlainTransData.h>
 
 namespace
 {

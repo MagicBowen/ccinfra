@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "ccinfra/concurrency/Executor.h"
+#include <ccinfra/sched/Executor.h>
 
 namespace
 {

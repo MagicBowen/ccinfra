@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <ccinfra/container/map/HashMap.h>
+#include <ccinfra/ctnr/map/HashMap.h>
 #include <ccinfra/base/Keywords.h>
 #include <string>
 
