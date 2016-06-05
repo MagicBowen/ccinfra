@@ -373,7 +373,7 @@ struct GofStateTest : testing::Test
     {
     }
 
-    void gotoExhaustedInOpenState()
+    void gotoExhaustedInWaitChargedState()
     {
         robot.charge();
         robot.open();
@@ -577,7 +577,7 @@ TEST_F(GofStateTest, should_continue_play_when_charge_in_open_state)
 
 TEST_F(GofStateTest, should_bibi_when_send_play_in_wait_charged_state)
 {
-    gotoExhaustedInOpenState();
+    gotoExhaustedInWaitChargedState();
     robot.play();
 
     ASSERT_EQ(Robot::wait_charged, robot.getCurrentState());
@@ -588,7 +588,7 @@ TEST_F(GofStateTest, should_bibi_when_send_play_in_wait_charged_state)
 
 TEST_F(GofStateTest, should_bibi_when_send_open_in_wait_charged_state)
 {
-    gotoExhaustedInOpenState();
+    gotoExhaustedInWaitChargedState();
     robot.open();
 
     ASSERT_EQ(Robot::wait_charged, robot.getCurrentState());
@@ -600,7 +600,7 @@ TEST_F(GofStateTest, should_bibi_when_send_open_in_wait_charged_state)
 
 TEST_F(GofStateTest, should_closed_and_mute_without_energy_when_send_close_in_wait_charged_state)
 {
-    gotoExhaustedInOpenState();
+    gotoExhaustedInWaitChargedState();
     robot.close();
 
     ASSERT_EQ(Robot::closed, robot.getCurrentState());
@@ -612,7 +612,7 @@ TEST_F(GofStateTest, should_closed_and_mute_without_energy_when_send_close_in_wa
 
 TEST_F(GofStateTest, should_goto_opened_when_charge_in_wait_charged_state)
 {
-    gotoExhaustedInOpenState();
+    gotoExhaustedInWaitChargedState();
     robot.charge();
 
     ASSERT_EQ(Robot::opened, robot.getCurrentState());
@@ -621,7 +621,7 @@ TEST_F(GofStateTest, should_goto_opened_when_charge_in_wait_charged_state)
 
 TEST_F(GofStateTest, should_continue_sing_when_opened_again_by_charging)
 {
-    gotoExhaustedInOpenState();
+    gotoExhaustedInWaitChargedState();
     robot.charge();
     robot.play();
 
