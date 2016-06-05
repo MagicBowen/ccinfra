@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "ccinfra/memory/ObjectAllocator.h"
-#include "ccinfra/algo/foreach.h"
+#include <ccinfra/algo/loop.h>
 
 namespace
 {

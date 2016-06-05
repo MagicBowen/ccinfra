@@ -3,7 +3,7 @@
 
 #include "ccinfra/base/BaseTypes.h"
 
-// Macros for c, no type safety!
+// Macros version, no type safety!
 
 #define BIT_MASK(BIT_NUM)       (((U64)1 << BIT_NUM) - 1)
 
@@ -11,7 +11,7 @@
 
 #define IS_BIT_ON(target, offset) (GET_BITS_VALUE(target, offset, 1) > 0)
 
-// Template function version for C++!
+// Template version
 
 template <typename T>
 T bit_mask(U32 bitNum)

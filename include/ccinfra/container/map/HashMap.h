@@ -9,7 +9,7 @@
 #include "ccinfra/base/static_assert.h"
 #include "ccinfra/base/EqHelper.h"
 #include "ccinfra/memory/ObjectAllocator.h"
-#include "ccinfra/algo/foreach.h"
+#include <ccinfra/algo/loop.h>
 
 template < typename KEY
          , typename VALUE

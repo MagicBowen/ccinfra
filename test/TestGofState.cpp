@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "ccinfra/algo/foreach.h"
+#include <ccinfra/algo/loop.h>
 #include "ccinfra/base/Keywords.h"
 #include "ccinfra/gof/Singleton.h"
 #include "ccinfra/base/NullPtr.h"

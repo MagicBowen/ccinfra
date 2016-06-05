@@ -62,8 +62,10 @@ The "~/project/gtest" should be replaced to your gtest installed path.
 
 The ccinfra now only be supported on Linux platform, all the tests run passed on Unbuntu14.04. Other OS such as Windows or Mac has not been tested!
 
-## To DO
+## TO DO
 
-- [ ] : golf state
-- [ ] : bit utils
 - [ ] : thread pool
+- [ ] : folder refact
+- [ ] : dates and msgcc compile
+- [ ] : modify doc: C++11, embeded, readme module, doc
+- [ ] : state in table

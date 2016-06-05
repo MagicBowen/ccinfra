@@ -7,4 +7,6 @@
 
 #define FOR_EACH_0(i, max) FOR_EACH(i, 0, max)
 
+#define ALWAYS_LOOP()  while(true)
+
 #endif 
