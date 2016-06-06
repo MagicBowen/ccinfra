@@ -4,12 +4,15 @@
 
 ## Introduction
 
-`ccinfra` is a `C++` infrastructure library for writting better `C++` codes! It includes below elements:
-- Macros that wrappered `C++` keywords for a better cross-platform C++ programming style.
+`ccinfra` is a `C++` infrastructure library for writting better and effective `C++` codes! It includes below main features:
+- Some grammer sugar that wrappered `C++` keywords for a better cross-platform C++ programming style.
 - A [DCI](https://en.wikipedia.org/wiki/Data,_context_and_interaction) programming frame for implementing composed programming in C++ easily!
-- Memory utils. For example: memory allocator, Singleton , TransData, AutoMsg ...
+- Memory utils. For example: memory allocator,  AutoMsg, TransData ...
 - Data structures (eg. array, list, map) for self memory government demands! It's useful for embeded programming.
-- Some algorithm and thread utils that fit for embeded C++ programming!
+- Some algorithm for bits operator, loop, bound...
+- Design pattern, such as Singleton and State pattern.
+- Concurrency tools, such as thread pool, lock utils... 
+- Log, an implementation of log for ccinfra.
 
 To learn more, visit the doc folder! View the source code of tests of ccinfra in the test folder for learning how to use every library elements in details!
 
@@ -60,12 +63,4 @@ The "~/project/gtest" should be replaced to your gtest installed path.
 
 ## Finally
 
-The ccinfra now only be supported on Linux platform, all the tests run passed on Unbuntu14.04. Other OS such as Windows or Mac has not been tested!
-
-## TO DO
-
-- [ ] : thread pool
-- [ ] : folder refact
-- [ ] : dates and msgcc compile
-- [ ] : modify doc: C++11, embeded, readme module, doc
-- [ ] : state in table
+The ccinfra now only be supported on Linux platform, all the tests run passed on Unbuntu14.04. Other OS such as Windows or Mac has not been tested! Some features in ccinfra such as "sched" which including thread need C++11 suport, therefor compile all the components of ccinfra should enable the C++11 flag of you compiler!  

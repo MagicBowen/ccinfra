@@ -4,15 +4,15 @@
 
 ## Introduction
 
-ccinfra是一套C\++的基础编程库。借助ccinfra可以低成本地写出漂亮、健壮的C\++代码。ccinfra一方面提供了一种优美的编程风格和编程框架，另一方面提供了一些数据结构、内存管理、并发调度、log等组件。考虑到如今C\++主要作为一种系统编程语言，往往偏向于对性能、内存布局、并发控制等要求比较严格的场景下使用，所以ccinfra中很多组件在设计的时候考虑到了这些问题，提供了一些标准C\++ STL库的可替代组件。由于ccinfra中每个组件都是低耦合的，所以你可以根据你的场景只选取部分进行使用。
+ccinfra是一套C\++的基础编程库。借助ccinfra可以低成本地写出漂亮、健壮的C\++代码。ccinfra一方面提供了一种优美的编程风格和编程框架，另一方面提供了一些数据结构、内存管理、并发调度、log等组件。考虑到如今C\++主要作为一种系统编程语言，往往偏向于对性能、内存管理和布局等要求比较严格的场景下使用，所以ccinfra中很多组件在设计的时候考虑到了这些问题，提供了一些标准C\++ STL库的可替代组件。由于ccinfra中每个组件都是低耦合的，所以你可以根据你的场景只选取部分进行使用。
 
 ## Install
 
-ccinfra的安装是简单的。ccinfra被设计为以头文件和静态库的形式进行发布和使用。只用编译ccinfra的源码，得到对应的静态库文件（例如linux系统下是“libccinfra.a”），然后将其和“ccinfra/include/ccinfra”目录拷贝到你的项目对应路径下，就可以使用了。当然如果你有多个项目依赖ccinfra，你可以将头文件和库拷贝到公共的路径下，配置每个项目的编译依赖，让其依赖同一份ccinfra。
+ccinfra的安装是简单的。ccinfra被设计为以头文件和静态库的形式进行发布和使用。编译ccinfra的源码，得到对应的静态库文件（例如linux系统下是“libccinfra.a”），然后将其和“ccinfra/include/ccinfra”目录拷贝到你的项目对应路径下，就可以使用了。如果你有多个项目依赖ccinfra，可以将头文件和库拷贝到公共的路径下，配置每个项目的编译依赖，让其依赖同一份ccinfra。
 
-ccinfra的编译依赖[cmake](https://cmake.org/)，确保你的机器已经安装好cmake。
+ccinfra的编译默认使用[cmake](https://cmake.org/)，确保你的机器已经安装好cmake。
 
-在你的shell中执行以下命令获取及编译ccinfra的源码。
+在shell中执行以下命令获取及编译ccinfra的源码。
 
 ~~~bash
 git clone git@github.com:MagicBowen/ccinfra.git
@@ -24,8 +24,9 @@ make
 ~~~
 
 以liux系统为例，如果编译通过，会产生 “ccinfra/build/src/libccinfra.a”， 这是需要依赖的ccinfra静态库。最好将ccinfra的头文件和libccinfra.a拷贝到一个公共的地方，让所有项目都可以方便的依赖。例如在“/home/shared"下创建ccinfra目录，将ccinfra源码下的incude目录拷贝到ccinfra目录下，然后在”home/shared/ccinfra“目录下创建lib目录，将libccinfra.a拷贝进去。最后，目录结构如下： ”/home/shared/ccinfra/include/ccinfra“， ”/home/shared/ccinfra/lib/libccinfra.a“。
-如果某项目需要依赖ccinfra，修改该项目的构建脚本，在头文件依赖中增加 ”/home/shared/ccinfra/include“， 在链接依赖中增加静态库目录 ”/home/shared/ccinfra/lib“， 并让其和ccinfra进行链接。
-如果简单的话可以在build目录下执行`sudo make install`，这样ccinfra的头文件和库，将会自动安装到当前系统默认的安装路径下，对于linux可能会是 “/usr/local/include” 以及 “/usr/local/lib” 目录。
+如果某项目需要依赖ccinfra，修改该项目的构建脚本，在头文件依赖中增加 ”/home/shared/ccinfra/include“， 在链接依赖中增加静态库目录 ”/home/shared/ccinfra/lib“， 并让其和ccinfra进行链接。如果你的项目使用了ccinfra的sched组件，那么需要在你的编译参数中添加对C++11的支持，另外在链接库中增加pthread。
+
+ccinfra提供了自动安装（不推荐该方式），编译成功后在build目录下执行`sudo make install`，这样ccinfra的头文件和库，将会自动安装到当前系统默认的安装路径下，对于linux可能会是 “/usr/local/include” 以及 “/usr/local/lib” 目录。
 
 可以尝试运行ccinfra的测试，看看ccinfra在你的系统下是否可以存在错误。
 ccinfra的测试需要依赖[gtest](https://github.com/google/googletest)，下载gtest的源码，编译出gtest的库后，手动进行gtest的安装（最新的gtest不支持自动安装）。选择一个目录，例如“/home/shared”下，创建一个gtest目录，将gtest源码下的include目录拷贝进去。在“/home/shared/gtest”目录下新建lib目录，将编译好的gtest库拷贝进去。最后目录结构如下：”/home/shared/gtest/include/gtest"，"/home/shared/gtest/lib/libgtest.a"。
@@ -45,31 +46,25 @@ make
 ## Usage
 
 ccinfra由主要的几个组件组成：
-- Base ： 提供基本类型封装，状态码以及各种断言机制。另外利用宏扩展C\++的关键字，提供语法糖。有些关键字后来C\++11已经支持，但是ccinfra将其进行了封装，使得使用的时候无需区分当前编译器版本是否支持某一C\++11特性。
-	适用场景： 广泛适用
+- Base ： 提供基本类型封装，状态码以及各种断言机制。另外利用宏扩展C\++的关键字，提供语法糖，有些关键字目前C\++11已经支持，但是ccinfra将其进行了封装，使得使用的时候无需区分当前编译器版本是否支持某一C\++11特性。Base组件利用上述元素构建了一套漂亮的C\++编程风格，可以帮助写出语义更强的C\++代码。
 
-- DCI ： 基于C\++的[DCI](https://en.wikipedia.org/wiki/Data,_context_and_interaction)框架。利用其可以低成本的在C++中实现组合式编程以支持DCI架构。同时里面包含一个可以替代RTTI的机制，可以在许多不能打开RTTI特性的场合作为替代手段。
-	适用场景： 广泛适用
+- DCI： 基于C\++的[DCI](https://en.wikipedia.org/wiki/Data,_context_and_interaction)框架。利用其可以低成本的在C++中实现组合式编程以支持DCI架构。同时里面包含一个可以替代RTTI的机制，可以在许多不能打开RTTI特性的场合作为替代手段。
 
-- Memory ： 提供自定义内存管理的一些组件。包括针对不同场景的内存分配器、针对嵌入式内存特征的智能指针、单例和一些辅助工具。
-	适用场景： 嵌入式开发，或者需要自管理内存的场景
+- Mem： 提供自定义内存管理的一些组件。包括针对不同场景的内存分配器、针对嵌入式内存特征的智能指针和一些辅助工具。
 
-- Container ： 提供适合嵌入式内存特征需求的Array、List、HashMap和一些辅助类。
-	适用场景： 嵌入式开发，或者对容器内存布局需要自管理的场景
+- Ctnr： 提供一些容器组件：Array、List、HashMap和一些辅助类。这些组件采用静态内存规划，内存布局贴近C，适合于嵌入式或者对内存有自定义管理需求的场合。
 
-- Algorithm ： 一些循环、排序算法的封装。
-	适用场景： 广泛适用
+- Algo： 包含对bit、数组进行操作的一些算法，一些stl库算法的替代和简单扩展。
 
-- Concurrency ： 提供嵌入式下多线程编程可以使用的一些辅助类。
-	适用场景： 广泛适用
+- Sched： 提供了一个封装过的C\++线程池以及对锁和线程数据区的封装。该组件需要C++\11的支持，并且需要和pthread库进行链接。
 
-- Log ： 封装了一套简单的Log机制，作为ccinfra的默认log机制。
-	适用场景： 广泛适用
+- Gof： 提供了对Singleton，Factory以及State设计模式的封装。
 
-- Other ： ccinfra还提供了一些辅助的宏以及对函数式编程的辅助粹取类。
-	适用场景： 广泛适用
+- Log： 封装了一套简单的Log机制，作为ccinfra的默认log机制。
 
-上述组件中，Base、DCI、Memory、Container相对比较完整，其余各个组件还在不断完善中...
+- Utils： 其它一些辅助的工具，例如repeat宏、函数参数的粹取类等。
+
+上述各个组件还在不断完善中，请持续的update以保持跟踪...
 
 下面针对一些主要的组件进行用法介绍，可以通过阅读针对每个组件的测试用例了解到更多的细节。未介绍到的组件请自行阅读测试用例或源码。
 
@@ -691,10 +686,18 @@ TEST(...)
 
 上述提供的RTTI替代手段，虽然比直接使用RTTI略显复杂，但是增加的手工编码成本并不大，带来的好处却是明显的。例如对嵌入式开发，这种机制相比RTTI来说对程序员是可控的，可以选择在仅需要该特性的范围内使用，避免无谓的内存和性能消耗。
 
-### Memory
+### Mem
 
-### Container
+### Ctnr
 
-### Others
+### Algo
+
+### Sched
+
+### Gof
+
+### Log
+
+### Utils
 
 ## Finally
