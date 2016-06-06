@@ -5,13 +5,13 @@
 
 namespace
 {
-    DEFINE_ROLE(EnergyCarrier)
+    DEFINE_ROLE(Energy)
     {
         ABSTRACT(void consume());
         ABSTRACT(bool isExhausted() const);
     };
 
-    struct HumanEnergy : EnergyCarrier
+    struct HumanEnergy : Energy
     {
         HumanEnergy()
         : isHungry(false), consumeTimes(0)
@@ -52,11 +52,11 @@ namespace
 
         void produce()
         {
-            if(ROLE(EnergyCarrier).isExhausted()) return;
+            if(ROLE(Energy).isExhausted()) return;
 
             produceNum++;
 
-            ROLE(EnergyCarrier).consume();
+            ROLE(Energy).consume();
         }
 
         U32 getProduceNum() const
@@ -68,7 +68,7 @@ namespace
         U32 produceNum;
 
     private:
-        USE_ROLE(EnergyCarrier);
+        USE_ROLE(Energy);
     };
 
     DEFINE_ROLE(Human)
@@ -82,7 +82,7 @@ namespace
     {
     private:
         IMPL_ROLE(Worker);
-        IMPL_ROLE(EnergyCarrier);
+        IMPL_ROLE(Energy);
     };
 
     struct HumanFactory
