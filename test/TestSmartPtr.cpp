@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include <ccinfra/mem/SharedObject.h>
 #include <ccinfra/mem/SmartPtr.h>
+#include <ccinfra/base/Keywords.h>
 
 namespace
 {

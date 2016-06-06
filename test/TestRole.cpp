@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "ccinfra/dci/Role.h"
 #include "ccinfra/base/BaseTypes.h"
+#include "ccinfra/base/Keywords.h"
 
 namespace
 {
