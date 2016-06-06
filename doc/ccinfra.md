@@ -58,7 +58,7 @@ ccinfra由主要的几个组件组成：
 
 - Sched： 提供了一个封装过的C\++线程池以及对锁和线程数据区的封装。该组件需要C++\11的支持，并且需要和pthread库进行链接。
 
-- Gof： 提供了对Singleton，Factory以及State设计模式的封装。
+- Gof： 提供了对Singleton、State设计模式的封装。
 
 - Log： 封装了一套简单的Log机制，作为ccinfra的默认log机制。
 
@@ -383,13 +383,13 @@ TEST(...)
 下面假设一种场景：模拟人和机器人制造产品。人制造产品会消耗吃饭得到的能量，缺乏能量后需要再吃饭补充；而机器人制造产品会消耗电能，缺乏能量后需要再充电。这里人和机器人在工作时都是一名worker（扮演的角色），工作的流程是一样的，但是区别在于依赖的能量消耗和获取方式不同。
 
 ~~~cpp
-DEFINE_ROLE(EnergyCarrier)
+DEFINE_ROLE(Energy)
 {
     ABSTRACT(void consume());
     ABSTRACT(bool isExhausted() const);
 };
 
-struct HumanEnergy : EnergyCarrier
+struct HumanEnergy : Energy
 {
     HumanEnergy()
     : isHungry(false), consumeTimes(0)
@@ -422,7 +422,7 @@ private:
     U8 consumeTimes;
 };
 
-struct ChargeEnergy : EnergyCarrier
+struct ChargeEnergy : Energy
 {
     ChargeEnergy() : percent(0)
     {
@@ -463,11 +463,11 @@ DEFINE_ROLE(Worker)
 
     void produce()
     {
-        if(ROLE(EnergyCarrier).isExhausted()) return;
+        if(ROLE(Energy).isExhausted()) return;
 
         produceNum++;
 
-        ROLE(EnergyCarrier).consume();
+        ROLE(Energy).consume();
     }
 
     U32 getProduceNum() const
@@ -479,7 +479,7 @@ private:
     U32 produceNum;
 
 private:
-    USE_ROLE(EnergyCarrier);
+    USE_ROLE(Energy);
 };
 ~~~
 
@@ -491,31 +491,31 @@ private:
 
 - `ROLE`：当一个类声明中使用了`USE_ROLE`声明依赖另外一个类XXX后，则在类的实现代码里面就可以调用 `ROLE(XXX)`来引用这个类去调用它的成员方法。
 
-上面的例子中用`DEFINE_ROLE`定义了一个名为`Worker`的role（本质上是一个类），`Worker`用`USE_ROLE`声明它的实现需要依赖于另一个role：`EnergyCarrier`，`Worker`在它的实现中调用`ROLE(EnergyCarrier)`访问它提供的接口方法。`EnergyCarrier`是一个抽象类，有两个子类`HumanEnergy`和`ChargeEnergy`分别对应于人和机器人的能量特征。上面是以类的形式定义的各种role，下面我们需要将role和领域对象关联并将role之间的依赖关系在领域对象内完成正确的交织。
+上面的例子中用`DEFINE_ROLE`定义了一个名为`Worker`的role（本质上是一个类），`Worker`用`USE_ROLE`声明它的实现需要依赖于另一个role：`Energy`，`Worker`在它的实现中调用`ROLE(Energy)`访问它提供的接口方法。`Energy`是一个抽象类，有两个子类`HumanEnergy`和`ChargeEnergy`分别对应于人和机器人的能量特征。上面是以类的形式定义的各种role，下面我们需要将role和领域对象关联并将role之间的依赖关系在领域对象内完成正确的交织。
 
 ~~~cpp
 struct Human : Worker
              , private HumanEnergy
 {
 private:
-    IMPL_ROLE(EnergyCarrier);
+    IMPL_ROLE(Energy);
 };
 
 struct Robot : Worker
              , ChargeEnergy
 {
 private:
-    IMPL_ROLE(EnergyCarrier);
+    IMPL_ROLE(Energy);
 };
 ~~~
 
-上面的代码使用多重继承完成了领域对象对role的组合。在上例中`Human`组合了`Worker`和`HumanEnergy`，而`Robot`组合了`Worker`和`ChargeEnergy`。最后在领域对象的类内还需要完成role之间的关系交织。由于`Worker`中声明了`USE_ROLE(EnergyCarrier)`，所以当`Human`和`Robot`继承了`Worker`之后就需要显示化`EnergyCarrier`从哪里来。有如下几种主要的交织方式：
+上面的代码使用多重继承完成了领域对象对role的组合。在上例中`Human`组合了`Worker`和`HumanEnergy`，而`Robot`组合了`Worker`和`ChargeEnergy`。最后在领域对象的类内还需要完成role之间的关系交织。由于`Worker`中声明了`USE_ROLE(Energy)`，所以当`Human`和`Robot`继承了`Worker`之后就需要显示化`Energy`从哪里来。有如下几种主要的交织方式：
 
-- `IMPL_ROLE`： 对上例，如果`EnergyCarrier`的某一个子类也被继承的话，那么就直接在交织类中声明`IMPL_ROLE(EnergyCarrier)`。于是当`Worker`工作时所找到的`ROLE(EnergyCarrier)`就是在交织类中所继承的具体`EnergyCarrier`子类。
+- `IMPL_ROLE`： 对上例，如果`Energy`的某一个子类也被继承的话，那么就直接在交织类中声明`IMPL_ROLE(Energy)`。于是当`Worker`工作时所找到的`ROLE(Energy)`就是在交织类中所继承的具体`Energy`子类。
 
-- `IMPL_ROLE_WITH_OBJ`： 当持有被依赖role的一个引用或者成员的时候，使用`IMPL_ROLE_WITH_OBJ`进行关系交织。假如上例中`Human`类中有一个成员：`HumanEnergy energy`，那么就可以用`IMPL_ROLE_WITH_OBJ(EnergyCarrier, energy)`来声明交织关系。该场景同样适用于类内持有的是被依赖role的指针、引用的场景。
+- `IMPL_ROLE_WITH_OBJ`： 当持有被依赖role的一个引用或者成员的时候，使用`IMPL_ROLE_WITH_OBJ`进行关系交织。假如上例中`Human`类中有一个成员：`HumanEnergy energy`，那么就可以用`IMPL_ROLE_WITH_OBJ(Energy, energy)`来声明交织关系。该场景同样适用于类内持有的是被依赖role的指针、引用的场景。
 
-- `DECL_ROLE` ： 自定义交织关系。例如对上例在`Human`中定义一个方法`DECL_ROLE(EnergyCarrier){ // function implementation}`，自定义`EnergyCarrier`的来源，完成交织。
+- `DECL_ROLE` ： 自定义交织关系。例如对上例在`Human`中定义一个方法`DECL_ROLE(Energy){ // function implementation}`，自定义`Energy`的来源，完成交织。
 
 当正确完成role的依赖交织工作后，领域对象类就可以被实例化了。如果没有交织正确，一般会出现编译错误。
 
@@ -528,7 +528,7 @@ TEST(...)
 
     Robot robot;
     SELF(robot, ChargeEnergy).charge();
-    while(!SELF(robot, EnergyCarrier).isExhausted())
+    while(!SELF(robot, Energy).isExhausted())
     {
         SELF(robot, Worker).produce();
     }
@@ -536,7 +536,7 @@ TEST(...)
 }
 ~~~
 
-如上使用`SELF`将领域对象cast到对应的role上访问其接口方法。注意只有被public继承的role才可以从领域对象上cast过去，private继承的role往往是作为领域对象的内部依赖（上例中`human`不能做`SELF(human, EnergyCarrier)`转换，会编译错误）。
+如上使用`SELF`将领域对象cast到对应的role上访问其接口方法。注意只有被public继承的role才可以从领域对象上cast过去，private继承的role往往是作为领域对象的内部依赖（上例中`human`不能做`SELF(human, Energy)`转换，会编译错误）。
 
 通过对上面例子中使用DCI的方式进行分析，我们可以看到ccinfra提供的DCI实现方式具有如下特点：
 
@@ -570,7 +570,7 @@ struct HumanObject : Human
 {
 private:
     IMPL_ROLE(Worker);
-    IMPL_ROLE(EnergyCarrier);
+    IMPL_ROLE(Energy);
 };
 
 struct HumanFactory
@@ -607,7 +607,7 @@ struct HumanObject : Actor
                    , private HumanEnergy
 {
 private:
-    IMPL_ROLE(EnergyCarrier);
+    IMPL_ROLE(Energy);
 };
 
 struct HumanFactory
@@ -655,7 +655,7 @@ struct HumanObject : dci::Unknown
     END_INTERFACE_TABLE()
 
 private:
-    IMPL_ROLE(EnergyCarrier);
+    IMPL_ROLE(Energy);
 };
 
 struct HumanFactory

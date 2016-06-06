@@ -4,13 +4,13 @@
 
 namespace
 {
-    DEFINE_ROLE(EnergyCarrier)
+    DEFINE_ROLE(Energy)
     {
         ABSTRACT(void consume());
         ABSTRACT(bool isExhausted() const);
     };
 
-    struct HumanEnergy : EnergyCarrier
+    struct HumanEnergy : Energy
     {
         enum
         {
@@ -22,7 +22,7 @@ namespace
         {
         }
 
-        void eat()
+        void supplyByFood()
         {
             isHungry = false;
             consumeTimes = 0;
@@ -49,7 +49,7 @@ namespace
         U8 consumeTimes;
     };
 
-    struct ChargeEnergy : EnergyCarrier
+    struct ChargeEnergy : Energy
     {
         enum
         {
@@ -90,11 +90,11 @@ namespace
 
         void produce()
         {
-            if(ROLE(EnergyCarrier).isExhausted()) return;
+            if(ROLE(Energy).isExhausted()) return;
 
             produceNum++;
 
-            ROLE(EnergyCarrier).consume();
+            ROLE(Energy).consume();
         }
 
         U32 getProduceNum() const
@@ -106,21 +106,21 @@ namespace
         U32 produceNum;
 
     private:
-        USE_ROLE(EnergyCarrier);
+        USE_ROLE(Energy);
     };
 
     struct Human : Worker
                  , HumanEnergy
     {
     private:
-        IMPL_ROLE(EnergyCarrier);
+        IMPL_ROLE(Energy);
     };
 
     struct Robot : Worker
                  , ChargeEnergy
     {
     private:
-        IMPL_ROLE(EnergyCarrier);
+        IMPL_ROLE(Energy);
     };
 }
 
@@ -128,14 +128,14 @@ TEST(RoleTest, should_cast_to_the_public_role_correctly_for_human)
 {
     Human human;
 
-    while(!SELF(human, EnergyCarrier).isExhausted())
+    while(!SELF(human, Energy).isExhausted())
     {
         SELF(human, Worker).produce();
     }
     ASSERT_EQ(Human::MAX_CONSUME_TIMES, SELF(human, Worker).getProduceNum());
 
-    human.eat();
-    ASSERT_FALSE(SELF(human, EnergyCarrier).isExhausted());
+    human.supplyByFood();
+    ASSERT_FALSE(SELF(human, Energy).isExhausted());
 }
 
 TEST(RoleTest, should_cast_to_the_public_role_correctly_for_robot)
@@ -144,7 +144,7 @@ TEST(RoleTest, should_cast_to_the_public_role_correctly_for_robot)
 
     SELF(robot, ChargeEnergy).charge();
 
-    while(!SELF(robot, EnergyCarrier).isExhausted())
+    while(!SELF(robot, Energy).isExhausted())
     {
         SELF(robot, Worker).produce();
     }
