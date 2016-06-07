@@ -53,7 +53,7 @@ TEST(ObjectAllocatorTest, should_not_alloc_when_has_no_free_slot)
     Foo* foo = new Foo(0);
     ASSERT_TRUE(__null__(foo));
 
-    for(int i = 0; i < MAX_SLOT_NUM; i++)
+    FOR_EACH_0(i, MAX_SLOT_NUM)
     {
         ASSERT_TRUE(__notnull__(foos[i]));
         delete foos[i];

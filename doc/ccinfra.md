@@ -850,7 +850,7 @@ private:
 
 上面的代码中，我们用`Placement<Member> memory`在Object中占好了内存，当Object的对象产生的时候就一起把Member的内存也申请好了，只用等着在合适的时机再去初始化member即可。
 
-针对上面的使用场景我们可以继续扩展。前面讲的DCI的例子中，采用多重继承，可以让所有role的内存汇聚在一起申请和释放。但是继承是一种静态关系，一个领域对象组合进来抽象role的哪个子类在编译期必须确定出来，如果这种关系是运行时才能确定的则不能采用继承的方式。这种问题常规的解决方法是在领域对象中持有一个抽象role的指针，然后就可以在运行期决定该指针指向的具体子类对象。这里存在的问题和上面的例子一样，role的内存和领域对象分开了，一旦上述的情况很多，一堆小的role都要动态申请释放，就会产生很多小内存片，而在嵌入式下就需要考虑创建很多不同规模的内存池，相当地费神。那么解决方法和上例类似，采用Placement将role的内存提前在领域对象中占好，这样role的内存就可以和领域对象同生同灭，可以极大的简化工厂和内存管理的负担。这里和上例的区别是，由于领域对象不知道提前占好的内存是抽象role的哪个子类，所以需要占得足够但又不浪费，这时`union`就可以帮上忙了。
+针对上面的使用场景我们可以继续扩展。前面讲的DCI的例子中，采用多重继承，可以让所有role的内存汇聚在一起申请和释放。但是继承是一种静态关系，一个领域对象组合进来抽象role的哪个子类在编译期必须确定出来，如果这种关系是运行时才能确定的则不能采用继承的方式。这种问题常规的解决方法是在领域对象中持有一个抽象role的指针，然后就可以在运行期决定该指针指向的具体子类对象。这里存在的问题和上面的例子一样，role的内存一旦和领域对象分开，一堆小的role都要动态申请释放，就会产生很多小内存片，而在嵌入式下就需要考虑创建很多不同规模的内存池，相当地费神。那么解决方法和上例类似，采用Placement将role的内存提前在领域对象中占好，这样role的内存就可以和领域对象同生同灭，可以极大的简化工厂和内存管理的负担。这里和上例的区别是，由于领域对象不知道提前占好的内存是抽象role的哪个子类，所以需要占得足够但又不浪费，这时`union`就可以帮上忙了。
 
 ~~~cpp
 DEFINE_ROLE(Energy)
@@ -923,6 +923,73 @@ private:
 ~~~
 
 #### ObjectAllocator
+
+ObjectAllocator用于创建内存池，并且提供辅助宏，将对象的new和delete操作符进行重载，让其从对应的内存池上进行对象内存申请和释放。具体用法如下：
+
+~~~cpp
+namespace
+{
+    struct Foo
+    {
+        Foo(int a) : x(a)
+        {
+        }
+
+        int getValue() const
+        {
+            return x;
+        }
+
+        DECL_OPERATOR_NEW();
+
+    private:
+        int x;
+    };
+
+    const U16 MAX_SLOT_NUM = 2;
+}
+
+DEF_OBJ_ALLOCATOR(Foo, MAX_SLOT_NUM);
+
+TEST(...)
+{
+    Foo* foos[MAX_SLOT_NUM] = {__null_ptr__};
+
+    for(int i = 0; i < MAX_SLOT_NUM; i++)
+    {
+        foos[i] = new Foo(0);
+    }
+
+    Foo* foo = new Foo(0);
+    ASSERT_TRUE(__null__(foo));
+
+    for(int i = 0; i < MAX_SLOT_NUM; i++)
+    {
+        ASSERT_TRUE(__notnull__(foos[i]));
+        delete foos[i];
+    }
+
+    foo = new Foo(0);
+    ASSERT_TRUE(__notnull__(foo));
+    delete foo;
+}
+~~~
+
+在类的定义中声明`DECL_OPERATOR_NEW();`, 通过`DEF_OBJ_ALLOCATOR`来定义内存池，参数为需要内存池的类名和内存池大小。内存池的内存位置和`DEF_OBJ_ALLOCATOR`所定义的位置相关。
+
+#### LinkedAllocator
+
+#### AutoMsg
+
+#### SmartPtr
+
+#### StructObject
+
+#### StructWrapper
+
+#### Maybe
+
+#### TransData
 
 ### Ctnr
 
