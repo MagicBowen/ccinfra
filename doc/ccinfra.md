@@ -688,6 +688,18 @@ TEST(...)
 
 ### Mem
 
+Memory组件包含如下和自定义内存管理相关的类：
+- Placement ： Placement可以开辟一块地址对齐的内存空间，协助进行placement new操作。
+- ObjectAllocator ： 对象分配器。用于定义某一对象专用的内存池，该对象的new和delete操作使用的内存空间从该对象的ObjectAllocator上分配和回收。
+- LinkedAllocator ： LinkedAllocator可以附加在一个指定数组上，将其包装成一个静态链表，用于数组元素的分配和回收。
+- AutoMsg ： 针对函数内大的结构体或者消息，可以使用AutoMsg让其在指定的内存池上分配，避免占用太多栈空间。
+- SmartPtr ： 一个自定义的智能指针类，需要和SharedObject结合使用，让引用计数的内存可以和对象放在一起。
+- StructObject ： 对plain struct进行封装，使其构造后默认内存清零。
+- StructWrapper : 对plain struct进行封装，使得可以为其添加行为。
+- MayBe ： 对对象进行封装，为其增加是否有效的状态位，用于对象状态判断。
+- TransData ： TransData将对象进行封装，为其提供两块内存，将对象状态在两块内存上轮转存储，可以将对象的状态进行整体提交或者回滚。
+
+
 
 ### Ctnr
 
