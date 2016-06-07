@@ -55,6 +55,67 @@ TEST(PlacementTest, should_new_object_array_on_placement)
 
 namespace
 {
+    struct Member
+    {
+        Member(U32 id) : id(id)
+        {
+        }
+
+        U32 getId() const
+        {
+            return id;
+        }
+
+    private:
+        U32 id;
+    };
+
+    struct Object
+    {
+        Object() : member(__null_ptr__)
+        {
+        }
+
+        void updateId(U32 id)
+        {
+            if(__notnull__(member)) return;
+            member = new (memory.alloc()) Member(id);
+        }
+
+        U32 getId() const
+        {
+            if(__null__(member)) return INVALID_ID;
+            return member->getId();
+        }
+
+        ~Object()
+        {
+            if(__notnull__(member)) memory.destroy();
+        }
+
+        enum
+        {
+            INVALID_ID = 0xFFFFFFFF
+        };
+
+    private:
+        Member* member;
+        Placement<Member> memory;
+    };
+}
+
+TEST(PlacementTest, should_delay_init_the_member_object_in_placement)
+{
+    Object object;
+
+    ASSERT_EQ(Object::INVALID_ID, object.getId());
+
+    object.updateId(5);
+    ASSERT_EQ(5, object.getId());
+}
+
+namespace
+{
     DEFINE_ROLE(Energy)
     {
         ABSTRACT(void consume());

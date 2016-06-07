@@ -699,7 +699,230 @@ Memory组件包含如下和自定义内存管理相关的类：
 - MayBe ： 对对象进行封装，为其增加是否有效的状态位，用于对象状态判断。
 - TransData ： TransData将对象进行封装，为其提供两块内存，将对象状态在两块内存上轮转存储，可以将对象的状态进行整体提交或者回滚。
 
+#### Placement
 
+用Placement可以开辟一块地址对齐的内存块，用于将对象new在指定的内存位置。
+
+~~~cpp
+struct Student
+{
+    Student(U32 id) : id(id)
+    {
+    }
+
+    U32 getId() const
+    {
+        return id;
+    }
+
+private:
+    U32 id;
+};
+
+TEST(...)
+{
+    Placement<Student> studentMemory;
+
+    Student *student = new (studentMemory.alloc()) Student(5);
+
+    ASSERT_EQ(5, student->getId());
+    ASSERT_EQ(5, studentMemory.getRef().getId());
+    ASSERT_EQ(5, studentMemory->getId());
+    ASSERT_EQ(5, (*studentMemory).getId());
+
+    studentMemory.destroy();
+}
+~~~
+
+如上例中，调用了`placement new`将student创建到了studentMemory对应的内存位置。`placement new`用于在指定的地址上执行new操作，地址可以由用户自定义，常用于需要自管理内存，避免使用堆内存的场景。传递给new运算符的地址必须是地址对齐的，而`Placement`则会根据对象的大小，创建一块地址对齐的内存，内存位置就在于你生成Placement对象的位置。所以上例中`Placement<Student> studentMemory；`的内存位置是一块函数栈空间内的临时地址，你可以将其放在你需要的任何地方。
+
+通过`Placement`可以直接访问对应的封装对象，用法就和使用对象指针一样。如上例中使用`studentMemory->getId()`和直接使用Student的指针一样。调用`getRef()`接口可以获取封装对象的引用。
+
+Placement的另一个常用场合是对象数组的创建。C\++要求对象数组的类必须存在一个无参构造函数，否则就不能直接创建数组，而得去创建对象指针的数组。例如直接这样定义是编译不过的`Student students[10]`，必须得定义成指针数组``Student* students[10]`。但是定义成指针数组就需要我们动态申请和释放内存，为了避免这样的麻烦，使用`Placement`可以解决该问题。
+
+~~~cpp
+TEST(...)
+{
+    const U8 MAX_ENGINE = 5;
+    Placement<Student> students[MAX_ENGINE];
+
+    for(int i = 0; i < MAX_ENGINE; i++)
+    {
+        new (students[i].alloc()) Student(i);
+    }
+
+    for(int i = 0; i < MAX_ENGINE; i++)
+    {
+        ASSERT_EQ(i, students[i]->getId());
+    }
+}
+~~~
+
+可以看到用`Placement`封装后，由于`Placement`具有无参构造函数，所以可以直接定义数组，先把内存开辟出来，然后再在`Placement`开辟的内存上初始化数组成员对象。
+
+事实上可以看到，使用`Placement`可以让我们先把内存开辟出来，然后延迟初始化对象。例如某一个类有一个成员对象，如果在类构造的时候无法确认其成员对象的构造参数，则成员对象必须被定义成指针，然后在获得其构造参数后再调用new将其初始化。如下例：
+
+~~~cpp
+struct Member
+{
+    Member(U32 id) : id(id)
+    {
+    }
+
+    U32 getId() const
+    {
+        return id;
+    }
+
+private:
+    U32 id;
+};
+
+struct Object
+{
+    Object() : member(__null_ptr__)
+    {
+    }
+
+    void updateId(U32 id)
+    {
+        if(__notnull__(member)) return;
+        member = new Member(id);
+    }
+
+    U32 getId() const
+    {
+        if(__null__(member)) return INVALID_ID;
+        return member->getId();
+    }
+
+    ~Object()
+    {
+        if(__notnull__(member)) delete member;
+    }
+
+    enum
+    {
+        INVALID_ID = 0xFFFFFFFF
+    };
+
+private:
+    Member *member;
+};
+~~~
+
+上例中为了延迟初始化member，将member声明成为指针，每次从堆上临时申请内存。上述做法由于将member的内存和Object对象的内存分开了，这为嵌入式等需要静态规划内存的场景带来不少麻烦，而Placement在这里可以为我们解决此问题。
+
+~~~cpp
+struct Object
+{
+    Object() : member(__null_ptr__)
+    {
+    }
+
+    void updateId(U32 id)
+    {
+        if(__notnull__(member)) return;
+        member = new (memory.alloc()) Member(id);
+    }
+
+    U32 getId() const
+    {
+        if(__null__(member)) return INVALID_ID;
+        return member->getId();
+    }
+
+    ~Object()
+    {
+        if(__notnull__(member)) memory.destroy();
+    }
+
+    enum
+    {
+        INVALID_ID = 0xFFFFFFFF
+    };
+
+private:
+    Member* member;
+    Placement<Member> memory;
+};
+~~~
+
+上面的代码中，我们用`Placement<Member> memory`在Object中占好了内存，当Object的对象产生的时候就一起把Member的内存也申请好了，只用等着在合适的时机再去初始化member即可。
+
+针对上面的使用场景我们可以继续扩展。前面讲的DCI的例子中，采用多重继承，可以让所有role的内存汇聚在一起申请和释放。但是继承是一种静态关系，一个领域对象组合进来抽象role的哪个子类在编译期必须确定出来，如果这种关系是运行时才能确定的则不能采用继承的方式。这种问题常规的解决方法是在领域对象中持有一个抽象role的指针，然后就可以在运行期决定该指针指向的具体子类对象。这里存在的问题和上面的例子一样，role的内存和领域对象分开了，一旦上述的情况很多，一堆小的role都要动态申请释放，就会产生很多小内存片，而在嵌入式下就需要考虑创建很多不同规模的内存池，相当地费神。那么解决方法和上例类似，采用Placement将role的内存提前在领域对象中占好，这样role的内存就可以和领域对象同生同灭，可以极大的简化工厂和内存管理的负担。这里和上例的区别是，由于领域对象不知道提前占好的内存是抽象role的哪个子类，所以需要占得足够但又不浪费，这时`union`就可以帮上忙了。
+
+~~~cpp
+DEFINE_ROLE(Energy)
+{
+    ABSTRACT(void consume());
+    ABSTRACT(bool isExhausted() const);
+};
+
+struct HumanEnergy : Energy
+{
+// same as before！
+};
+
+struct ChargeEnergy : Energy
+{
+// same as before！
+};
+
+DEFINE_ROLE(Worker)
+{
+// same as before！
+
+private:
+    USE_ROLE(Energy);
+};
+
+enum WorkerType
+{
+    HUMAN,
+    ROBOT
+};
+
+struct WorkerObject : Worker
+{
+    WorkerObject(WorkerType type)
+    : energy(__null_ptr__)
+    {
+        if(type == HUMAN)
+        {
+            energy = new (energyMemory.human.alloc()) HumanEnergy();
+        }
+        else
+        {
+            energy = new (energyMemory.robot.alloc()) ChargeEnergy();
+        }
+    }
+
+private:
+    union
+    {
+        Placement<HumanEnergy>  human;
+        Placement<ChargeEnergy> robot;
+    }energyMemory;
+
+    Energy *energy;
+
+private:
+    IMPL_ROLE_WITH_OBJ(Energy, *energy);
+};
+~~~
+
+上例是对前面DCI章节所讲例子的改写，我们假定一个工人是机器人还是人类，到运行期根据构造参数才能确定。这时`WorkerObject`组合进来`Energy`的哪个子类在编译期是无法确定的，这时不能采用继承的方式。而为了不给内存管理带来负担，我们的做法是在`WorkerObject`中提前先为其把内存占好,由于不知道将来`energy`会指向哪个子类，所以我们将`Energy`的所有子类用Placement封装后罗列起来，然后再用union将其联合，这样保证我们预留的内存可以满足其任一子类但是又不产生过多的浪费。
+
+~~~cpp
+    union
+    {
+        Placement<HumanEnergy>  human;
+        Placement<ChargeEnergy> robot;
+    }energyMemory;
+~~~
+
+#### ObjectAllocator
 
 ### Ctnr
 
