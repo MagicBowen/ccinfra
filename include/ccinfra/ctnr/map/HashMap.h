@@ -6,10 +6,11 @@
 #include <ccinfra/ctnr/map/MapVisitor.h>
 #include <ccinfra/ctnr/list/ListElem.h>
 #include <ccinfra/ctnr/list/List.h>
-#include "ccinfra/base/static_assert.h"
-#include "ccinfra/base/EqHelper.h"
+#include <ccinfra/base/StaticAssert.h>
+#include <ccinfra/base/EqHelper.h>
 #include <ccinfra/mem/ObjectAllocator.h>
 #include <ccinfra/algo/loop.h>
+#include <ccinfra/base/ConstExpr.h>
 
 template < typename KEY
          , typename VALUE
@@ -178,7 +179,7 @@ struct HashMap
         return num;
     }
 
-    size_t maxSize() const
+    CONST_EXPR size_t maxSize() const
     {
         return ELEM_SIZE;
     }

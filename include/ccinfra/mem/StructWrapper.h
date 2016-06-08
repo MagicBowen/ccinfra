@@ -1,7 +1,7 @@
 #ifndef CCINFRA_STRUCT_WRAPPER__H__
 #define CCINFRA_STRUCT_WRAPPER__H__
 
-#include <ccinfra/base/static_assert.h>
+#include <ccinfra/base/StaticAssert.h>
 
 ///////////////////////////////////////////////////////////////////////
 template <typename FROM, typename TO>
