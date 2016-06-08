@@ -1189,7 +1189,92 @@ TEST(...)
 
 #### Maybe
 
+Maybe模板类用于将另外一个类型进行封装，将其扩展成为一个支持更新、校验操作的新类型。如下：
+
+~~~cpp
+Maybe<int> x;
+
+x.update(5);
+
+ASSERT_TRUE(x.isPresent());
+ASSERT_EQ(5, *x);
+~~~
+
+如上当用Maybe封装后，新的类型支持update和isPresent操作。如果执行过update操作，在isPresent为真，否则为假。对Maybe的其他用法和使用被封装类型的指针一样，但是需要注意两点：
+- Maybe封装过后，内存结构和原有类型不同，不能做内存布局上的任何假设；
+- Maybe会调用被封装类型的赋值操作运算符`operator=`，如果默认的不能满足，请自定义被封装类型的赋值操作运算。
+
 #### TransData
+
+TransData模板类用于对类型进行扩展，让其支持事务内存特征，可以整体提交和回滚。TransData里面定义了其封装类的两个实例，一个作为生效区，另一个为备份区。有一个生效标记位指向的对象实例即为生效区。新的对象被更新进来的时候，会先写在备份区，当确认提交后，生效标记位指向备份区，原来的失效实例区变为备份区。TransData提供了很多接口，用于修改当前的状态。具体查看“ccinfra/mem/TransData.h”文件，里面详细描述了TransData具备的状态和支持的事件。可以像使用被封装类型的指针一样，调用TransData访问被封装类，这时TransData默认调用的是生效区对应的实例。TransData需要被封装类`T`具有如下接口
+
+-  `T& operator=(const T& rhs)`
+-  `bool operator==(const T& rhs) const`
+-  `bool operator!=(const T& rhs) const`
+-  `Status copyTo(T& rhs)`
+-  `void reset()`
+
+下面是一个简单的例子：
+~~~cpp
+struct ObjectInfo
+{
+    ObjectInfo() : value(0xFF) {}
+    ObjectInfo(int value) : value(value) {}
+
+    int getValue() const
+    {
+        return value;
+    }
+
+    bool operator==(const ObjectInfo& rhs) const
+    {
+        return value == rhs.value;
+    }
+
+    bool operator!=(const ObjectInfo& rhs) const
+    {
+        return value != rhs.value;
+    }
+
+    ObjectInfo& operator=(const ObjectInfo& rhs)
+    {
+    	if(this == &rhs) return;
+        value = rhs.value;
+        return *this;
+    }
+
+    Status copyTo(ObjectInfo& rhs)
+    {
+		value = rhs.value;
+        return CCINFRA_SUCCESS;
+    }
+
+    void reset()
+    {
+    	value = 0xFF;
+    }
+private:
+    int value;
+};
+
+TEST(...)
+{
+	TransData<ObjectInfo> data;
+
+    data.update(ObjectInfo(2));
+    data.confirm();
+
+    data.update(ObjectInfo(3));
+    ASSERT_EQ(3, data->getValue());
+
+    data.revert();
+    ASSERT_EQ(2, data->getValue());
+}
+~~~
+
+此外，ccinfra提供了PlainTransData，可以免去对C++内置的原生类型，以及plain struct类型添加上面所提的接口，直接可以封装使用：`PlainTransData<int> data`。
+
+TransData提供的功能非常丰富，具体可以查看TransData的源码以及测试文件。
 
 ### Ctnr
 
