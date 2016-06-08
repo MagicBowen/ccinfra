@@ -5,7 +5,7 @@
 
 namespace
 {
-    DEFINE_ROLE(Foo) EXTENDS(SharedObject)
+    struct Foo : SharedObject
     {
         Foo() : destroyedNum(0)
         {

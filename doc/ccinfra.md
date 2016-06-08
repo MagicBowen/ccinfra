@@ -701,7 +701,7 @@ Memory组件包含如下和自定义内存管理相关的类：
 
 #### Placement
 
-用Placement可以开辟一块地址对齐的内存块，用于将对象new在指定的内存位置。
+`placement new`允许用户在调用`new`操作的时候将对象构造在一块指定的内存地址上，方面用户自管理内存。由于构造对象所用的内存地址必须是一个根据当前系统字节对齐的有效地址，而ccinfra的Placement模板类则可以根据模板参数类的大小开辟一块地址对齐的内存块，用于辅助实现`placement new`。
 
 ~~~cpp
 struct Student
@@ -975,15 +975,147 @@ TEST(...)
 }
 ~~~
 
-在类的定义中声明`DECL_OPERATOR_NEW();`, 通过`DEF_OBJ_ALLOCATOR`来定义内存池，参数为需要内存池的类名和内存池大小。内存池的内存位置和`DEF_OBJ_ALLOCATOR`所定义的位置相关。
+在类的定义中声明`DECL_OPERATOR_NEW()`, 通过`DEF_OBJ_ALLOCATOR`来定义内存池，参数为需要内存池的类名和内存池大小。内存池的内存位置和`DEF_OBJ_ALLOCATOR`所定义的位置相关。
 
 #### LinkedAllocator
 
+LinkedAllocator模板类将指定数组封装成一个静态链表，然后就可以基于该数组进行元素分配和回收操作。具体见下例：
+
+~~~cpp
+
+int array[] = {0, 1, 2, 3, 4};
+
+const static int MAX_ALLOC_NUM = 3;
+LinkedAllocator<int, ARR_SIZE(array)> allocator(MAX_ALLOC_NUM);
+
+const int* x0 = allocator.alloc();
+ASSERT_TRUE(__notnull__(x0));
+ASSERT_EQ(0, *x0);
+
+const int* x1 = allocator.alloc();
+ASSERT_TRUE(__notnull__(x1));
+ASSERT_EQ(1, *x1);
+
+const int* x2 = allocator.alloc();
+ASSERT_TRUE(__notnull__(x2));
+ASSERT_EQ(2, *x2);
+
+const int* x3 = allocator.alloc();
+ASSERT_TRUE(__null__(x3));
+
+allocator.dealloc(*x2);
+
+const int* x3 = allocator.alloc();
+ASSERT_TRUE(__notnull__(x3));
+ASSERT_EQ(2, *x3);
+~~~
+
 #### AutoMsg
+
+对于C/C\++，如果在栈上的临时变量内存占用过大，为了防止栈溢出，我们一般建议将其分配在堆上或者全局静态区。对于需要自管理内存的场景，一般不会直接在堆上分配，而是在自定义的内存池上进行分配。由于一般情况下在栈上分配的大对象都是需要外发的plain struct结构的消息，所以ccinfra提供了AutoMsg模板类用来协助完成这件事情。
+
+~~~cpp
+struct LargeMsg
+{
+	U32 msgId;
+    U8 msgData[16 * 1024];
+};
+
+void send(const LargeMsg&);
+
+void process()
+{
+    AutoMsg<LargeMsg> msg;
+    msg->msgId = 0xabab;
+    // fill msg->msgData;
+    send(*msg);
+}
+~~~
+
+用AutoMsg封装过后的消息，使用起来就如同使用这个消息的指针一样方便。AutoMsg默认采用了ccinfra提供的一个静态内存分配器`MsgAllocator`，将消息内存分配在`MsgAllocator`提供的内存池上，如下代码。如果该内存分配器不能满足你的要求，可以将其替换成你自定义的实现。
+
+~~~cpp
+template <typename MSG, typename MSG_ALLOCATOR = MsgAllocator>
+struct AutoMsg
+{
+// ...
+};
+~~~
 
 #### SmartPtr
 
+SmartPtr是一个基于引用计数的智能指针，和STL库中的shared_ptr作用类似，区别在于shared_ptr的引用计数的内存和其所指对象的内存是分离的，由shared_ptr自行分配，这会导致要么在堆上产生很多内存小碎片，要么需要单独手动对引用计数进行内存管理。而SmartPtr则和SharedObject辅助类结合，让引用计数的内存和被指对象绑定在一起。好处是内存管理变得简单，缺点是SmartPtr能够指向的对象不具有通用性，必须提前定义好。但在我的经验里，智能指针具有传染性，所以往往不要滥用，使用智能指针最好控制在一定范围内，再加上前面DCI中讲述的小类大对象的设计思想，领域对象往往不会很多，所以并不是问题。
+
+~~~cpp
+struct Foo : private SharedObject
+{
+    Foo(int id) : id(id)
+    {
+    }
+
+    int getId() const
+    {
+        return id;
+    }
+
+    IMPL_ROLE(SharedObject);
+
+private:
+    int id;
+};
+~~~
+
+如上我们定义了一个类Foo，让其继承SharedObject，并且在类内声明`IMPL_ROLE(SharedObject)`，这样Foo就和引用计数绑定在了一起。然后就可以用SmartPtr指向Foo了。具体如下：
+
+~~~cpp
+SmartPtr<Foo> pf(new Foo(3));
+
+ASSERT_EQ(3, pf->getId());
+
+SmartPtr<Foo> pf1 = pf;
+ASSERT_EQ(3, pf1->getId());
+~~~
+
+默认在引用计数变为0后，会调用delete操作符删除对象。如果对象有自定义的销毁方式，需要继承SharedObject后覆写`bool needDestroy()`和`void destroy()`接口。例如上例可以改为：
+
+~~~cpp
+struct Foo : private SharedObject
+{
+    Foo(int id) : id(id)
+    {
+    }
+
+    int getId() const
+    {
+        return id;
+    }
+
+    IMPL_ROLE(SharedObject);
+
+private:
+    OVERRIDE(void destroy())
+    {
+        FooAllocator::free(this);
+    }
+    OVERRIDE(bool needDestroy())
+    {
+        return true;
+    }
+
+private:
+    int id;
+};
+
+TEST(...)
+{
+    SmartPtr<Foo> pf(new (FooAllocator::alloc()) Foo(3));
+	// ...
+}
+~~~
+
 #### StructObject
+
+
 
 #### StructWrapper
 
