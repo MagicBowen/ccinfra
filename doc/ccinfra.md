@@ -1115,9 +1115,77 @@ TEST(...)
 
 #### StructObject
 
+StructObject用于对C结构的plain struct进行封装，可以默认进行内存清零，但是用起来却和使用原生结构一致。
 
+~~~cpp
+struct Msg
+{
+	U32 msgId;
+    U32 transNum;
+};
+
+TEST(...)
+{
+    StructObject<Msg> msg;
+    ASSERT_EQ(0, msg.id);
+    ASSERT_EQ(0, msg.transNum);
+
+    memset(&msg, 0xff, sizeof(msg));
+    ASSERT_EQ(0xffffffff, msg.id);
+    ASSERT_EQ(0xffffffff, msg.transNum);}
+~~~
+
+当然StructObject提供的其它接口也支持你像指针一样地去使用它：
+
+~~~cpp
+    StructObject<Msg> msg;
+    ASSERT_EQ(0, msg->id);
+    ASSERT_EQ(0, msg->transNum);
+
+    memset(msg.getPointer(), 0x0ff, sizeof(msg));
+    ASSERT_EQ(0xffffffff, (*msg).id);
+    ASSERT_EQ(0xffffffff, (*msg).transNum);
+~~~
 
 #### StructWrapper
+
+当我们处理很多和C交互的代码的时候，会面临很多plain struct结构，或者是我们从外部接收进来二进制消息。这些结构只有数据缺少方法，我们在交给领域层处理的时候，希望将其转换成methodful的，这时候StructWrapper可以帮到你。
+
+~~~cpp
+struct PlainMsg
+{
+    U32 id;
+    U32 transNum;
+};
+
+STRUCT_WRAPPER(DomainEvent, PlainMsg)
+{
+    enum
+    {
+        MIN_ID = 0,
+        MAX_ID = 20,
+    };
+
+    bool isValid() const
+    {
+        return (MIN_ID <= id) && (id <= MAX_ID);
+    }
+};
+~~~
+
+上面的代码中，用`STRUCT_WRAPPER`对`PlainMsg`进行了封装，创建了新的类型`DomainEvent`，在`DomainEvent`类里面可以为原来的结构体增加更多有意义的行为。`DomainEvent`里面有个默认的方法`by`可以将已有的`PlainMsg`的对象实例转化成`DomainEvent`的对象实例。这样就可以使用添加的方法了。当然在`DomainEvent`的对象上还可以像直接使用`PlainMsg`的对象一样，直接访问其成员字段。
+
+~~~cpp
+TEST(...)
+{
+    PlainMsg msg{2, 4};
+
+    DomainEvent& event = DomainEvent::by(msg);
+
+    ASSERT_TRUE(event.isValid());
+    ASSERT_EQ(4, event.transNum);
+}
+~~~
 
 #### Maybe
 
