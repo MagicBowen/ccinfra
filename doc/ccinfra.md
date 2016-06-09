@@ -1460,17 +1460,131 @@ TEST(...)
 
 ccinfra中的List是一个双向链表，某一类型T只有继承了ListElem<T>，才可以插入List<T>中去。继承了ListElem<T>的节点内存布局和C习惯中的链表节点内存布局是一样的，链表指针和节点数据是绑定在一起的，而List对象中只包含一个头节点以及统计当前链表大小的变量。List接收节点并完成节点前后链表指针的链接，但是并不拷贝节点，所以对于节点的内存管理完全由程序员决定，List并不做任何假定。
 
-从上面的例子中可以看到ccinfra的List组件的用法和std::list类似，提供了各种类似的接口以及正逆向迭代器，并且提供了一些方便遍历的辅助宏。其它还有更多的用法，具体参考该组件的实现(ccinfra/include/ctnr/list)和测试源码（ccinfra/test/TestList.h）。
+从上面的例子中可以看到ccinfra的List组件用法和std::list类似，封装了各种接口以及提供了正逆向迭代器，同时还提供了一些方便遍历的辅助宏。关于ccinfra的List的更多用法，具体参考该组件的实现(ccinfra/include/ctnr/list)和测试源码（ccinfra/test/TestList.cpp）。
 
-通过上面的例子也可以看出，在C的链表内存结构的实现中，哪些节点可以作为链表元素是提前确定好的，而STL库中的std::list却可以指向任何元素，并不需要提前规划好。当然有利就有弊，后者却需要分配更多的内存块。但是这并不是C\++或者面向对象的问题，只是STL作为一个基础库，它选择了通用性。如果你需要偏向性能，那么就可以按照自己的使用方式来实现一个list，但是你必须知道你为此放弃了什么。这或许就是C\++的强大之处，它给了你选择的自由，让你可以尽最大的努力去取得更好的平衡。正如ccinfra的List，它兼容了C的内存结构，保证了性能，但谁又能说它的用法不OO呢？
+通过上面的例子也可以看出，如果链表指针和节点数据内存在一起，那么哪些类型可以作为链表元素是提前确定好的，而STL库中的std::list却可以指向任何元素，并不需要提前规划。当然有利就有弊，后者确实需要分配更多的内存块。但是这并不是C\++或者面向对象的问题，只是STL作为一个基础库，它选择了通用性。如果你需要偏向性能，那么就可以按照自己的使用方式来实现一个list，但是你必须知道你为此放弃了什么。这正是C\++的强大之处，它给了你选择的自由，让你可以尽最大的努力去取得更好的平衡。正如ccinfra的List，它兼容了C的内存结构，保证了性能，但谁又能说它的用法不OO呢？
 
 #### HashMap
 
+HashMap将{Key, Value}组在一片连续的静态内存上进行分配，这块内存内置在HashMap对象实例中，生命周期和HashMap的对象实例一致。使用HashMap必须指定该HashMap的最大容量，生成的HashMap实例会按照容量直接占有对应的内存，该最大容量后续不能再修改，如此实现只为将所有内存内聚在一起，简化对内存有静态管理需求的开发场景。
+
+~~~cpp
+// ccinfra/ctnr/map/HashMap.h
+template < typename KEY
+         , typename VALUE
+         , size_t   ELEM_SIZE = 1024
+         , size_t   HASH_SIZE = ELEM_SIZE
+         , typename HASH_FN = HashFn<KEY, HASH_SIZE>
+         , typename EQUAL_FN = EqualFn<KEY> >
+struct HashMap
+{
+// Implementation;
+};
+~~~
+
+从上面HashMap的定义可以看到，它是一个模板类，使用的时候需要依次传入 key和value的类型，容量以及哈希空间大小，还有对于key的哈希函数以及比较函数。
+
+哈希空间大小指哈希函数返回值的空间范围，默认和哈希表的容量相等。如果在该空间上出现了冲突，HashMap会采用在该hash值后面建立链表，将所有对于该hash值冲突的节点链接起来。
+
+HashFn和EqualFn已经实现了基本类型的哈希函数，如果这些默认实现不能满足你的要求，可以自定义新的实现然后将其作为模板参数传入HashMap。对于自定义类型，可以继续扩充HashFn和EqualFn的模板特化版本。
+
+对于HashMap的使用是比较简单的，下面是一个简单的示例，更多用法请参考HashMap的源码以及测试用例（ccinfra/test/TestHashMap.cpp）。
+
+~~~cpp
+struct Key
+{
+    Key(int x, int y)
+    : x(x), y(y)
+    {
+    }
+
+    size_t hash() const
+    {
+        return (x + y);
+    }
+
+    __INLINE_EQUALS(Key)
+    {
+        return (x == rhs.x) && (y == rhs.y);
+    }
+
+private:
+    int x;
+    int y;
+};
+
+struct Value
+{
+    Value() : value(__null_ptr__){}
+    Value(const char* v) : value(v)
+    {
+    }
+
+    const char* getValue() const
+    {
+        return value;
+    }
+
+    bool operator==(const Value& rhs) const
+    {
+        return strcmp(value, rhs.value) == 0;
+    }
+
+private:
+    const char* value;
+};
+
+template<size_t HASH_SIZE>
+struct HashFn<Key, HASH_SIZE>
+{
+    size_t operator()(const Key& key) const
+    {
+        return key.hash();
+    }
+};
+
+TEST(...)
+{
+    HashMap<Key, Value> map;
+
+    map.put(Key(1, 3), Value("four"));
+    map[Key(2, 3)] = Value("five");
+
+    ASSERT_EQ(Value("four"), map[Key(1, 3)]);
+    ASSERT_EQ(Value("five"), *map.get(Key(2, 3)));
+    ASSERT_EQ(__null_ptr__,  map.get(Key(2, 4)));
+}
+~~~
+
+注意对HashMap使用put和get方法会比较安全。当时用operator[]时，对于不存在的元素HashMap会插入一个空元素。
+
 #### RingNumber
+
+RingNumber是一个循环数模板类。所谓循环数即一个从在[0, max)范围内不断循环的正整数。例如时钟的小时，分钟和秒，以及月和日等等，都是循环数。
+
+~~~cpp
+RingNumber<U8, 10> r1(4);
+RingNumber<U8, 10> r2(11);
+
+ASSERT_TRUE((r1 << 2) == (r2 >> 11));
+~~~
 
 ### Algo
 
+Algo包含了一些简单的算法和一些辅助宏。
+
+- bits.h：提供了比特操作的一些宏和方法。如以下示例：
+	- `ASSERT_EQ(0x7F,   BIT_MASK(7));`
+	- `ASSERT_EQ(0x5,    GET_BITS_VALUE(0xaa, 3, 3));`
+	- `ASSERT_TRUE(IS_BIT_ON(0xaa, 1));`
+- bound.h：提供了在有序数组中找到某一元素的low-bound和upper-bound元素的下标，在找不到的情况下该下标并不越界。
+- search.h：提供了一个在嵌入式下替代STL库中`binary_search`的函数。
+- min-max.h：min、max宏，以及实现了beween方法。
+- loop.h：对循环提供了一些辅助宏。
+
 ### Sched
+
+由于C\++11中终于提供了标准并发库，使得写出跨平台的并发代码成为可能。Sched里面包含了一个简单的线程池，以及对锁和线程数据区的封装辅助工具。
 
 ### Gof
 
