@@ -144,7 +144,7 @@ private:
 
 /////////////////////////////////////////////////////////////
 #define ARRAY_FOREACH_FROM(type, i, from, items) \
-   for(typename Array<type>::Iterator i=from; i != items.end(); ++i)
+   for(typename type::Iterator i=from; i != items.end(); ++i)
 
 #define ARRAY_FOREACH(type, i, items) \
    ARRAY_FOREACH_FROM(type, i, items.begin(), items)
