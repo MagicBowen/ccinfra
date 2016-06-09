@@ -1194,6 +1194,8 @@ Maybe模板类用于将另外一个类型进行封装，将其扩展成为一个
 ~~~cpp
 Maybe<int> x;
 
+ASSERT_FALSE(x.isPresent());
+
 x.update(5);
 
 ASSERT_TRUE(x.isPresent());
@@ -1277,6 +1279,194 @@ TEST(...)
 TransData提供的功能非常丰富，具体可以查看TransData的源码以及测试文件。
 
 ### Ctnr
+
+Ctnr组件包含了四个数据结构，一个RingNumber和三个容器Array、List和HashMap。Ctnr的容器类和STL中同功能容器的主要区别在于其内存结构的差异。Ctnr的容器内存结构布局和C比较类似，更加方便静态内存管理的需求。
+
+#### Array
+
+如果你需要一个动态数组，那么STL库的std::vector可以满足你，如果你需要一个静态数组，C\++11的STL库中的std::array也可以满足你。这里ccinfra中的Array模板类和std::array功能类似，都是静态模板类，区别在于std::array要求数组元素的对象类型必须存在无参构造函数，但是Array类支持以元素类的有参构造函数初始化数组元素。这里Array组件需要C\++11的支持，使用该组件请确保你的编译器版本以及编译参数支持C\++11。
+
+~~~cpp
+struct Object
+{
+    enum { INVALID_VALUE = 0xFF };
+
+    Object() : value(INVALID_VALUE)
+    {
+    }
+
+    Object(int value)
+    :value(value)
+    {
+    }
+
+    int getValue() const
+    {
+        return value;
+    }
+
+    void update(U8 v)
+    {
+        value = v;
+    }
+
+private:
+    U8 value;
+};
+
+TEST(...)
+{
+    Array<Object, 2> objects;
+
+    ASSERT_EQ(Object::INVALID_VALUE, objects[0].getValue());
+    ASSERT_EQ(Object::INVALID_VALUE, objects[1].getValue());
+}
+
+TEST(...)
+{
+    Array<Object, 2> objects(5);
+
+    ASSERT_EQ(5, objects[0].getValue());
+    ASSERT_EQ(5, objects[1].getValue());
+}
+
+TEST(...)
+{
+    Array<Object, 2> objects;
+
+    objects.emplace(1, 5);
+
+    ASSERT_EQ(Object::INVALID_VALUE, objects[0].getValue());
+    ASSERT_EQ(5, objects[1].getValue());
+}
+
+TEST(...)
+{
+    typedef Array<Object, 2> ThisArray;
+    ThisArray objects;
+
+
+    ThisArray::Iterator i = objects.begin();
+    ASSERT_EQ(Object::INVALID_VALUE, i->getValue());
+
+    objects[1].update(5);
+    i++;
+    ASSERT_EQ(5, i->getValue());
+
+    i->update(10);
+    ASSERT_EQ(10, objects[1].getValue());
+
+    ASSERT_NE(objects.end(), i);
+    ASSERT_EQ(objects.end(), ++i);
+}
+
+TEST(...)
+{
+    typedef Array<Object, 2> ThisArray;
+    ThisArray objects(10);
+
+    objects[1].update(5);
+
+    U32 sum = 0;
+    ARRAY_FOREACH(ThisArray, i, objects)
+    {
+        sum += i->getValue();
+    }
+    ASSERT_EQ(15, sum);
+}
+~~~
+
+#### List
+
+[ZeroMQ](http://zeromq.org/)的作者在文章["Why should I have written ZeroMQ in C, not C++"](http://250bpm.com/blog:8)中批评了C++ STL库中的list导致了更多的内存分配和内存碎片以及由此引发的性能问题。如下原文中的代码和图示：
+
+~~~cpp
+// C++程序的链表
+class person
+{
+    int age;
+    int weight;
+};
+
+std::list <person*> people;
+~~~
+
+~~~cpp
+// C程序的链表
+struct person
+{
+    struct person *prev;
+    struct person *next;
+    int age;
+    int weight;
+};
+
+struct
+{
+    struct person *first;
+    struct person *last;
+} people;
+~~~
+
+两种链表在内存结构上的差异：
+![list compare](./pics/list.png)
+
+作者把该问题最后推演到是C\++和面向对象设计的问题。我想说的是，C\++的设计哲学是给你提供强大抽象手段的同时，让你仍然可以在任何特性和性能之间去取舍和平衡。上述问题并不是C\++或者面向对象的问题，其实当我们真正掌握了C\++的设计哲学，我们就可以设计出一种既可以像面向对象那样地使用，又可以兼顾像C那样内存布局的list，这就是ccinfra提供的List组件。事实上我们已经在嵌入式开发中很愉快地使用该组件很多年了。
+
+~~~cpp
+struct Foo : ListElem<Foo>
+{
+    Foo(int a) : x(a)
+    {
+    }
+
+    int getValue() const
+    {
+        return x;
+    }
+
+private:
+    int x;
+};
+
+TEST(...)
+{
+    List<Foo> elems;
+
+	ASSERT_TRUE(elems.isEmpty());
+    ASSERT_EQ(0, elems.size());
+
+	Foo elem1(1), elem2(2), elem3(3);
+
+    elems.pushBack(elem1);
+    elems.pushBack(elem2);
+    elems.pushBack(elem3);
+
+    ASSERT_EQ(&elem1, elems.getFirst());
+    ASSERT_EQ(&elem3, elems.getLast());
+    ASSERT_EQ(3, elems.size());
+
+    Foo* first = elems.popFront();
+    ASSERT_EQ(1, first->getValue());
+    ASSERT_EQ(2, elems.size());
+
+	int i = 2;
+    LIST_FOREACH(Foo, elem, elems)
+    {
+        ASSERT_EQ(i++, elem->getValue());
+    }
+}
+~~~
+
+ccinfra中的List是一个双向链表，某一类型T只有继承了ListElem<T>，才可以插入List<T>中去。继承了ListElem<T>的list节点内存布局和C习惯中的链表节点是一样的，链表指针和节点数据是绑定在一起的。List对象中只包含一个头节点以及统计当前链表大小的变量。List的接口接收节点的指针，完成前后链表的链接，并不拷贝节点对象，所以对于节点的内存管理完全由程序员决定，List并不做任何假定。
+
+从上面的例子中可以看到ccinfra的List组件的用法和std::list类似，提供了各种类似的接口以及正逆向迭代器，并且提供了一些方便遍历的辅助宏。其它还有更多的用法，具体参考该组件的实现(ccinfra/include/ctnr/list)和测试源码（ccinfra/test/TestList.h）。
+
+通过上面的例子也可以看出，在C的链表内存结构的实现中，哪些节点可以作为链表元素是提前确定好的，而STL库中的std::list却可以指向任何元素，并不需要提前规划好。当然有利就有弊，后者却需要分配更多的内存块。但是这并不是C\++或者面向对象的问题，只是STL作为一个基础库，它选择了通用性。如果你需要偏向性能，那么就可以按照自己的使用方式来实现一个list，但是你必须知道你为此放弃了什么。这或许就是C\++的强大之处，它给了你选择的自由，让你可以尽最大的努力去取得更好的平衡。正如ccinfra的List，它兼容了C的内存结构，保证了性能，但谁又能说它的用法不OO呢？
+
+#### HashMap
+
+#### RingNumber
 
 ### Algo
 

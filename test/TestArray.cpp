@@ -90,11 +90,11 @@ TEST(ArrayTest, should_use_the_iterator_of_array)
     typedef Array<Object, 2> ThisArray;
     ThisArray objects;
 
-    objects[1].update(5);
 
     ThisArray::Iterator i = objects.begin();
     ASSERT_EQ(Object::INVALID_VALUE, i->getValue());
 
+    objects[1].update(5);
     i++;
     ASSERT_EQ(5, i->getValue());
 
