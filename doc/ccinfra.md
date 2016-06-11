@@ -1466,6 +1466,8 @@ ccinfra中的List是一个双向链表，某一类型T只有继承了ListElem<T>
 
 #### HashMap
 
+用上节介绍的List组件，可以很方便的封装出Stack，Queue等其它数据结构。由于map的实现一般相对复杂，所以ccinfra封装了一个HashMap以方便大家的使用。
+
 HashMap将{Key, Value}组在一片连续的静态内存上进行分配，这块内存内置在HashMap对象实例中，生命周期和HashMap的对象实例一致。使用HashMap必须指定该HashMap的最大容量，生成的HashMap实例会按照容量直接占有对应的内存，该最大容量后续不能再修改，如此实现只为将所有内存内聚在一起，简化对内存有静态管理需求的开发场景。
 
 ~~~cpp
@@ -1685,12 +1687,12 @@ unsigned int ThreadInfo::index = 0;
 
 TEST(...)
 {
-	ThreadData<int, ThreadInfo> data;
+	ThreadData<int, ThreadInfoStub> data;
 
     *data = 2;
     ASSERT_EQ(2, *data);
 
-	ThreadInfo::setCurrentId(1);
+	ThreadInfoStub::setCurrentId(1);
 
     *data = 5;
     ASSERT_EQ(5, *data);
@@ -1701,10 +1703,404 @@ TEST(...)
 
 ### Gof
 
+Gof中提供了两个设计模式的辅助类：Singleton和State。
+
+#### Singleton
+
+“ccinfra/gof/Singleton.h”中是Singleton类模板的实现。具体用法如下：
+
+~~~cpp
+DEF_SINGLETON(ObjectFactory)
+{
+	Object* create() const;
+};
+
+TEST(...)
+{
+	Object* obj = ObjectFactory::getInstance().create();
+    // ...
+}
+~~~
+
+注意这里提供的Singleton不提供并发安全，其次Singleton的子类任然可以突破Singleton的限制，通过构造函数被构造多个实例。Singleton只是简单的单例模式的封装，更复杂机制的Singleton可以参考[boost](http://www.boost.org/)的实现。
+
+#### State
+
+Gof的State模式用于解决一个类的接口在不同状态下行为不同的问题，通过状态模式，可以让类对于这种根据状态值来决定行为的实现更有扩展性。具体做法是给每个状态值建立一个状态类，它们有一个共同的抽象父类，各个具体状态类只专注于在自己状态下的行为差异部分的实现。宿主类中持有状态抽象类的指针，宿主类通过让抽象接口指针指向不同的状态类的实现，就完成了状态跃迁。一般来说状态类比宿主类更加了解在什么条件下宿主类的应该跃迁到哪个目标状态，所以一般状态类会持有宿主类的引用，在状态类内部完成对宿主类目标状态的修改。由于状态模式用到了多态，每个状态子类需要动态创建释放，所以引入了动态内存管理的开销。这里，对于需要简化内存管理的场合，我们提供了一组状态模式的辅助工具，以便更简单的使用状态模式，不会引入动态内存管理的问题。
+
+下例中假设有一个唱歌机器人，它在有电的时候开启后可以唱歌，没电后会发出bibi的响声，可以给它充电让其继续工作。具体如下：
+- 具有三种状态：closed,  opened,  wait_charged；
+- 可以处理四类事件：close, open,  play,  charge
+- 具有五种行为：mute,  bibi,  sing,  chargeEnergy,  consumeEnergy
+- 内部有一个是否没电的属性：isExhausted。每次充电后，在收到play的消息后会sing一次，连续sing两次后，电量耗完。
+
+不采用状态模式实现如下：
+
+~~~cpp
+DEF_INTERFACE(Audio)
+{
+    ABSTRACT(void bibi());
+    ABSTRACT(void sing());
+    ABSTRACT(void mute());
+};
+
+struct Robot
+{
+    enum State
+    {
+        closed,
+        opened,
+        wait_charged
+    };
+
+    enum
+    {
+        max_sing_times_in_one_charge = 2
+    };
+
+    Robot(Audio& audio)
+    : audio(audio)
+    , state(closed)
+    , leftSingTimes(0)
+    {
+    }
+
+    void open()
+    {
+        if(state == closed)
+        {
+            if(!isExhausted())
+            {
+                state = opened;
+            }
+            else
+            {
+                bibi();
+            }
+        }
+        else if(state == wait_charged)
+        {
+            audio.bibi();
+        }
+    }
+
+    void play()
+    {
+        if(state == opened)
+        {
+            if(!isExhausted())
+            {
+                sing();
+                consumeEnergy();
+                if(isExhausted())
+                {
+                    state = wait_charged;
+                }
+            }
+        }
+        else if(state == wait_charged)
+        {
+            bibi();
+        }
+    }
+
+    void charge()
+    {
+        chargeEnergy();
+
+        if(state == wait_charged)
+        {
+            state = opened;
+        }
+    }
+
+    void close()
+    {
+        mute();
+        state = closed;
+    }
+
+    State getCurrentState() const
+    {
+        return state;
+    }
+
+    bool isExhausted() const
+    {
+        return leftSingTimes == 0;
+    }
+
+private:
+    void mute()
+    {
+        audio.mute();
+    }
+
+    void bibi()
+    {
+        audio.bibi();
+    }
+
+    void sing()
+    {
+        audio.sing();
+    }
+
+    void consumeEnergy()
+    {
+        leftSingTimes--;
+    }
+
+    void chargeEnergy()
+    {
+        leftSingTimes = max_sing_times_in_one_charge;
+    }
+
+private:
+    Audio& audio;
+    State state;
+    U8 leftSingTimes;
+};
+~~~
+
+修改为ccinfra中的GofState实现模式后，如下：
+
+~~~cpp
+DEF_INTERFACE(Audio)
+{
+    ABSTRACT(void bibi());
+    ABSTRACT(void sing());
+    ABSTRACT(void mute());
+};
+
+struct Robot
+{
+    enum State
+    {
+        closed,
+        opened,
+        wait_charged
+    };
+
+    enum
+    {
+        max_sing_times_in_one_charge = 2
+    };
+
+    Robot(Audio& audio)
+    : audio(audio)
+    , state(__null_ptr__)
+    , leftSingTimes(0)
+    {
+        __GOTO_STATE(Closed);
+    }
+
+    void open();
+    void play();
+    void charge();
+    void close();
+    State getCurrentState() const;
+
+    bool isExhausted() const
+    {
+        return leftSingTimes == 0;
+    }
+
+private:
+    void mute()
+    {
+        audio.mute();
+    }
+
+    void bibi()
+    {
+        audio.bibi();
+    }
+
+    void sing()
+    {
+        audio.sing();
+    }
+
+    void consumeEnergy()
+    {
+        leftSingTimes--;
+    }
+
+    void chargeEnergy()
+    {
+        leftSingTimes = max_sing_times_in_one_charge;
+    }
+
+private:
+    __USING_GOF_STATE;
+    __HAS_STATE(Closed);
+    __HAS_STATE(Opened);
+    __HAS_STATE(WaitCharged);
+
+private:
+    Audio& audio;
+    U8 leftSingTimes;
+};
+
+__DEF_GOF_STATE_INTERFACE(Robot)
+{
+    ABSTRACT(State getState() const);
+    DEFAULT(void, open(Robot&));
+    DEFAULT(void, play(Robot&));
+    DEFAULT(void, charge(Robot&));
+    virtual void close(Robot& THIS)
+    {
+        THIS.mute();
+        THIS.__GOTO_STATE(Closed);
+    }
+};
+
+__DEF_GOF_STATE(Robot, Closed)
+{
+private:
+    OVERRIDE(void open(Robot& THIS))
+    {
+        if(THIS.isExhausted())
+        {
+            THIS.bibi();
+        }
+        else
+        {
+            THIS.__GOTO_STATE(Opened);
+        }
+    }
+
+    OVERRIDE(void charge(Robot& THIS))
+    {
+        THIS.chargeEnergy();
+    }
+
+    OVERRIDE(State getState() const)
+    {
+        return closed;
+    }
+};
+
+__DEF_GOF_STATE(Robot, Opened)
+{
+private:
+    OVERRIDE(void play(Robot& THIS))
+    {
+        if(THIS.isExhausted()) return;
+
+        THIS.sing();
+        THIS.consumeEnergy();
+
+        if(THIS.isExhausted())
+        {
+            THIS.__GOTO_STATE(WaitCharged);
+        }
+    }
+
+    OVERRIDE(void charge(Robot& THIS))
+    {
+        THIS.chargeEnergy();
+    }
+
+    OVERRIDE(State getState() const)
+    {
+        return opened;
+    }
+};
+
+__DEF_GOF_STATE(Robot, WaitCharged)
+{
+private:
+    OVERRIDE(void open(Robot& THIS))
+    {
+        THIS.bibi();
+    }
+
+    OVERRIDE(void play(Robot& THIS))
+    {
+        THIS.bibi();
+    }
+
+    OVERRIDE(void charge(Robot& THIS))
+    {
+        THIS.chargeEnergy();
+        THIS.__GOTO_STATE(Opened);
+    }
+
+    OVERRIDE(State getState() const)
+    {
+        return wait_charged;
+    }
+};
+
+__REGISTER_STATE(Robot, Closed);
+__REGISTER_STATE(Robot, Opened);
+__REGISTER_STATE(Robot, WaitCharged);
+
+void Robot::open()
+{
+    state->open(*this);
+}
+
+void Robot::play()
+{
+    state->play(*this);
+}
+
+void Robot::charge()
+{
+    state->charge(*this);
+}
+
+void Robot::close()
+{
+    state->close(*this);
+}
+
+Robot::State Robot::getCurrentState() const
+{
+    return state->getState();
+}
+~~~
+
+可以看到，在宿主类内部声明使用状态模式`__USING_GOF_STATE`，然后使用`__HAS_STATE`声明具体有哪些状态。接下来用`__DEF_GOF_STATE_INTERFACE`定义状态类的抽象接口，使用`__DEF_GOF_STATE`定义每个状态类的具体实现。最后用`__REGISTER_STATE`完成状态子类的注册。
+
+上述ccinfra的状态模式有如下几个特点：
+- 具体的状态类被实现为单例，所以无需动态内存申请和释放，但是缺点是状态类不能有私有状态。每个状态类的私有状态都必须作为宿主类的属性。
+- 所有的状态类都是宿主类的内部类，所以可以直接访问宿主类的任何私有接口和属性。
+- 需要的时候，宿主类要把自己的指针作为参数传递给状态类，以便状态类访问宿主类的属性，并修改宿主类。
+
 ### Log
+
+ccinfra的Log机制提供了如下几个级别的打印：
+- DBG_LOG ： 调测信息打印，级别最低；
+- INFO_LOG： 正常信息打印；
+- WARN_LOG： 告警信息打印；
+- ERR_LOG：  错误信息打印；
+- FATAL_LOG：致命信息打印，级别最高；
+
+具体用法和printf类似，参数是格式化字符串。差异是采用log的打印会加上文件名和行号，以及不同级别会有不同的打印颜色。
+
+~~~cpp
+Status result = doSomething();
+if(__CCINFRA_FAILED(result))
+{
+	ERR_LOG("doSomething return failure, error code = %d \n", result);
+}
+~~~
 
 ### Utils
 
+Utils包含一些辅助的工具，例如lambda的参数萃取类模板、repeat宏等等。
+一般来说一些暂时没有形成规模不知道放哪里的工具就临时先放到这里...
+
 ## Finally
 
-### TO DO
+ccinfra是我们在用C\++开发和重构大型电信级设备时积累下来的基础库。由于电信级设备一般属于在高可靠的专有硬件上的嵌入式开发，对性能，内存等都有特殊要求。另外由于电信业务的复杂性多变性，又要求软件能够对业务进行很好的抽象以提高灵活性和表达力。
+
+基于上述条件，C\++基本成了最好的选择！但是由于C\++自身过于灵活，所以必须要有一套最佳实践来约束，使得大家的代码能够一致化；另外用C\++来建模，需要有一套建模技术和工具的支持；最后为了让建模能够容易落地，我们需要各种常用的内存管理、数据结构、算发、设计模式等等的嵌入式版本的替代实现。以上其实就是ccinfra在做的事情。
+
+ccinfra还在不断的完善中，如果发现错误或者有更好的建议，欢迎联系作者！
+
+> 作者：MagicBowen；Email：e.bowen.wang@icloud.com； 转载本文请注明作者信息，谢谢！
