@@ -1584,7 +1584,120 @@ Algo包含了一些简单的算法和一些辅助宏。
 
 ### Sched
 
-由于C\++11中终于提供了标准并发库，使得写出跨平台的并发代码成为可能。Sched里面包含了一个简单的线程池，以及对锁和线程数据区的封装辅助工具。
+由于C\++11终于提供了标准并发库，使得写出跨平台的并发代码成为可能。Sched里面包含了一个简单的线程池，以及对锁和线程数据区的封装辅助工具。
+
+#### Executor
+
+Executor是一个简单的线程池，基于C++11的thread。具体用法很简单，如下：
+
+~~~cpp
+int fib(int n)
+{
+    if(n == 0) return 0;
+    return n + fib(n-1);
+}
+
+struct Fib
+{
+    Fib(int n) : n(n)
+    {
+    }
+
+    int operator()() const
+    {
+        return fib(n);
+    }
+
+private:
+    int n;
+};
+
+TEST()
+{
+	Executor executor(2);
+
+    auto result1 = executor.execute(fib, 5);
+    auto result2 = executor.execute(Fib(6));
+    auto result3 = executor.execute([](){ return fib(7); });
+
+    ASSERT_EQ(15, result1.get());
+    ASSERT_EQ(21, result2.get());
+    ASSERT_EQ(28, result2.get());
+}
+~~~
+
+Executor构造时传入的是线程池支持的最大线程数，这个数字并不是越大越好，需要由你的系统CPU核数以及计算特征决定。Executor的execute接口可以接收函数，functor以及lambda，我们把这些统一叫做任务。对于函数和functor类型的任务还需要给execute传入具体的参数。execute返回的是一个std::future类型，调用它的get接口就可以获得对应任务的返回值。std::future的get接口会阻塞当前线程，直到任务被线程调度并计算结束。线程池内部以简单轮流的方式逐一执行传入的执行任务。
+
+#### 锁相关
+
+C\++11提供了std::mutex锁，锁支持RAII。为了让mutex锁的临界区更明显，我们封装了SYNCHRONIZED辅助宏。如下，临界区是SYNCHRONIZED后面两个花括号之间的代码，参数是对应的mutex锁变量名。
+
+~~~cpp
+// ccinfra/src/sched/Executor.cpp
+Executor::~Executor()
+ {
+     SYNCHRONIZED(tasksMutex)
+     {
+         stop = true;
+     }
+     // ...
+ }
+~~~
+
+#### ThreadData
+
+对于并发编程，可能最重要的事就是识别哪些是临界资源哪些是独享资源。设计的时候我们尽量减少临界资源的范围，仅对确实需要共享的进行共享，不需要共享的属于线程的独享资源。对于独享资源应该只有负责它的线程进行访问，存储在线程的私有内存区中。我们提供的ThreadData提供了一种方便静态内存管理的线程数据封装模板类。
+
+~~~cpp
+template <typename T, typename THREAD_INFO>
+struct ThreadData
+{
+// Implementation！
+}
+~~~
+
+ThreadData模板类的第一个参数T指明具体封装的数据类型，第二个参数THREAD_INFO时需要使用方自行提供的一个静态类。THREAD_INFO应该满足如下特征：
+- 提供一个类内的public静态常量MAX_THREAD_NUM，指明最大支持的线程数。
+- 提供一个public静态方法`unsigned int getCurrentId()`,能够获得当前的调度线程id。注意id的范围是[0, MAX_THREAD_NUM)。
+
+下面是测试用例中的例子：
+
+~~~cpp
+struct ThreadInfoStub
+{
+    static unsigned int getCurrentId()
+    {
+        return index;
+    }
+
+    static void setCurrentId(unsigned int id)
+    {
+        index = id;
+    }
+
+    const static unsigned int MAX_THREAD_NUM = 2;
+
+private:
+    static unsigned int index;
+};
+
+unsigned int ThreadInfo::index = 0;
+
+TEST(...)
+{
+	ThreadData<int, ThreadInfo> data;
+
+    *data = 2;
+    ASSERT_EQ(2, *data);
+
+	ThreadInfo::setCurrentId(1);
+
+    *data = 5;
+    ASSERT_EQ(5, *data);
+}
+~~~
+
+可以看到，ThreadData的定义的变量就如果使用其指针一样，但是实际操作的内存会根据当前实际的thread id操作不同的内存区域。
 
 ### Gof
 
