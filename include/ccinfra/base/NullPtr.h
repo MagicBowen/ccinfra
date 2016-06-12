@@ -4,13 +4,13 @@
 #include <ccinfra/base/Config.h>
 
 #if __SUPPORT_NULL_PTR
-#define __null_ptr__ nullptr
+#define __null_ptr nullptr
 #else
-#define __null_ptr__ 0
+#define __null_ptr 0
 #endif
 
-#define __notnull__(ptr) ptr != __null_ptr__
-#define __null__(ptr) ptr == __null_ptr__
+#define __NOT_NULL(ptr) ptr != __null_ptr
+#define __IS_NULL(ptr) ptr == __null_ptr
 
 #endif
 

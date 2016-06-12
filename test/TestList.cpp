@@ -29,8 +29,8 @@ protected:
 
 TEST_F(ListTest, should_be_empty_when_init)
 {
-    ASSERT_TRUE(__null__(elems.getFirst()));
-    ASSERT_TRUE(__null__(elems.getLast()));
+    ASSERT_TRUE(__IS_NULL(elems.getFirst()));
+    ASSERT_TRUE(__IS_NULL(elems.getLast()));
     ASSERT_TRUE(elems.isEmpty());
     ASSERT_EQ(0, elems.size());
 }

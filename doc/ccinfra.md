@@ -4,7 +4,7 @@
 
 ## Introduction
 
-ccinfra是一套C\++的基础编程库。借助ccinfra可以低成本地写出漂亮、健壮的C\++代码。ccinfra一方面提供了一种优美的编程风格和编程框架，另一方面提供了一些数据结构、内存管理、并发调度、log等组件。考虑到如今C\++主要作为一种系统编程语言，往往偏向于对性能、内存管理和布局等要求比较严格的场景下使用，所以ccinfra中很多组件在设计的时候考虑到了这些问题，提供了一些标准C\++ STL库的可替代组件。由于ccinfra中每个组件都是低耦合的，所以你可以根据你的场景只选取部分进行使用。
+ccinfra是一套C\++的基础编程库。借助ccinfra可以低成本地写出漂亮、健壮的C\++代码。ccinfra一方面提供了一种优美的编程风格和编程框架，另一方面提供了一些数据结构、内存管理、并发调度、log等组件。考虑到如今C\++主要作为一种系统编程语言，更多地在对性能、内存管理和内存布局等有特殊要求的场景下使用，所以ccinfra中的组件在设计的时候专门考虑了这些问题，提供了一些标准C\++ STL库的可替代组件。由于ccinfra中每个组件都是低耦合的，所以你可以根据你的场景只选取部分进行使用。
 
 ## Install
 
@@ -24,9 +24,11 @@ make
 ~~~
 
 以liux系统为例，如果编译通过，会产生 “ccinfra/build/src/libccinfra.a”， 这是需要依赖的ccinfra静态库。最好将ccinfra的头文件和libccinfra.a拷贝到一个公共的地方，让所有项目都可以方便的依赖。例如在“/home/shared"下创建ccinfra目录，将ccinfra源码下的incude目录拷贝到ccinfra目录下，然后在”home/shared/ccinfra“目录下创建lib目录，将libccinfra.a拷贝进去。最后，目录结构如下： ”/home/shared/ccinfra/include/ccinfra“， ”/home/shared/ccinfra/lib/libccinfra.a“。
-如果某项目需要依赖ccinfra，修改该项目的构建脚本，在头文件依赖中增加 ”/home/shared/ccinfra/include“， 在链接依赖中增加静态库目录 ”/home/shared/ccinfra/lib“， 并让其和ccinfra进行链接。如果你的项目使用了ccinfra的sched组件，那么需要在你的编译参数中添加对C++11的支持，另外在链接库中增加pthread。
+如果某项目需要依赖ccinfra，修改该项目的构建脚本，在头文件依赖中增加 ”/home/shared/ccinfra/include“， 在链接依赖中增加静态库目录 ”/home/shared/ccinfra/lib“， 并让其和ccinfra进行链接。
 
-ccinfra提供了自动安装（不推荐该方式），编译成功后在build目录下执行`sudo make install`，这样ccinfra的头文件和库，将会自动安装到当前系统默认的安装路径下，对于linux可能会是 “/usr/local/include” 以及 “/usr/local/lib” 目录。
+ccinfra提供了自动安装，编译成功后在build目录下执行`sudo make install`，这样ccinfra的头文件和库，将会自动安装到当前系统默认的安装路径下，对于linux可能会是 “/usr/local/include” 以及 “/usr/local/lib” 目录。
+
+ccinfra中的一些组件使用了C\++11特性（每个组件的介绍中会专门说明），如果你的项目使用了这些组件，请确保你的编译器支持C\++11并且编译选项开启了c\++11。最后，使用ccinfra的sched组件还需要在你的链接库中增加pthread。
 
 可以尝试运行ccinfra的测试，看看ccinfra在你的系统下是否可以存在错误。
 ccinfra的测试需要依赖[gtest](https://github.com/google/googletest)，下载gtest的源码，编译出gtest的库后，手动进行gtest的安装（最新的gtest不支持自动安装）。选择一个目录，例如“/home/shared”下，创建一个gtest目录，将gtest源码下的include目录拷贝进去。在“/home/shared/gtest”目录下新建lib目录，将编译好的gtest库拷贝进去。最后目录结构如下：”/home/shared/gtest/include/gtest"，"/home/shared/gtest/lib/libgtest.a"。
@@ -52,7 +54,7 @@ ccinfra由主要的几个组件组成：
 
 - Mem： 提供自定义内存管理的一些组件。包括针对不同场景的内存分配器、针对嵌入式内存特征的智能指针和一些辅助工具。
 
-- Ctnr： 提供一些容器组件：Array、List、HashMap和一些辅助类。这些组件采用静态内存规划，内存布局贴近C，适合于嵌入式或者对内存有自定义管理需求的场合。
+- Ctnr： 提供一些容器组件：Array、List、HashMap和一些辅助类。这些组件采用静态内存规划，内存布局贴近C，适合于嵌入式或者对内存管理有自定义需求的场合。
 
 - Algo： 包含对bit、数组进行操作的一些算法，一些stl库算法的替代和简单扩展。
 
@@ -64,9 +66,9 @@ ccinfra由主要的几个组件组成：
 
 - Utils： 其它一些辅助的工具，例如repeat宏、函数参数的粹取类等。
 
-上述各个组件还在不断完善中，请持续的update以保持跟踪...
+上述各个组件还在不断完善中，请持续update以保持跟踪...
 
-下面针对一些主要的组件进行用法介绍，可以通过阅读针对每个组件的测试用例了解到更多的细节。未介绍到的组件请自行阅读测试用例或源码。
+下面针对一些主要的组件进行用法介绍，可以通过阅读针对每个组件的测试用例了解到更多的使用细节。未介绍到的组件请自行阅读测试用例或源码。
 
 ### Base
 
@@ -101,7 +103,7 @@ static bool tryFree(void *p)
 }
 ~~~
 
-"ccinfra/base/Status.h"定义了ccinfra的基本成功和错误码：`CCINFRA_SUCCESS`和`CCINFRA_FAILURE`，另外提供了两个辅助宏：
+"ccinfra/base/Status.h"中定义了ccinfra的成功和错误码：`CCINFRA_SUCCESS`和`CCINFRA_FAILURE`，另外提供了两个辅助宏：
 
 ~~~cpp
 // Status.h
@@ -136,7 +138,7 @@ Status modify()
 }
 ~~~
 
-"ccinfra/base/static_assert.h"提供了静态断言`STATIC_ASSERT`。在支持C++11的场景下，`STATIC_ASSERT`被映射成关键字`static_assert`，否则被映射成自定义实现。
+"ccinfra/base/static_assert.h"中提供了静态断言`STATIC_ASSERT`。在支持C++11的场景下，`STATIC_ASSERT`被映射成关键字`static_assert`，否则被映射成自定义实现。
 
 ~~~cpp
 // static_assert.h
@@ -283,17 +285,17 @@ TEST(...)
 
 - `DEFAULT`：定义一个具有默认实现的虚方法。一旦一个方法被定义为`DEFAULT`，该方法在子类中可以不需要`OVERRIDE`。对于有返回值的函数，`DEFAULT`定义的默认实现中会自动返回默认值。对于bool类型返回false，对于数型和指针都返回0。如果默认实现不能满足你的要求，需要显示在子类中用`OVERRIDE`进行具体实现定义。
 
-“ccinfra/base/NullPtr.h”中对空指针进行了封装，统一用`__null_ptr__`表示空地址。该定义在支持C\++11的场景下会映射为关键字`nullptr`，否则为数字0。同时提供对空指针进行判断的两个宏。
+“ccinfra/base/NullPtr.h”中对空指针进行了封装，统一用`__null_ptr`表示空地址。该定义在支持C\++11的场景下会映射为关键字`nullptr`，否则为数字0。同时提供对空指针进行判断的两个宏。
 
 ~~~cpp
 #if __SUPPORT_NULL_PTR
-#define __null_ptr__ nullptr
+#define __null_ptr nullptr
 #else
-#define __null_ptr__ 0
+#define __null_ptr 0
 #endif
 
-#define __notnull__(ptr) ptr != __null_ptr__
-#define __null__(ptr) ptr == __null_ptr__
+#define __NOT_NULL(ptr) ptr != __null_ptr
+#define __IS_NULL(ptr) ptr == __null_ptr
 
 #endif
 ~~~
@@ -306,17 +308,17 @@ Status put(const KEY& key, const VALUE& value)
 {
     const VALUE* v = get(key);
 
-    if(__notnull__(v))
+    if(__NOT_NULL(v))
     {
         // ...
         return CCINFRA_SUCCESS;
     }
 
-    return __null__(insert(key ,value)) ? CCINFRA_FAILURE : CCINFRA_SUCCESS;
+    return __IS_NULL(insert(key ,value)) ? CCINFRA_FAILURE : CCINFRA_SUCCESS;
 }
 ~~~
 
-"ccinfra/base/EqHelper.h"定义了一些辅助宏，用于方面类实现比较运算符。这些辅助宏在你定义了`==`的实现后，会自动扩展出`！=`的实现，在你定了`==`和`<`的实现后，会自动扩展出其它所有比较运算符的实现。具体用法如下：
+"ccinfra/base/EqHelper.h"中定义了一些辅助宏，用于类实现比较运算符。这些辅助宏在你定义了`==`的实现后，会自动扩展出`！=`的实现，在你定义了`==`和`<`的实现后，会自动扩展出其它所有比较运算符的实现。具体用法如下：
 
 ~~~cpp
 // Complex.h
@@ -485,13 +487,13 @@ private:
 
 上面代码中使用了DCI框架中三个主要的语法糖：
 
-- `DEFINE_ROLE`：用于定义role，一个role在这里就是一个普通的类。`DEFINE_ROLE`的实现和前面介绍的`DEF_INTERFACE`一模一样，但是在DCI框架里面使用这个命名更具有语义。`DEFINE_ROLE`定义的类中需要至少包含一个虚方法或者使用了`USE_ROLE`声明依赖另外一个role。
+- DEFINE_ROLE：用于定义role，一个role在这里就是一个普通的类。`DEFINE_ROLE`的实现和前面介绍的`DEF_INTERFACE`一模一样，但是在DCI框架里面使用这个命名更具有语义。`DEFINE_ROLE`定义的类中需要至少包含一个虚方法或者使用了`USE_ROLE`声明依赖另外一个role。
 
-- `USE_ROLE`：在一个类里面声明自己的实现依赖另外一个role。
+- USE_ROLE：在一个类里面声明自己的实现依赖另外一个role。
 
-- `ROLE`：当一个类声明中使用了`USE_ROLE`声明依赖另外一个类XXX后，则在类的实现代码里面就可以调用 `ROLE(XXX)`来引用这个类去调用它的成员方法。
+- ROLE：当一个类声明中使用了`USE_ROLE`声明依赖另外一个类XXX后，则在类的实现代码里面就可以调用 `ROLE(XXX)`来引用这个类去调用它的成员方法。
 
-上面的例子中用`DEFINE_ROLE`定义了一个名为`Worker`的role（本质上是一个类），`Worker`用`USE_ROLE`声明它的实现需要依赖于另一个role：`Energy`，`Worker`在它的实现中调用`ROLE(Energy)`访问它提供的接口方法。`Energy`是一个抽象类，有两个子类`HumanEnergy`和`ChargeEnergy`分别对应于人和机器人的能量特征。上面是以类的形式定义的各种role，下面我们需要将role和领域对象关联并将role之间的依赖关系在领域对象内完成正确的交织。
+上面的例子中用DEFINE_ROLE定义了一个名为`Worker`的role（本质上是一个类），`Worker`用USE_ROLE声明它的实现需要依赖于另一个role：`Energy`，`Worker`在它的实现中调用`ROLE(Energy)`访问它提供的接口方法。`Energy`是一个抽象类，有两个子类`HumanEnergy`和`ChargeEnergy`分别对应于人和机器人的能量特征。上面是以类的形式定义的各种role，下面我们需要将role和领域对象关联并将role之间的依赖关系在领域对象内完成正确的交织。
 
 ~~~cpp
 struct Human : Worker
@@ -509,13 +511,13 @@ private:
 };
 ~~~
 
-上面的代码使用多重继承完成了领域对象对role的组合。在上例中`Human`组合了`Worker`和`HumanEnergy`，而`Robot`组合了`Worker`和`ChargeEnergy`。最后在领域对象的类内还需要完成role之间的关系交织。由于`Worker`中声明了`USE_ROLE(Energy)`，所以当`Human`和`Robot`继承了`Worker`之后就需要显示化描述`Energy`从哪里来。有如下几种主要的交织方式：
+上面的代码使用多重继承完成了领域对象对role的组合。在上例中Human组合了Worker和HumanEnergy，而Robot组合了Worker和ChargeEnergy。最后在领域对象的类内还需要完成role之间的关系交织。由于Worker中声明了`USE_ROLE(Energy)`，所以当Human和Robot继承了Worker之后就需要显示化描述Energy从哪里来。有如下几种主要的交织方式：
 
-- `IMPL_ROLE`： 对上例，如果`Energy`的某一个子类也被继承的话，那么就直接在交织类中声明`IMPL_ROLE(Energy)`。于是当`Worker`工作时所找到的`ROLE(Energy)`就是在交织类中所继承的具体`Energy`子类。
+- IMPL_ROLE： 对上例，如果`Energy`的某一个子类也被继承的话，那么就直接在交织类中声明`IMPL_ROLE(Energy)`。于是当`Worker`工作时所找到的`ROLE(Energy)`就是在交织类中所继承的具体`Energy`子类。
 
-- `IMPL_ROLE_WITH_OBJ`： 当持有被依赖role的一个引用或者成员的时候，使用`IMPL_ROLE_WITH_OBJ`进行关系交织。假如上例中`Human`类中有一个成员：`HumanEnergy energy`，那么就可以用`IMPL_ROLE_WITH_OBJ(Energy, energy)`来声明交织关系。该场景同样适用于类内持有的是被依赖role的指针、引用的场景。
+- IMPL_ROLE_WITH_OBJ： 当持有被依赖role的一个引用或者成员的时候，使用`IMPL_ROLE_WITH_OBJ`进行关系交织。假如上例中`Human`类中有一个成员：`HumanEnergy energy`，那么就可以用`IMPL_ROLE_WITH_OBJ(Energy, energy)`来声明交织关系。该场景同样适用于类内持有的是被依赖role的指针、引用的场景。
 
-- `DECL_ROLE` ： 自定义交织关系。例如对上例在`Human`中定义一个方法`DECL_ROLE(Energy){ // function implementation}`，自定义`Energy`的来源，完成交织。
+- DECL_ROLE： 自定义交织关系。例如对上例在`Human`中定义一个方法`DECL_ROLE(Energy){ // function implementation}`，自定义`Energy`的来源，完成交织。
 
 当正确完成role的依赖交织工作后，领域对象类就可以被实例化了。如果没有交织正确，一般会出现编译错误。
 
@@ -544,10 +546,10 @@ TEST(...)
 
 - 提供一种组合式编程风格。`USE_ROLE`可以声明依赖一个具体类或者抽象类。当一个类的一部分有复用价值的时候就可以将其拆分出来，然后让原有的类`USE_ROLE`它，最后通过继承再组合在一起。当一个类出现新的变化方向时，就可以让当前类`USE_ROLE`一个抽象类，最后通过继承抽象类的不同子类来完成对变化方向的选择。最后如果站在类的视图上看，我们得到的是一系列可被复用的类代码素材库；站在领域对象的角度上来看，所谓领域对象只是选择合适自己的类素材，最后完成组合拼装而已（见下面的类视图和DCI视图）。
 
-    > 类视图：
+    类视图：
     ![class](./pics/class.jpg)
 
-    > DCI视图：
+    DCI视图：
     ![class](./pics/dci.jpg)
 
 - 每个领域对象的结构类似一颗向上生长的树（见上DCI视图）。Role作为这颗树的叶子，实际上并不区分是行为类还是数据类，都尽量设计得高内聚低耦合，采用`USE_ROLE`的方式声明互相之间的依赖关系。领域对象作为树根采用多重继承完成对role的组合和依赖关系交织，可以被外部使用的role被public继承，我们叫做“public role”（上图中空心圆圈表示），而只在树的内部被调用的role则被private继承，叫做“private role”（上图中实心圆圈表示）。当context需要调用某一领域对象时，必须从领域对象cast到对应的public role上去调用，不会出现传统教科书上所说的多重继承带来的二义性问题。
@@ -624,7 +626,7 @@ TEST(...)
 
     Worker* worker = dynamic_cast<Worker*>(actor);
 
-    ASSERT_TRUE(__notnull__(worker));
+    ASSERT_TRUE(__NOT_NULL(worker));
 
     worker->produce();
 
@@ -672,7 +674,7 @@ TEST(...)
 
     Worker* worker = dci::unknown_cast<Worker>(unknown);
 
-    ASSERT_TRUE(__notnull__(worker));
+    ASSERT_TRUE(__NOT_NULL(worker));
 
     worker->produce();
 
@@ -692,12 +694,12 @@ Memory组件包含如下和自定义内存管理相关的类：
 - Placement ： Placement可以开辟一块地址对齐的内存空间，协助进行placement new操作。
 - ObjectAllocator ： 对象分配器。用于定义某一对象专用的内存池，该对象的new和delete操作使用的内存空间从该对象的ObjectAllocator上分配和回收。
 - LinkedAllocator ： LinkedAllocator可以附加在一个指定数组上，将其包装成一个静态链表，用于数组元素的分配和回收。
-- AutoMsg ： 针对函数内大的结构体或者消息，可以使用AutoMsg让其在指定的内存池上分配，避免占用太多栈空间。
+- AutoMsg ： 针对函数内大的临时结构体或者消息，可以使用AutoMsg让其在指定的内存池上分配，避免占用太多栈空间。
 - SmartPtr ： 一个自定义的智能指针类，需要和SharedObject结合使用，让引用计数的内存可以和对象放在一起。
 - StructObject ： 对plain struct进行封装，使其构造后默认内存清零。
 - StructWrapper : 对plain struct进行封装，使得可以为其添加行为。
 - MayBe ： 对对象进行封装，为其增加是否有效的状态位，用于对象状态判断。
-- TransData ： TransData将对象进行封装，为其提供两块内存，将对象状态在两块内存上轮转存储，可以将对象的状态进行整体提交或者回滚。
+- TransData ： TransData将对象进行封装，为其提供两块内存，将对象状态在两块内存上轮转存储，可以将对象的状态进行整体提交或者回滚，类似于事务内存。
 
 #### Placement
 
@@ -738,20 +740,20 @@ TEST(...)
 
 通过`Placement`可以直接访问对应的封装对象，用法就和使用对象指针一样。如上例中使用`studentMemory->getId()`和直接使用Student的指针一样。调用`getRef()`接口可以获取封装对象的引用。
 
-Placement的另一个常用场合是对象数组的创建。C\++要求对象数组的类必须存在一个无参构造函数，否则就不能直接创建数组，而得去创建对象指针的数组。例如直接这样定义是编译不过的`Student students[10]`，必须得定义成指针数组``Student* students[10]`。但是定义成指针数组就需要我们动态申请和释放内存，为了避免这样的麻烦，使用`Placement`可以解决该问题。
+Placement的另一个常用场合是对象数组的创建。C\++要求对象数组的类必须存在一个无参构造函数，否则就不能直接创建数组，而得去创建对象指针的数组。例如直接这样定义`Student students[10]`是编译不过的，必须得定义成指针数组``Student* students[10]`。但是定义成指针数组就需要我们动态申请和释放内存，为了避免这样的麻烦，使用`Placement`可以解决该问题。
 
 ~~~cpp
 TEST(...)
 {
-    const U8 MAX_ENGINE = 5;
-    Placement<Student> students[MAX_ENGINE];
+    const U8 MAX_NUM = 5;
+    Placement<Student> students[MAX_NUM];
 
-    for(int i = 0; i < MAX_ENGINE; i++)
+    for(int i = 0; i < MAX_NUM; i++)
     {
         new (students[i].alloc()) Student(i);
     }
 
-    for(int i = 0; i < MAX_ENGINE; i++)
+    for(int i = 0; i < MAX_NUM; i++)
     {
         ASSERT_EQ(i, students[i]->getId());
     }
@@ -760,7 +762,7 @@ TEST(...)
 
 可以看到用`Placement`封装后，由于`Placement`具有无参构造函数，所以可以直接定义数组，先把内存开辟出来，然后再在`Placement`开辟的内存上初始化数组成员对象。
 
-事实上可以看到，使用`Placement`可以让我们先把内存开辟出来，然后延迟初始化对象。例如某一个类有一个成员对象，如果在类构造的时候无法确认其成员对象的构造参数，则成员对象必须被定义成指针，然后在获得其构造参数后再调用new将其初始化。如下例：
+通过上面的例子我们可以看到，使用`Placement`可以让我们先把内存开辟出来，然后延迟初始化对象。例如某一个类有一个成员对象，如果在类构造的时候无法确认其成员对象的构造参数，则成员对象必须被定义成指针，然后在获得其构造参数后再调用new将其初始化。如下例：
 
 ~~~cpp
 struct Member
@@ -780,25 +782,25 @@ private:
 
 struct Object
 {
-    Object() : member(__null_ptr__)
+    Object() : member(__null_ptr)
     {
     }
 
     void updateId(U32 id)
     {
-        if(__notnull__(member)) return;
+        if(__NOT_NULL(member)) return;
         member = new Member(id);
     }
 
     U32 getId() const
     {
-        if(__null__(member)) return INVALID_ID;
+        if(__IS_NULL(member)) return INVALID_ID;
         return member->getId();
     }
 
     ~Object()
     {
-        if(__notnull__(member)) delete member;
+        if(__NOT_NULL(member)) delete member;
     }
 
     enum
@@ -816,25 +818,25 @@ private:
 ~~~cpp
 struct Object
 {
-    Object() : member(__null_ptr__)
+    Object() : member(__null_ptr)
     {
     }
 
     void updateId(U32 id)
     {
-        if(__notnull__(member)) return;
+        if(__NOT_NULL(member)) return;
         member = new (memory.alloc()) Member(id);
     }
 
     U32 getId() const
     {
-        if(__null__(member)) return INVALID_ID;
+        if(__IS_NULL(member)) return INVALID_ID;
         return member->getId();
     }
 
     ~Object()
     {
-        if(__notnull__(member)) memory.destroy();
+        if(__NOT_NULL(member)) memory.destroy();
     }
 
     enum
@@ -850,7 +852,7 @@ private:
 
 上面的代码中，我们用`Placement<Member> memory`在Object中占好了内存，当Object的对象产生的时候就一起把Member的内存也申请好了，只用等着在合适的时机再去初始化member即可。
 
-针对上面的使用场景我们可以继续扩展。前面讲的DCI的例子中，采用多重继承，可以让所有role的内存汇聚在一起申请和释放。但是继承是一种静态关系，一个领域对象组合进来抽象role的哪个子类在编译期必须确定出来，如果这种关系是运行时才能确定的则不能采用继承的方式。这种问题常规的解决方法是在领域对象中持有一个抽象role的指针，然后就可以在运行期决定该指针指向的具体子类对象。这里存在的问题和上面的例子一样，role的内存一旦和领域对象分开，一堆小的role都要动态申请释放，就会产生很多小内存片，而在嵌入式下就需要考虑创建很多不同规模的内存池，相当地费神。那么解决方法和上例类似，采用Placement将role的内存提前在领域对象中占好，这样role的内存就可以和领域对象同生同灭，可以极大的简化工厂和内存管理的负担。这里和上例的区别是，由于领域对象不知道提前占好的内存是抽象role的哪个子类，所以需要占得足够但又不浪费，这时`union`就可以帮上忙了。
+针对上面的使用场景我们可以继续扩展。前面讲的DCI的例子中，采用多重继承，可以让所有role的内存汇聚在一起申请和释放。但是继承是一种静态关系，一个领域对象组合进来抽象role的哪个子类在编译期必须确定出来，如果这种关系是运行时才能确定的则不能采用继承的方式。这种问题的常规解决方法是在领域对象中持有一个抽象role的指针，然后在运行期决定该指针指向的具体子类对象。这里存在的问题和上面的例子一样，role的内存一旦和领域对象分开，如果一堆小的role都要动态申请释放，就会产生很多内存碎片，而在嵌入式下就需要考虑创建很多不同规模的内存池，相当地费神。对该问题的解决方法和上例类似，采用Placement将role的内存提前在领域对象中占好，这样role的内存就可以和领域对象同生同灭，可以极大的简化工厂和内存管理的负担。这里和上例的区别是，由于领域对象不知道提前占好的内存是抽象role的哪个子类，所以需要占得足够但又不浪费，这时`union`恰好可以帮助我们。
 
 ~~~cpp
 DEFINE_ROLE(Energy)
@@ -886,7 +888,7 @@ enum WorkerType
 struct WorkerObject : Worker
 {
     WorkerObject(WorkerType type)
-    : energy(__null_ptr__)
+    : energy(__null_ptr)
     {
         if(type == HUMAN)
         {
@@ -924,7 +926,7 @@ private:
 
 #### ObjectAllocator
 
-ObjectAllocator用于创建内存池，并且提供辅助宏，将对象的new和delete操作符进行重载，让其从对应的内存池上进行对象内存申请和释放。具体用法如下：
+ObjectAllocator用于创建对象内存池，并且提供了辅助宏，可以将对象的new和delete操作符进行重载，让其从对应的内存池上进行对象内存申请和释放。具体用法如下：
 
 ~~~cpp
 namespace
@@ -953,7 +955,7 @@ DEF_OBJ_ALLOCATOR(Foo, MAX_SLOT_NUM);
 
 TEST(...)
 {
-    Foo* foos[MAX_SLOT_NUM] = {__null_ptr__};
+    Foo* foos[MAX_SLOT_NUM] = {__null_ptr};
 
     for(int i = 0; i < MAX_SLOT_NUM; i++)
     {
@@ -961,21 +963,21 @@ TEST(...)
     }
 
     Foo* foo = new Foo(0);
-    ASSERT_TRUE(__null__(foo));
+    ASSERT_TRUE(__IS_NULL(foo));
 
     for(int i = 0; i < MAX_SLOT_NUM; i++)
     {
-        ASSERT_TRUE(__notnull__(foos[i]));
+        ASSERT_TRUE(__NOT_NULL(foos[i]));
         delete foos[i];
     }
 
     foo = new Foo(0);
-    ASSERT_TRUE(__notnull__(foo));
+    ASSERT_TRUE(__NOT_NULL(foo));
     delete foo;
 }
 ~~~
 
-在类的定义中声明`DECL_OPERATOR_NEW()`, 通过`DEF_OBJ_ALLOCATOR`来定义内存池，参数为需要内存池的类名和内存池大小。内存池的内存位置和`DEF_OBJ_ALLOCATOR`所定义的位置相关。
+在类的定义中声明`DECL_OPERATOR_NEW()`用于重载new和delete操作符, 在类外通过`DEF_OBJ_ALLOCATOR`来定义内存池，参数为需要内存池的类名和内存池大小。内存池的内存位置就在`DEF_OBJ_ALLOCATOR`所定义的内存池对象所处的位置，可以是栈空间、堆空间或者静态空间，完全由程序员决定。
 
 #### LinkedAllocator
 
@@ -989,24 +991,24 @@ const static int MAX_ALLOC_NUM = 3;
 LinkedAllocator<int, ARR_SIZE(array)> allocator(MAX_ALLOC_NUM);
 
 const int* x0 = allocator.alloc();
-ASSERT_TRUE(__notnull__(x0));
+ASSERT_TRUE(__NOT_NULL(x0));
 ASSERT_EQ(0, *x0);
 
 const int* x1 = allocator.alloc();
-ASSERT_TRUE(__notnull__(x1));
+ASSERT_TRUE(__NOT_NULL(x1));
 ASSERT_EQ(1, *x1);
 
 const int* x2 = allocator.alloc();
-ASSERT_TRUE(__notnull__(x2));
+ASSERT_TRUE(__NOT_NULL(x2));
 ASSERT_EQ(2, *x2);
 
 const int* x3 = allocator.alloc();
-ASSERT_TRUE(__null__(x3));
+ASSERT_TRUE(__IS_NULL(x3));
 
 allocator.dealloc(*x2);
 
 const int* x3 = allocator.alloc();
-ASSERT_TRUE(__notnull__(x3));
+ASSERT_TRUE(__NOT_NULL(x3));
 ASSERT_EQ(2, *x3);
 ~~~
 
@@ -1149,7 +1151,7 @@ TEST(...)
 
 #### StructWrapper
 
-当我们处理很多和C交互的代码的时候，会面临很多plain struct结构，或者是我们从外部接收进来二进制消息。这些结构只有数据缺少方法，我们在交给领域层处理的时候，希望将其转换成methodful的，这时候StructWrapper可以帮到你。
+当我们处理和C交互的代码或者是从外部接收进来二进制消息的时候，会面临很多plain struct结构，这些结构只有数据缺少方法，我们在交给领域层处理的时候，希望将其转换成methodful的，这时候StructWrapper可以帮到你。
 
 ~~~cpp
 struct PlainMsg
@@ -1173,7 +1175,7 @@ STRUCT_WRAPPER(DomainEvent, PlainMsg)
 };
 ~~~
 
-上面的代码中，用`STRUCT_WRAPPER`对`PlainMsg`进行了封装，创建了新的类型`DomainEvent`，在`DomainEvent`类里面可以为原来的结构体增加更多有意义的行为。`DomainEvent`里面有个默认的方法`by`可以将已有的`PlainMsg`的对象实例转化成`DomainEvent`的对象实例。这样就可以使用添加的方法了。当然在`DomainEvent`的对象上还可以像直接使用`PlainMsg`的对象一样，直接访问其成员字段。
+上面的代码中，用`STRUCT_WRAPPER`对`PlainMsg`进行了封装，创建了新的类型`DomainEvent`，在`DomainEvent`类里面可以为原来的结构体增加更多有意义的行为。`DomainEvent`里面有个默认的方法`by`可以将已有的`PlainMsg`的对象实例转化成`DomainEvent`的对象实例。这样就可以使用添加的方法了。当然在`DomainEvent`的对象上还可以像直接使用`PlainMsg`一样，直接访问其成员字段。
 
 ~~~cpp
 TEST(...)
@@ -1189,7 +1191,7 @@ TEST(...)
 
 #### Maybe
 
-Maybe模板类用于将另外一个类型进行封装，将其扩展成为一个支持更新、校验操作的新类型。如下：
+Maybe类模板用于将另外一个类型进行封装，将其扩展成为一个支持更新、校验操作的新类型。如下：
 
 ~~~cpp
 Maybe<int> x;
@@ -1202,13 +1204,13 @@ ASSERT_TRUE(x.isPresent());
 ASSERT_EQ(5, *x);
 ~~~
 
-如上当用Maybe封装后，新的类型支持update和isPresent操作。如果执行过update操作，在isPresent为真，否则为假。对Maybe的其他用法和使用被封装类型的指针一样，但是需要注意两点：
+如上当用Maybe封装后，新的类型支持update和isPresent操作。如果执行过update操作，则isPresent为真，否则为假。除了增加上面的接口外，Maybe的其它用法和使用被封装类型的指针一样，但是需要注意两点：
 - Maybe封装过后，内存结构和原有类型不同，不能做内存布局上的任何假设；
 - Maybe会调用被封装类型的赋值操作运算符`operator=`，如果默认的不能满足，请自定义被封装类型的赋值操作运算。
 
 #### TransData
 
-TransData模板类用于对类型进行扩展，让其支持事务内存特征，可以整体提交和回滚。TransData里面定义了其封装类的两个实例，一个作为生效区，另一个为备份区。有一个生效标记位指向的对象实例即为生效区。新的对象被更新进来的时候，会先写在备份区，当确认提交后，生效标记位指向备份区，原来的失效实例区变为备份区。TransData提供了很多接口，用于修改当前的状态。具体查看“ccinfra/mem/TransData.h”文件，里面详细描述了TransData具备的状态和支持的事件。可以像使用被封装类型的指针一样，调用TransData访问被封装类，这时TransData默认调用的是生效区对应的实例。TransData需要被封装类`T`具有如下接口
+TransData模板类用于对类型进行扩展，让其支持事务内存特征：可以对对象状态进行整体提交和回滚。TransData里面定义了被封装类的两个对象实例，一个作为生效区，另一个为备份区。由一个生效标记位始终指向生效区。新的对象被更新进来的时候，会先写在备份区，当确认提交后，该备份区升级位生效区，原来的失效实例区变为备份区。TransData提供了很多接口，具体查看“ccinfra/mem/TransData.h”文件，里面详细描述了TransData具备的状态和支持的事件。可以像使用被封装类型的指针一样，调用TransData访问被封装类，这时TransData默认调用的是生效区对应的实例。最后TransData需要被封装类`T`具有如下接口
 
 -  `T& operator=(const T& rhs)`
 -  `bool operator==(const T& rhs) const`
@@ -1274,17 +1276,17 @@ TEST(...)
 }
 ~~~
 
-此外，ccinfra提供了PlainTransData，可以免去对C++内置的原生类型，以及plain struct类型添加上面所提的接口，直接可以封装使用：`PlainTransData<int> data`。
+此外，ccinfra提供了PlainTransData，可以免去对C++内置的原生类型，以及plain struct类型添加上面所提的接口，直接可以封装使用。例如：`PlainTransData<int> data`。
 
 TransData提供的功能非常丰富，具体可以查看TransData的源码以及测试文件。
 
 ### Ctnr
 
-Ctnr组件包含了四个数据结构，一个RingNumber和三个容器Array、List和HashMap。Ctnr的容器类和STL中同功能容器的主要区别在于其内存结构的差异。Ctnr的容器内存结构布局和C比较类似，更加方便静态内存管理的需求。
+Ctnr组件包含了四个数据结构：一个RingNumber和三个容器模板类。Ctnr的容器和STL中同功能容器的主要区别主要在其内存结构的差异。Ctnr的容器内存结构布局和C比较类似，更加方便静态内存管理的需求。
 
 #### Array
 
-如果你需要一个动态数组，那么STL库的std::vector可以满足你，如果你需要一个静态数组，C\++11的STL库中的std::array也可以满足你。这里ccinfra中的Array模板类和std::array功能类似，都是静态模板类，区别在于std::array要求数组元素的对象类型必须存在无参构造函数，但是Array类支持以元素类的有参构造函数初始化数组元素。这里Array组件需要C\++11的支持，使用该组件请确保你的编译器版本以及编译参数支持C\++11。
+如果你需要一个动态数组，那么STL库的std::vector可以满足你，如果你需要一个静态数组，C\++11的STL库中的std::array也可以满足你。这里ccinfra中的Array模板类和std::array功能类似，都是静态模板类，区别在于std::array要求数组元素的对象类型必须存在无参构造函数，但是Array类支持以元素类的有参构造函数初始化数组元素。这里Array组件需要C\++11的支持，使用该组件请确保你的编译器版本支持C\++11，并且编译参数开启了C\++11。
 
 ~~~cpp
 struct Object
@@ -1468,7 +1470,7 @@ ccinfra中的List是一个双向链表，某一类型T只有继承了ListElem<T>
 
 用上节介绍的List组件，可以很方便的封装出Stack，Queue等其它数据结构。由于map的实现一般相对复杂，所以ccinfra封装了一个HashMap以方便大家的使用。
 
-HashMap将{Key, Value}组在一片连续的静态内存上进行分配，这块内存内置在HashMap对象实例中，生命周期和HashMap的对象实例一致。使用HashMap必须指定该HashMap的最大容量，生成的HashMap实例会按照容量直接占有对应的内存，该最大容量后续不能再修改，如此实现只为将所有内存内聚在一起，简化对内存有静态管理需求的开发场景。
+HashMap将{Key, Value}组在一片连续的静态内存上进行分配，这块内存内置在HashMap对象实例中，生命周期和HashMap的对象实例一致。使用HashMap必须指定该HashMap的最大容量，生成的HashMap实例会按照容量直接占据对应的内存，该最大容量后续不能再修改，如此实现只为将所有内存内聚在一起，简化对内存有静态管理需求的开发场景。
 
 ~~~cpp
 // ccinfra/ctnr/map/HashMap.h
@@ -1486,7 +1488,7 @@ struct HashMap
 
 从上面HashMap的定义可以看到，它是一个模板类，使用的时候需要依次传入 key和value的类型，容量以及哈希空间大小，还有对于key的哈希函数以及比较函数。
 
-哈希空间大小指哈希函数返回值的空间范围，默认和哈希表的容量相等。如果在该空间上出现了冲突，HashMap会采用在该hash值后面建立链表，将所有对于该hash值冲突的节点链接起来。
+哈希空间大小指哈希函数返回值的空间范围，默认和哈希表的容量相等。如果在该空间上出现了冲突，HashMap会采用在该hash值后面建立链表，将所有和该hash值冲突的节点链接起来。
 
 HashFn和EqualFn已经实现了基本类型的哈希函数，如果这些默认实现不能满足你的要求，可以自定义新的实现然后将其作为模板参数传入HashMap。对于自定义类型，可以继续扩充HashFn和EqualFn的模板特化版本。
 
@@ -1517,7 +1519,7 @@ private:
 
 struct Value
 {
-    Value() : value(__null_ptr__){}
+    Value() : value(__null_ptr){}
     Value(const char* v) : value(v)
     {
     }
@@ -1554,7 +1556,7 @@ TEST(...)
 
     ASSERT_EQ(Value("four"), map[Key(1, 3)]);
     ASSERT_EQ(Value("five"), *map.get(Key(2, 3)));
-    ASSERT_EQ(__null_ptr__,  map.get(Key(2, 4)));
+    ASSERT_EQ(__null_ptr,  map.get(Key(2, 4)));
 }
 ~~~
 
@@ -1562,7 +1564,7 @@ TEST(...)
 
 #### RingNumber
 
-RingNumber是一个循环数模板类。所谓循环数即一个从在[0, max)范围内不断循环的正整数。例如时钟的小时，分钟和秒，以及月和日等等，都是循环数。
+RingNumber是一个循环数模板类。所谓循环数即一个从在[0, max)范围内不断循环的正整数。例如时钟的小时，分钟和秒，以及月、日、星期等等，都是循环数。
 
 ~~~cpp
 RingNumber<U8, 10> r1(4);
@@ -1658,11 +1660,11 @@ struct ThreadData
 }
 ~~~
 
-ThreadData模板类的第一个参数T指明具体封装的数据类型，第二个参数THREAD_INFO时需要使用方自行提供的一个静态类。THREAD_INFO应该满足如下特征：
+ThreadData模板类的第一个参数T指明具体封装的数据类型，第二个参数THREAD_INFO是需要使用方自行提供的一个静态类。THREAD_INFO应该满足如下特征：
 - 提供一个类内的public静态常量MAX_THREAD_NUM，指明最大支持的线程数。
 - 提供一个public静态方法`unsigned int getCurrentId()`,能够获得当前的调度线程id。注意id的范围是[0, MAX_THREAD_NUM)。
 
-下面是测试用例中的例子：
+下面是ThreadData的测试用例（ccinfra/test/TestThreadData.cpp）中的例子：
 
 ~~~cpp
 struct ThreadInfoStub
@@ -1699,7 +1701,7 @@ TEST(...)
 }
 ~~~
 
-可以看到，ThreadData的定义的变量就如果使用其指针一样，但是实际操作的内存会根据当前实际的thread id操作不同的内存区域。
+可以看到，用ThreadData定义的变量就如果使用其指针一样，但是实际操作的内存会根据当前实际的thread id操作不同的内存区域。
 
 ### Gof
 
@@ -1722,11 +1724,11 @@ TEST(...)
 }
 ~~~
 
-注意这里提供的Singleton不提供并发安全，其次Singleton的子类任然可以突破Singleton的限制，通过构造函数被构造多个实例。Singleton只是简单的单例模式的封装，更复杂机制的Singleton可以参考[boost](http://www.boost.org/)的实现。
+注意这里提供的Singleton不提供并发安全，另外Singleton的子类也可以突破Singleton的限制，通过构造函数被构造多个实例。Singleton只是简单的单例模式的封装，更复杂机制的Singleton可以参考[boost](http://www.boost.org/)的实现。
 
 #### State
 
-Gof的State模式用于解决一个类的接口在不同状态下行为不同的问题，通过状态模式，可以让类对于这种根据状态值来决定行为的实现更有扩展性。具体做法是给每个状态值建立一个状态类，它们有一个共同的抽象父类，各个具体状态类只专注于在自己状态下的行为差异部分的实现。宿主类中持有状态抽象类的指针，宿主类通过让抽象接口指针指向不同的状态类的实现，就完成了状态跃迁。一般来说状态类比宿主类更加了解在什么条件下宿主类的应该跃迁到哪个目标状态，所以一般状态类会持有宿主类的引用，在状态类内部完成对宿主类目标状态的修改。由于状态模式用到了多态，每个状态子类需要动态创建释放，所以引入了动态内存管理的开销。这里，对于需要简化内存管理的场合，我们提供了一组状态模式的辅助工具，以便更简单的使用状态模式，不会引入动态内存管理的问题。
+Gof的State模式用于解决一个类的接口在不同状态下行为不同的问题，通过状态模式，可以让类对于这种根据状态值来决定行为的实现更有扩展性。具体做法是给每个状态值建立一个状态类，它们有一个共同的抽象父类，各个具体状态类只专注于在自己状态下的行为差异部分的实现。宿主类中持有状态抽象类的指针，宿主类通过让抽象接口指针指向不同的状态类的实现，就完成了状态跃迁。一般来说状态类比宿主类更加了解在什么条件下宿主类应该跃迁到哪个目标状态，所以一般状态类会持有宿主类的引用，在状态类内部完成对宿主类目标状态的修改。由于状态模式用到了多态，每个状态子类需要动态创建释放，因此会引入了动态内存管理的开销。这里，对于需要简化内存管理的场合，我们提供了一组状态模式的辅助工具，可以更简单地实现状态模式，同时不会引入动态内存管理的问题。
 
 下例中假设有一个唱歌机器人，它在有电的时候开启后可以唱歌，没电后会发出bibi的响声，可以给它充电让其继续工作。具体如下：
 - 具有三种状态：closed,  opened,  wait_charged；
@@ -1889,7 +1891,7 @@ struct Robot
 
     Robot(Audio& audio)
     : audio(audio)
-    , state(__null_ptr__)
+    , state(__null_ptr)
     , leftSingTimes(0)
     {
         __GOTO_STATE(Closed);
@@ -2080,7 +2082,7 @@ ccinfra的Log机制提供了如下几个级别的打印：
 - ERR_LOG：  错误信息打印；
 - FATAL_LOG：致命信息打印，级别最高；
 
-具体用法和printf类似，参数是格式化字符串。差异是采用log的打印会加上文件名和行号，以及不同级别会有不同的打印颜色。
+具体用法和`printf`类似，参数是格式化字符串。差异是log的打印会加上文件名和行号，以及不同级别会有不同的打印颜色。
 
 ~~~cpp
 Status result = doSomething();
@@ -2097,9 +2099,9 @@ Utils包含一些辅助的工具，例如lambda的参数萃取类模板、repeat
 
 ## Finally
 
-ccinfra是我们在用C\++开发和重构大型电信级设备时积累下来的基础库。由于电信级设备一般属于在高可靠的专有硬件上的嵌入式开发，对性能，内存等都有特殊要求。另外由于电信业务的复杂性多变性，又要求软件能够对业务进行很好的抽象以提高灵活性和表达力。
+ccinfra是我们在用C\++开发和重构大型电信级设备时积累下来的基础库。由于电信级设备开发属于在高可靠的专有硬件上的嵌入式开发，对性能、内存等都有特殊要求。另外由于电信业务的复杂性多变性，又要求软件能够对业务进行很好的抽象以提高灵活性和表达力。
 
-基于上述条件，C\++基本成了最好的选择！但是由于C\++自身过于灵活，所以必须要有一套最佳实践来约束，使得大家的代码能够一致化；另外用C\++来建模，需要有一套建模技术和工具的支持；最后为了让建模能够容易落地，我们需要各种常用的内存管理、数据结构、算发、设计模式等等的嵌入式版本的替代实现。以上其实就是ccinfra在做的事情。
+基于上述条件，C\++基本成了最好的选择！但是由于C\++自身过于灵活，所以必须要有一套最佳实践来约束，使得大家的代码能够一致化；另外用C\++来建模，需要有一套建模技术和工具的支持；最后为了让建模能够容易落地，我们需要各种常用的内存管理、数据结构、算发、设计模式等的嵌入式版本的替代实现。以上其实就是ccinfra在做的事情。
 
 ccinfra还在不断的完善中，如果发现错误或者有更好的建议，欢迎联系作者！
 

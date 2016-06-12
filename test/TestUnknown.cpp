@@ -102,13 +102,13 @@ TEST(UnknownTest, should_cast_to_the_exist_interface)
     dci::Unknown * unknown = &human;
 
     Worker* worker = dci::unknown_cast<Worker>(unknown);
-    ASSERT_TRUE(__notnull__(worker));
+    ASSERT_TRUE(__NOT_NULL(worker));
 
     worker->produce();
     ASSERT_EQ(1, worker->getProduceNum());
 
     SleepInfo * info = dci::unknown_cast<SleepInfo>(unknown);
-    ASSERT_TRUE(__notnull__(info));
+    ASSERT_TRUE(__NOT_NULL(info));
 
     info->sleep();
     ASSERT_TRUE(info->isSleeping());
@@ -123,8 +123,8 @@ TEST(UnknownTest, should_return_null_when_cast_to_unexist_interface)
     dci::Unknown * unknown = &robot;
 
     Worker* worker = dci::unknown_cast<Worker>(unknown);
-    ASSERT_TRUE(__notnull__(worker));
+    ASSERT_TRUE(__NOT_NULL(worker));
 
     SleepInfo * info = dci::unknown_cast<SleepInfo>(unknown);
-    ASSERT_TRUE(__null__(info));
+    ASSERT_TRUE(__IS_NULL(info));
 }

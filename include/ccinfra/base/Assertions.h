@@ -202,7 +202,7 @@ do {                                                 \
 
 #define __CCINFRA_ASSERT_VALID_PTR(ptr, action)      \
 do {                                                 \
-    if ((ptr) == __null_ptr__)                       \
+    if ((ptr) == __null_ptr)                       \
     {                                                \
         __NIL_PTR(ptr);                              \
         action;                                      \
@@ -228,7 +228,7 @@ do {                                                 \
   __CCINFRA_ASSERT_VALID_PTR(ptr, __NIL_ACTION)
 
 #define __CCINFRA_ASSERT_VALID_PTR_FINALLY(ptr, action, returnAction)  \
-    if ((ptr) == __null_ptr__)                      \
+    if ((ptr) == __null_ptr)                      \
     {                                               \
         __NIL_PTR(ptr);                             \
         action;                                     \

@@ -40,7 +40,7 @@ namespace
 
         char errInfo[BUFF_SIZE];
 
-        if (fmt != __null_ptr__)
+        if (fmt != __null_ptr)
         {
             vsnprintf(errInfo, BUFF_SIZE, fmt, paramList);
         }

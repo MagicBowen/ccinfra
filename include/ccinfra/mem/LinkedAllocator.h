@@ -43,7 +43,7 @@ struct LinkedAllocator
 
     T* alloc()
     {
-        if(isFreeListEmpty())    return __null_ptr__;
+        if(isFreeListEmpty())    return __null_ptr;
 
         LinkNode* freeNode = freeList.popFront();
         busyList.pushBack(*freeNode);

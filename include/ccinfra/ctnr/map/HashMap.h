@@ -197,9 +197,9 @@ struct HashMap
     const VALUE* get(const KEY& key) const
     {
         Node* node = find(key);
-        if(__null__(node))
+        if(__IS_NULL(node))
         {
-            return __null_ptr__;
+            return __null_ptr;
         }
 
         return &(node->value);
@@ -209,20 +209,20 @@ struct HashMap
     {
         const VALUE* v = get(key);
 
-        if(__notnull__(v))
+        if(__NOT_NULL(v))
         {
             *const_cast<VALUE*>(v) = value;
             return CCINFRA_SUCCESS;
         }
 
-        return __null__(insert(key ,value)) ? CCINFRA_FAILURE : CCINFRA_SUCCESS;
+        return __IS_NULL(insert(key ,value)) ? CCINFRA_FAILURE : CCINFRA_SUCCESS;
     }
 
     VALUE& operator[](const KEY& key)
     {
         const VALUE* v = get(key);
 
-        if(__notnull__(v))
+        if(__NOT_NULL(v))
         {
             return *const_cast<VALUE*>(v);
         }
@@ -234,7 +234,7 @@ struct HashMap
     {
         Node* node = find(key);
 
-        if(__notnull__(node))
+        if(__NOT_NULL(node))
         {
             buckets[getIndex(key)].remove(*node);
             allocator.free(node);
@@ -288,7 +288,7 @@ private:
     Node* insert(const KEY& key, const VALUE& value)
     {
         void* p = allocator.alloc();
-        if(__null__(p)) return __null_ptr__;
+        if(__IS_NULL(p)) return __null_ptr;
 
         Node* node = new (p) Node(key, value);
         buckets[getIndex(key)].pushBack(*node);
@@ -301,9 +301,9 @@ private:
     Node* find(const KEY& key) const
     {
         Node* node = buckets[getIndex(key)].search(NodePred(key));
-        if(__null__(node))
+        if(__IS_NULL(node))
         {
-            return __null_ptr__;
+            return __null_ptr;
         }
 
         return node;

@@ -72,25 +72,25 @@ namespace
 
     struct Object
     {
-        Object() : member(__null_ptr__)
+        Object() : member(__null_ptr)
         {
         }
 
         void updateId(U32 id)
         {
-            if(__notnull__(member)) return;
+            if(__NOT_NULL(member)) return;
             member = new (memory.alloc()) Member(id);
         }
 
         U32 getId() const
         {
-            if(__null__(member)) return INVALID_ID;
+            if(__IS_NULL(member)) return INVALID_ID;
             return member->getId();
         }
 
         ~Object()
         {
-            if(__notnull__(member)) memory.destroy();
+            if(__NOT_NULL(member)) memory.destroy();
         }
 
         enum
@@ -224,7 +224,7 @@ namespace
     struct WorkerObject : Worker
     {
         WorkerObject(WorkerType type)
-        : energy(__null_ptr__)
+        : energy(__null_ptr)
         {
             if(type == HUMAN)
             {

@@ -34,7 +34,7 @@ TEST(ObjectAllocatorTest, should_have_correct_free_slot_when_init)
 TEST(ObjectAllocatorTest, should_alloc_OK_when_has_free_slot)
 {
     Foo* foo = new Foo(3);
-    ASSERT_TRUE(__notnull__(foo));
+    ASSERT_TRUE(__NOT_NULL(foo));
     ASSERT_EQ(MAX_SLOT_NUM - 1, FooAllocator.getFreeSlotNum());
 
     delete foo;
@@ -43,7 +43,7 @@ TEST(ObjectAllocatorTest, should_alloc_OK_when_has_free_slot)
 
 TEST(ObjectAllocatorTest, should_not_alloc_when_has_no_free_slot)
 {
-    Foo* foos[MAX_SLOT_NUM] = {__null_ptr__};
+    Foo* foos[MAX_SLOT_NUM] = {__null_ptr};
 
     FOR_EACH_0(i, MAX_SLOT_NUM)
     {
@@ -51,15 +51,15 @@ TEST(ObjectAllocatorTest, should_not_alloc_when_has_no_free_slot)
     }
 
     Foo* foo = new Foo(0);
-    ASSERT_TRUE(__null__(foo));
+    ASSERT_TRUE(__IS_NULL(foo));
 
     FOR_EACH_0(i, MAX_SLOT_NUM)
     {
-        ASSERT_TRUE(__notnull__(foos[i]));
+        ASSERT_TRUE(__NOT_NULL(foos[i]));
         delete foos[i];
     }
 
     foo = new Foo(0);
-    ASSERT_TRUE(__notnull__(foo));
+    ASSERT_TRUE(__NOT_NULL(foo));
     delete foo;
 }

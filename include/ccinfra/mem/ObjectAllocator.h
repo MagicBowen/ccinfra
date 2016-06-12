@@ -9,8 +9,8 @@ template<typename T, U16 MAX_NUM>
 struct ObjectAllocator
 {
     ObjectAllocator() 
-        : freeHead(__null_ptr__)
-        , freeTail(__null_ptr__)
+        : freeHead(__null_ptr)
+        , freeTail(__null_ptr)
         , freeCounter(0)
     {
         for(U16 i = 0; i < MAX_NUM; i++)
@@ -31,21 +31,21 @@ struct ObjectAllocator
 
     bool hasFreeSlot() const
     {
-        return freeHead != __null_ptr__;
+        return freeHead != __null_ptr;
     }
 
     void* alloc()
     {
         if(!hasFreeSlot())
         {
-            return __null_ptr__;
+            return __null_ptr;
         }
         return doAlloc();
     }
 
     void free(void* p)
     {
-        if(p == __null_ptr__) return;
+        if(p == __null_ptr) return;
         //if (isFree(p)) return; //important!, protect case :free a entity which has been freed
 
         CCINFRA_ASSERT_TRUE_VOID(within(p));
@@ -74,9 +74,9 @@ private:
 
         freeHead = freeHead->next;
 
-        if(freeHead == __null_ptr__)
+        if(freeHead == __null_ptr)
         {
-            freeTail = __null_ptr__;
+            freeTail = __null_ptr;
         }
 
         freeCounter--;
@@ -97,14 +97,14 @@ private:
         }
 
         freeTail = &entity;
-        freeTail->next = __null_ptr__;
+        freeTail->next = __null_ptr;
         freeCounter++;
     }
 
     bool isFree(const void* p) const
     {
         Entity* _header = freeHead;
-        while (_header != __null_ptr__)
+        while (_header != __null_ptr)
         {
             if(_header == p) return true;
             _header = _header->next;

@@ -191,7 +191,7 @@ namespace
 
         Robot(Audio& audio)
         : audio(audio)
-        , state(__null_ptr__)
+        , state(__null_ptr)
         , leftSingTimes(0)
         {
             __GOTO_STATE(Closed);

@@ -30,12 +30,12 @@ TEST_F(LinkedAllocatorTest, should_alloc_ok_when_has_free_slots)
     for(int i = 0; i < MAX_ALLOC_NUM; i++)
     {
         const int* x = allocator.alloc();
-        ASSERT_TRUE(__notnull__(x));
+        ASSERT_TRUE(__NOT_NULL(x));
         ASSERT_EQ(i, *x);
     }
 
     const int* x = allocator.alloc();
-    ASSERT_TRUE(__null__(x));
+    ASSERT_TRUE(__IS_NULL(x));
 }
 
 TEST_F(LinkedAllocatorTest, should_alloc_ok_when_free_slots)
@@ -46,14 +46,14 @@ TEST_F(LinkedAllocatorTest, should_alloc_ok_when_free_slots)
     }
 
     const int* x = allocator.alloc();
-    ASSERT_TRUE(__notnull__(x));
+    ASSERT_TRUE(__NOT_NULL(x));
 
     const int *y = allocator.alloc();
-    ASSERT_TRUE(__null__(y));
+    ASSERT_TRUE(__IS_NULL(y));
 
     ASSERT_TRUE(CCINFRA_SUCCESS == allocator.dealloc(*x));
 
     y = allocator.alloc();
-    ASSERT_TRUE(__notnull__(y));
+    ASSERT_TRUE(__NOT_NULL(y));
     ASSERT_EQ(2, *y);
 }

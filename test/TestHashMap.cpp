@@ -35,7 +35,7 @@ TEST(HashMapTest, should_erase_the_map_correctly_when_only_on_node_in_map)
 
     ASSERT_TRUE(map.empty());
     ASSERT_EQ(0, map.size());
-    ASSERT_EQ(__null_ptr__, map.get(1));
+    ASSERT_EQ(__null_ptr, map.get(1));
 }
 
 TEST(HashMapTest, should_erase_the_map_correctly_when_muti_node_in_map)
@@ -50,7 +50,7 @@ TEST(HashMapTest, should_erase_the_map_correctly_when_muti_node_in_map)
     ASSERT_FALSE(map.empty());
     ASSERT_EQ(1, map.size());
     ASSERT_EQ(2, *map.get(1));
-    ASSERT_EQ(__null_ptr__, map.get(2));
+    ASSERT_EQ(__null_ptr, map.get(2));
 }
 
 TEST(HashMapTest, should_clear_the_map_correctly)
@@ -64,7 +64,7 @@ TEST(HashMapTest, should_clear_the_map_correctly)
 
     ASSERT_TRUE(map.empty());
     ASSERT_EQ(0, map.size());
-    ASSERT_EQ(__null_ptr__, map.get(1));
+    ASSERT_EQ(__null_ptr, map.get(1));
 }
 
 TEST(HashMapTest, should_not_change_the_value_when_same_key_already_in)
@@ -269,7 +269,7 @@ namespace
 
     struct Value
     {
-        Value() : value(__null_ptr__){}
+        Value() : value(__null_ptr){}
         Value(const char* v) : value(v)
         {
         }
@@ -307,7 +307,7 @@ TEST(HashMapTest, should_work_with_user_defined_hash_and_equal_function)
 
     ASSERT_EQ(Value("four"), map[Key(1, 3)]);
     ASSERT_EQ(Value("five"), *map.get(Key(2, 3)));
-    ASSERT_EQ(__null_ptr__,  map.get(Key(2, 4)));
+    ASSERT_EQ(__null_ptr,  map.get(Key(2, 4)));
 }
 
 TEST(HashMapTest, should_store_the_pointer_to_value)
@@ -322,7 +322,7 @@ TEST(HashMapTest, should_store_the_pointer_to_value)
 
     ASSERT_EQ(&v1, map[Key(0, 1)]);
     ASSERT_EQ(&v2, *map.get(Key(1, 1)));
-    ASSERT_EQ(__null_ptr__,  map.get(Key(2, 4)));
+    ASSERT_EQ(__null_ptr,  map.get(Key(2, 4)));
 }
 
 
