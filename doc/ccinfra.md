@@ -23,7 +23,20 @@ cmake ..
 make
 ~~~
 
-以liux系统为例，如果编译通过，会产生 “ccinfra/build/src/libccinfra.a”， 这是需要依赖的ccinfra静态库。最好将ccinfra的头文件和libccinfra.a拷贝到一个公共的地方，让所有项目都可以方便的依赖。例如在“/home/shared"下创建ccinfra目录，将ccinfra源码下的incude目录拷贝到ccinfra目录下，然后在”home/shared/ccinfra“目录下创建lib目录，将libccinfra.a拷贝进去。最后，目录结构如下： ”/home/shared/ccinfra/include/ccinfra“， ”/home/shared/ccinfra/lib/libccinfra.a“。
+以liux系统为例，如果编译通过，会产生 “ccinfra/build/src/libccinfra.a”， 这是需要依赖的ccinfra静态库。最好将ccinfra的头文件和libccinfra.a拷贝到一个公共的地方，让所有项目都可以方便的依赖。例如在“/home/shared"下创建ccinfra目录，将ccinfra源码下的incude目录拷贝到ccinfra目录下，然后在”home/shared/ccinfra“目录下创建lib目录，将libccinfra.a拷贝进去。最后，目录结构如下：
+
+~~~bash
+/home/shared/ccinfra
+                ├── include
+                │    └── ccinfra
+                │          │── base
+                │          │── dci
+                │          │── ctnr
+                │          └── ...
+                └── lib
+                     └── libccinfra.a
+~~~
+
 如果某项目需要依赖ccinfra，修改该项目的构建脚本，在头文件依赖中增加 ”/home/shared/ccinfra/include“， 在链接依赖中增加静态库目录 ”/home/shared/ccinfra/lib“， 并让其和ccinfra进行链接。
 
 ccinfra提供了自动安装，编译成功后在build目录下执行`sudo make install`，这样ccinfra的头文件和库，将会自动安装到当前系统默认的安装路径下，对于linux可能会是 “/usr/local/include” 以及 “/usr/local/lib” 目录。
@@ -31,7 +44,16 @@ ccinfra提供了自动安装，编译成功后在build目录下执行`sudo make 
 ccinfra中的一些组件使用了C\++11特性（每个组件的介绍中会专门说明），如果你的项目使用了这些组件，请确保你的编译器支持C\++11并且编译选项开启了c\++11。最后，使用ccinfra的sched组件还需要在你的链接库中增加pthread。
 
 可以尝试运行ccinfra的测试，看看ccinfra在你的系统下是否可以存在错误。
-ccinfra的测试需要依赖[gtest](https://github.com/google/googletest)，下载gtest的源码，编译出gtest的库后，手动进行gtest的安装（最新的gtest不支持自动安装）。选择一个目录，例如“/home/shared”下，创建一个gtest目录，将gtest源码下的include目录拷贝进去。在“/home/shared/gtest”目录下新建lib目录，将编译好的gtest库拷贝进去。最后目录结构如下：”/home/shared/gtest/include/gtest"，"/home/shared/gtest/lib/libgtest.a"。
+ccinfra的测试需要依赖[gtest](https://github.com/google/googletest)，下载gtest的源码，编译出gtest的库后，手动进行gtest的安装（最新的gtest不支持自动安装）。选择一个目录，例如“/home/shared”下，创建一个gtest目录，将gtest源码下的include目录拷贝进去。在“/home/shared/gtest”目录下新建lib目录，将编译好的gtest库拷贝进去。最后目录结构如下：
+
+~~~bash
+/home/shared/gtest
+                ├── include
+                │    └── gtest
+                │          └── ...
+                └── lib
+                     └── libgtest.a
+~~~
 
 安装好gtest后，在ccinfra的源码目录下执行：
 
