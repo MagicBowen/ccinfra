@@ -16,7 +16,7 @@ namespace
 FIXTURE(StructObjectTest)
 {
 
-	TEST("should_be_zero_when_init")
+	TEST("should be zero when init")
 	{
 		StructObject<Msg> msg;
 		ASSERT_THAT(msg.id, eq(0));
@@ -27,7 +27,7 @@ FIXTURE(StructObjectTest)
 		ASSERT_THAT(msg.transNum, eq(0xffffffff));
 	}
 
-	TEST("should_be_used_as_pointer")
+	TEST("should be used as pointer")
 	{
 		StructObject<Msg> msg;
 		ASSERT_THAT(msg->id, eq(0));

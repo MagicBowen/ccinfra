@@ -25,7 +25,7 @@ namespace
 
 FIXTURE(ListTest)
 {
-	TEST("should_be_empty_when_init")
+	TEST("should be empty when init")
 	{
 		ASSERT_THAT(__IS_NULL(elems.getFirst()), be_true());
 	    ASSERT_THAT(__IS_NULL(elems.getLast()), be_true());
@@ -33,7 +33,7 @@ FIXTURE(ListTest)
 	    ASSERT_THAT(elems.size(), eq(0));
 	}
 
-	TEST("should_be_get_elem_when_list_is_not_empty")
+	TEST("should be get elem when list is not empty")
 	{
 	    Foo elem(1);
 
@@ -49,7 +49,7 @@ FIXTURE(ListTest)
 	    ASSERT_THAT(elems.isEmpty(), be_true());
 	}
 
-	TEST("should_travel_the_list")
+	TEST("should travel the list")
 	{
 	    Foo elem1(1), elem2(2), elem3(3);
 
@@ -64,7 +64,7 @@ FIXTURE(ListTest)
 	    }
 	}
 
-	TEST("should_point_to_the_correct_addr_when_get_next")
+	TEST("should point to the correct addr when get next")
 	{
 	    Foo elem(1);
 	    elems.pushBack(elem);

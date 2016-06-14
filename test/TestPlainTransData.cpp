@@ -41,34 +41,34 @@ FIXTURE(PlainTransDataTest)
 
 	Foo foo;
 
-	TEST("an_uninitialized_trans_data_should_be_invalid")
+	TEST("an uninitialized trans data should be invalid")
 	{
 		ASSERT_THAT(intData.isPresent(), be_false());
 	}
 
-	TEST("an_uninitialized_trans_data_should_be_null_if_accessed_by_pointer")
+	TEST("an uninitialized trans data should be null if accessed by pointer")
 	{
 		ASSERT_THAT(0 == intData.operator->(), be_true());
 	}
 
-	TEST("an_uninitialized_trans_data_should_be_null_if_accessed_by_a_constant_pointer")
+	TEST("an uninitialized trans data should be null if accessed by a constant pointer")
 	{
 		ASSERT_THAT(0 == getConstPointer(), be_true());
 	}
 
-	TEST("once_set_value_it_should_become_valid")
+	TEST("once set value it should become valid")
 	{
 		intData.update(10);
 		ASSERT_THAT(intData.isPresent(), be_true());
 	}
 
-	TEST("once_set_value_it_should_be_able_to_be_accessed_by_reference")
+	TEST("once set value it should be able to be accessed by reference")
 	{
 		intData.update(10);
 		ASSERT_THAT(10 == getConstReference(), be_true());
 	}
 
-	TEST("if_revert_a_updated_value_should_become_invalid")
+	TEST("if revert a updated value should become invalid")
 	{
 		intData.update(10);
 		intData.revert();
@@ -76,7 +76,7 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(intData.isPresent(), be_false());
 	}
 
-	TEST("before_a_updated_value_is_confirmed_if_it_reverted_should_become_invalid_again")
+	TEST("before a updated value is confirmed if it reverted should become invalid again")
 	{
 		intData.update(10);
 		intData.update(20);
@@ -85,7 +85,7 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(intData.isPresent(), be_false());
 	}
 
-	TEST("once_a_updated_value_is_confirmed_it_should_will_become_valid")
+	TEST("once a updated value is confirmed it should will become valid")
 	{
 		intData.update(10);
 		intData.confirm();
@@ -93,7 +93,7 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(intData.isPresent(), be_true());
 	}
 
-	TEST("a_confirmed_value_can_not_be_reverted")
+	TEST("a confirmed value can not be reverted")
 	{
 		intData.update(10);
 		intData.confirm();
@@ -103,7 +103,7 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(10 == (*intData), be_true());
 	}
 
-	TEST("a_confirmed_value_can_be_updated_again")
+	TEST("a confirmed value can be updated again")
 	{
 		intData.update(10);
 		intData.confirm();
@@ -113,7 +113,7 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(20 == (*intData), be_true());
 	}
 
-	TEST("if_a_confirmed_value_is_updated_again_then_reverting_should_be_able_to_rollback")
+	TEST("if a confirmed value is updated again then reverting should be able to rollback")
 	{
 		intData.update(10);
 		intData.confirm();
@@ -124,7 +124,7 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(10 == (*intData), be_true());
 	}
 
-	TEST("once_a_confirmed_value_is_reset_it_should_become_invalid")
+	TEST("once a confirmed value is reset it should become invalid")
 	{
 		intData.update(10);
 		intData.confirm();
@@ -133,14 +133,14 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(intData.isPresent(), be_false());
 	}
 
-	TEST("an_unstable_data_should_not_be_able_to_be_modified")
+	TEST("an unstable data should not be able to be modified")
 	{
 		intData.update(10);
 
 		ASSERT_THAT(intData.modify(), ne(CCINFRA_SUCCESS));
 	}
 
-	TEST("a_stable_data_should_be_able_to_be_modified")
+	TEST("a stable data should be able to be modified")
 	{
 		intData.update(10);
 		intData.confirm();
@@ -148,13 +148,13 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(intData.modify(), eq(CCINFRA_SUCCESS));
 	}
 
-	TEST("after_clone_for_modification_it_is_value_keep_unchanged")
+	TEST("after clone for modification it is value keep unchanged")
 	{
 		enableModifiable();
 		ASSERT_THAT(*intData, eq(10));
 	}
 
-	TEST("after_clone_for_modification_should_be_able_modify_actually")
+	TEST("after clone for modification should be able modify actually")
 	{
 		enableModifiable();
 		(*intData) = 20;
@@ -162,7 +162,7 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(*intData, eq(20));
 	}
 
-	TEST("after_modification_if_revert_should_roll_back")
+	TEST("after modification if revert should roll back")
 	{
 		enableModifiable();
 		(*intData) = 20;
@@ -171,18 +171,18 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(*intData, eq(10));
 	}
 
-	TEST("for_an_uninitialized_trans_data_its_old_value_should_be_invalid")
+	TEST("for an uninitialized trans data its old value should be invalid")
 	{
 		ASSERT_THAT(fooData.isOldPresent(), be_false());
 	}
 
-	TEST("for_an_initialized_trans_data_its_old_value_is_still_be_invalid")
+	TEST("for an initialized trans data its old value is still be invalid")
 	{
 		fooData.update(foo);
 		ASSERT_THAT(fooData.isOldPresent(), be_false());
 	}
 
-	TEST("for_an_initialized_PlainTransData_after_confirmation_its_old_value_is_still_be_invalid")
+	TEST("for an initialized PlainTransData after confirmation its old value is still be invalid")
 	{
 		fooData.update(foo);
 		fooData.confirm();
@@ -190,7 +190,7 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(fooData.isOldPresent(), be_false());
 	}
 
-	TEST("after_confirmation_if_update_again_its_old_value_should_be_valid")
+	TEST("after confirmation if update again its old value should be valid")
 	{
 		fooData.update(foo);
 		fooData.confirm();
@@ -203,7 +203,7 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(fooData.isOldPresent(), be_true());
 	}
 
-	TEST("after_confirmation_if_update_again_its_old_value_should_be_the_previous_one")
+	TEST("after confirmation if update again its old value should be the previous one")
 	{
 		fooData.update(foo);
 		fooData.confirm();
@@ -217,7 +217,7 @@ FIXTURE(PlainTransDataTest)
 		ASSERT_THAT(fooData.getOldValue().b, eq(20));
 	}
 
-	TEST("after_confirmation_if_update_again_its_new_value_should_be_the_new_one")
+	TEST("after confirmation if update again its new value should be the new one")
 	{
 		fooData.update(foo);
 		fooData.confirm();

@@ -5,7 +5,7 @@ USING_HAMCREST_NS
 
 FIXTURE(BitsTest)
 {
-	TEST("should_calc_the_correct_bit_mask_by_macro")
+	TEST("should calc the correct bit mask by macro")
 	{
 	    ASSERT_THAT(BIT_MASK(0), eq(0));
 	    ASSERT_THAT(BIT_MASK(1), eq(1));
@@ -19,7 +19,7 @@ FIXTURE(BitsTest)
 	    ASSERT_THAT(BIT_MASK(63), eq(0x7FFFFFFFFFFFFFFF));
 	}
 
-	TEST("should_calc_the_correct_bit_mask_by_template_function")
+	TEST("should calc the correct bit mask by template function")
 	{
 	    ASSERT_THAT(bit_mask<U8>(0), eq(0));
 	    ASSERT_THAT(bit_mask<U8>(1), eq(1));
@@ -33,7 +33,7 @@ FIXTURE(BitsTest)
 	    ASSERT_THAT(bit_mask<U64>(63), eq(0x7FFFFFFFFFFFFFFF));
 	}
 
-	TEST("should_get_the_bits_value_by_macro")
+	TEST("should get the bits value by macro")
 	{
 	    ASSERT_THAT(GET_BITS_VALUE(0xaa, 2, 2), eq(0x2));
 	    ASSERT_THAT(GET_BITS_VALUE(0xaa, 3, 2), eq(0x1));
@@ -42,7 +42,7 @@ FIXTURE(BitsTest)
 	    ASSERT_THAT(GET_BITS_VALUE(0xccaaaaaaaaaaaaaa, 60, 4), eq(0xc));
 	}
 
-	TEST("should_get_the_bits_value_by_template_function")
+	TEST("should get the bits value by template function")
 	{
 	    ASSERT_THAT(bit_value(0xaa, 2, 2), eq(0x2));
 	    ASSERT_THAT(bit_value(0xaa, 3, 2), eq(0x1));
@@ -52,13 +52,13 @@ FIXTURE(BitsTest)
 	    ASSERT_THAT(bit_value(0xccaaaaaaaaaaaaaa, 60, 4), eq(0xc));
 	}
 
-	TEST("should_get_the_given_bit_value_by_macro")
+	TEST("should get the given bit value by macro")
 	{
 		ASSERT_THAT(IS_BIT_ON(0xaa, 2), be_false());
 		ASSERT_THAT(IS_BIT_ON(0xccaaaaaaaaaaaaaa, 63), be_true());
 	}
 
-	TEST("should_get_the_given_bit_value_by_template_function")
+	TEST("should get the given bit value by template function")
 	{
 		ASSERT_THAT(is_bit_on(0xaa, 2), be_false());
 	    ASSERT_THAT(is_bit_on(0xccaaaaaaaaaaaaaa, 63), be_true());

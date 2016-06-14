@@ -5,7 +5,7 @@ USING_HAMCREST_NS
 
 FIXTURE(RingNumberTest)
 {
-	TEST("should_compare_equal_when_ring_number_init_equal")
+	TEST("should compare equal when ring number init equal")
 	{
 		RingNumber<U8, 10> r1(1);
 		RingNumber<U8, 10> r2(11);
@@ -13,7 +13,7 @@ FIXTURE(RingNumberTest)
 		ASSERT_THAT(r1 == r2, be_true());
 	}
 
-	TEST("should_compare_unequal_when_ring_number_init_unequal")
+	TEST("should compare unequal when ring number init unequal")
 	{
 		RingNumber<U8, 10> r1(2);
 		RingNumber<U8, 10> r2(11);
@@ -21,7 +21,7 @@ FIXTURE(RingNumberTest)
 		ASSERT_THAT(r1 == r2, be_false());
 	}
 
-	TEST("should_compare_equal_when_ring_number_add_to_equal")
+	TEST("should compare equal when ring number add to equal")
 	{
 		RingNumber<U8, 10> r1(2);
 		RingNumber<U8, 10> r2(11);
@@ -29,7 +29,7 @@ FIXTURE(RingNumberTest)
 		ASSERT_THAT(r1 == (++r2), be_true());
 	}
 
-	TEST("should_compare_equal_when_ring_number_move_to_equal")
+	TEST("should compare equal when ring number move to equal")
 	{
 		RingNumber<U8, 10> r1(4);
 		RingNumber<U8, 10> r2(11);

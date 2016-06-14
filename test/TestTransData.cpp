@@ -110,19 +110,19 @@ FIXTURE(TestInitTransData)
 {
     TransData<Object> data;
 
-    TEST("the_state_should_be_correct_for_an_uninitialized_trans_data")
+    TEST("the state should be correct for an uninitialized trans data")
     {
         assertInit();
     }
 
-    TEST("should_in_NEW_state_after_updating")
+    TEST("should in NEW state after updating")
     {
         data.update(Object(2));
 
         assertUpdated();
     }
 
-    TEST("should_in_NEW_state_after_force_updating")
+    TEST("should in NEW state after force updating")
     {
         data.forceUpdate();
         data.update(Object(2));
@@ -130,7 +130,7 @@ FIXTURE(TestInitTransData)
         assertUpdated();
     }
 
-    TEST("should_in_ACTIVE_state_after_updating_then_confirming")
+    TEST("should in ACTIVE state after updating then confirming")
     {
         data.update(Object(2));
         data.confirm();
@@ -146,7 +146,7 @@ FIXTURE(TestInitTransData)
         ASSERT_THAT(alloc_blocks, eq(1));
     }
 
-    TEST("should_return_to_INIT_after_updating_then_reverting")
+    TEST("should return to INIT after updating then reverting")
     {
         data.update(Object(2));
         data.revert();
@@ -154,28 +154,28 @@ FIXTURE(TestInitTransData)
         assertInit();
     }
 
-    TEST("touch_should_have_no_effect")
+    TEST("touch should have no effect")
     {
         data.touch();
 
         assertInit();
     }
 
-    TEST("release_should_have_no_effect")
+    TEST("release should have no effect")
     {
         data.release();
 
         assertInit();
     }
 
-    TEST("reset_should_have_no_effect")
+    TEST("reset should have no effect")
     {
         data.reset();
 
         assertInit();
     }
 
-    TEST("should_not_allow_to_modify")
+    TEST("should not allow to modify")
     {
         ASSERT_THAT(data.modify(), ne(CCINFRA_SUCCESS));
 
@@ -248,24 +248,24 @@ FIXTURE(TestActiveTransData)
         ASSERT_THAT(alloc_blocks, eq(2));
     }
 
-	TEST("after_reset_should_return_to_idle")
+	TEST("after reset should return to idle")
 	{
 		data.reset();
 		assertInit();
 	}
 
-	TEST("should_in_MODIFIED_state_after_updating")
+	TEST("should in MODIFIED state after updating")
 	{
 		update();
 	}
 
-	TEST("should_in_MODIFIED_state_after_force_updating")
+	TEST("should in MODIFIED state after force updating")
 	{
 		data.forceUpdate();
 		update();
 	}
 
-	TEST("should_in_ACTIVE_state_after_updating_and_confirming")
+	TEST("should in ACTIVE state after updating and confirming")
 	{
 		data.update(Object(3));
 		data.confirm();
@@ -282,7 +282,7 @@ FIXTURE(TestActiveTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_not_be_changed_after_updating_a_identical_value")
+	TEST("should not be changed after updating a identical value")
 	{
 		data.update(Object(2));
 
@@ -299,7 +299,7 @@ FIXTURE(TestActiveTransData)
 		ASSERT_THAT(alloc_blocks, eq(2));
 	}
 
-	TEST("should_be_able_to_modify")
+	TEST("should be able to modify")
 	{
 		ASSERT_THAT(data.modify(), eq(CCINFRA_SUCCESS));
 
@@ -316,7 +316,7 @@ FIXTURE(TestActiveTransData)
 		ASSERT_THAT(alloc_blocks, eq(2));
 	}
 
-	TEST("should_in_ACTIVE_state_after_updating_and_reverting")
+	TEST("should in ACTIVE state after updating and reverting")
 	{
 		data.update(Object(3));
 		data.revert();
@@ -333,7 +333,7 @@ FIXTURE(TestActiveTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_in_TOUCHED_state_after_touch")
+	TEST("should in TOUCHED state after touch")
 	{
 		data.touch();
 
@@ -349,7 +349,7 @@ FIXTURE(TestActiveTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_in_RELEASED_state_after_release")
+	TEST("should in RELEASED state after release")
 	{
 		data.release();
 
@@ -395,7 +395,7 @@ FIXTURE(TestTouchTransData)
     }
 
 
-	TEST("should_be_in_shadow_state")
+	TEST("should be in shadow state")
 	{
 		ASSERT_THAT(data.isStable(), be_false());
 
@@ -422,7 +422,7 @@ FIXTURE(TestTouchTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_not_allow_modify")
+	TEST("should not allow modify")
 	{
 		ASSERT_THAT(data.modify(), ne(CCINFRA_SUCCESS));
 
@@ -438,7 +438,7 @@ FIXTURE(TestTouchTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_be_in_shadow_state_after_updating")
+	TEST("should be in shadow state after updating")
 	{
 		data.update(Object(2));
 
@@ -455,7 +455,7 @@ FIXTURE(TestTouchTransData)
 		ASSERT_THAT(alloc_blocks, eq(2));
 	}
 
-	TEST("should_use_new_data_after_updating")
+	TEST("should use new data after updating")
 	{
 		data.update(Object(3));
 
@@ -472,7 +472,7 @@ FIXTURE(TestTouchTransData)
 		ASSERT_THAT(alloc_blocks, eq(2));
 	}
 
-	TEST("should_in_ACTIVE_state_after_confirm")
+	TEST("should in ACTIVE state after confirm")
 	{
 		data.confirm();
 
@@ -488,7 +488,7 @@ FIXTURE(TestTouchTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_in_ACTIVE_state_after_reverting")
+	TEST("should in ACTIVE state after reverting")
 	{
 		data.revert();
 
@@ -504,7 +504,7 @@ FIXTURE(TestTouchTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_in_RELEASED_state_after_releasing")
+	TEST("should in RELEASED state after releasing")
 	{
 		data.release();
 
@@ -523,7 +523,7 @@ FIXTURE(TestTouchTransData)
 		assertInit();
 	}
 
-	TEST("should_in_ACTIVE_state_after_releasing_and_reverting")
+	TEST("should in ACTIVE state after releasing and reverting")
 	{
 		data.release();
 		data.revert();
@@ -540,7 +540,7 @@ FIXTURE(TestTouchTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_in_IDLE_state_after_reset")
+	TEST("should in IDLE state after reset")
 	{
 		data.reset();
 		assertInit();
@@ -570,19 +570,19 @@ FIXTURE(TestReleaseTransData)
         ASSERT_THAT(alloc_blocks, eq(0));
     }
 
-	TEST("should_in_IDLE_state_after_reseting")
+	TEST("should in IDLE state after reseting")
 	{
 		data.reset();
 		assertInit();
 	}
 
-	TEST("should_in_IDLE_state_after_confirming")
+	TEST("should in IDLE state after confirming")
 	{
 		data.confirm();
 		assertInit();
 	}
 
-	TEST("should_in_ACTIVE_state_after_reverting")
+	TEST("should in ACTIVE state after reverting")
 	{
 		data.revert();
 
@@ -598,7 +598,7 @@ FIXTURE(TestReleaseTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_in_RELEASED_state")
+	TEST("should in RELEASED state")
 	{
 		ASSERT_THAT(data.isStable(), be_false());
 
@@ -612,7 +612,7 @@ FIXTURE(TestReleaseTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_in_SHADOWN_state_after_updating")
+	TEST("should in SHADOWN state after updating")
 	{
 		data.update(Object(2));
 
@@ -629,7 +629,7 @@ FIXTURE(TestReleaseTransData)
 		ASSERT_THAT(alloc_blocks, eq(2));
 	}
 
-	TEST("should_use_new_value_state_after_updating")
+	TEST("should use new value state after updating")
 	{
 		data.update(Object(3));
 
@@ -646,7 +646,7 @@ FIXTURE(TestReleaseTransData)
 		ASSERT_THAT(alloc_blocks, eq(2));
 	}
 
-	TEST("should_in_ACTIVE_state_after_updating_and_reverting")
+	TEST("should in ACTIVE state after updating and reverting")
 	{
 		data.update(Object(3));
 		data.revert();
@@ -663,12 +663,12 @@ FIXTURE(TestReleaseTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_not_allow_modify")
+	TEST("should not allow modify")
 	{
 		ASSERT_THAT(data.modify(), ne(CCINFRA_SUCCESS));
 	}
 
-	TEST("should_have_no_effect_for_touching")
+	TEST("should have no effect for touching")
 	{
 		data.touch();
 
@@ -684,7 +684,7 @@ FIXTURE(TestReleaseTransData)
 		ASSERT_THAT(alloc_blocks, eq(1));
 	}
 
-	TEST("should_have_no_effect_for_releasing")
+	TEST("should have no effect for releasing")
 	{
 		data.release();
 

@@ -30,7 +30,7 @@ FIXTURE(ThreadDataTest)
 {
     ThreadData<int, ThreadInfo> data;
 
-	TEST("should_write_the_correct_thread_data_when_default_thread_id")
+	TEST("should write the correct thread data when default thread id")
 	{
 		*data = 2;
 
@@ -38,7 +38,7 @@ FIXTURE(ThreadDataTest)
 		ASSERT_THAT(data[0], eq(2));
 	}
 
-	TEST("should_write_the_correct_thread_data_when_change_the_current_thread_id")
+	TEST("should write the correct thread data when change the current thread id")
 	{
 		ThreadInfo::setCurrentId(1);
 

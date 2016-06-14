@@ -16,13 +16,13 @@ FIXTURE(LinkedAllocatorTest)
     {
     }
 
-    TEST("should_has_free_slot_num_when_init")
+    TEST("should has free slot num when init")
     {
     	ASSERT_THAT(allocator.isBusyListEmpty(), be_true());
     	ASSERT_THAT(allocator.isFreeListEmpty(), be_false());
     }
 
-    TEST("should_alloc_ok_when_has_free_slots")
+    TEST("should alloc ok when has free slots")
     {
         for(int i = 0; i < MAX_ALLOC_NUM; i++)
         {
@@ -35,7 +35,7 @@ FIXTURE(LinkedAllocatorTest)
         ASSERT_THAT(__IS_NULL(x), be_true());
     }
 
-    TEST("should_alloc_ok_when_free_slots")
+    TEST("should alloc ok when free slots")
     {
         for(int i = 0; i < MAX_ALLOC_NUM - 1; i++)
         {

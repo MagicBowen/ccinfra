@@ -11,14 +11,14 @@ namespace
 
 FIXTURE(BinarySearchTest)
 {
-	TEST("should_find_correct_when_key_is_in_the_middle_position")
+	TEST("should find correct when key is in the middle position")
 	{
 		int *r = ccinfra_binary_search(begin_a(a), end_a(a), 5);
 		ASSERT_THAT(*r, eq(5));
 		ASSERT_THAT(position(a, r), eq(2));
 	}
 
-	TEST("should_return_the_end_when_key_not_find")
+	TEST("should return the end when key not find")
 	{
 		ASSERT_THAT(ccinfra_binary_search(begin_a(a), end_a(a), 6), eq(end_a(a)));
 	}

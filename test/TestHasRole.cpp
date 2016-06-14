@@ -96,7 +96,7 @@ namespace
 
 FIXTURE(HasRoleTest)
 {
-	TEST("should_visit_all_the_role_correctly_through_has_role_interface")
+	TEST("should visit all the role correctly through has role interface")
 	{
 		Human* human = HumanFactory::create();
 

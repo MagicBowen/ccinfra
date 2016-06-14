@@ -27,7 +27,7 @@ namespace
 
 FIXTURE(PlacementTest1)
 {
-	TEST("should_new_object_on_placement_memory")
+	TEST("should new object on placement memory")
 	{
 		Placement<Student> studentMemory;
 
@@ -41,7 +41,7 @@ FIXTURE(PlacementTest1)
 		studentMemory.destroy();
 	}
 
-	TEST("should_new_object_array_on_placement")
+	TEST("should new object array on placement")
 	{
 		const U8 MAX_ENGINE = 5;
 		Placement<Student> students[MAX_ENGINE];
@@ -108,7 +108,7 @@ namespace
 
 FIXTURE(PlacementTest2)
 {
-	TEST("should_delay_init_the_member_object_in_placement")
+	TEST("should delay init the member object in placement")
 	{
 		Object object;
 
@@ -251,7 +251,7 @@ namespace
 
 FIXTURE(PlacementTest3)
 {
-	TEST("should_cast_to_the_public_role_correctly_for_human")
+	TEST("should cast to the public role correctly for human")
 	{
 		WorkerObject human(HUMAN);
 
@@ -262,7 +262,7 @@ FIXTURE(PlacementTest3)
 		ASSERT_THAT(SELF(human, Worker).getProduceNum(), eq(MAX_CONSUME_TIMES));
 	}
 
-	TEST("should_cast_to_the_public_role_correctly_for_robot")
+	TEST("should cast to the public role correctly for robot")
 	{
 		WorkerObject robot(ROBOT);
 

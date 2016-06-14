@@ -29,7 +29,7 @@ namespace
 
 FIXTURE(StructWrapperTest)
 {
-	TEST("should_use_the_method_when_wrappered")
+	TEST("should use the method when wrappered")
 	{
 	    PlainMsg msg{2, 4};
 

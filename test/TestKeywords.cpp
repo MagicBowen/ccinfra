@@ -79,7 +79,7 @@ namespace
 
 FIXTURE(KeywordsTest)
 {
-	TEST("should_override_the_correct_interface_when_inherit_the_interface")
+	TEST("should override the correct interface when inherit the interface")
 	{
 	    Shape2D *square = new Square(5);
 	    Shape2D *rectangle = new Rectangle(2, 3);

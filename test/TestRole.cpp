@@ -123,7 +123,7 @@ namespace
 
 FIXTURE(RoleTest)
 {
-	TEST("should_cast_to_the_public_role_correctly_for_human")
+	TEST("should cast to the public role correctly for human")
 	{
 		Human human;
 
@@ -137,7 +137,7 @@ FIXTURE(RoleTest)
 		ASSERT_THAT(SELF(human, Energy).isExhausted(), be_false());
 	}
 
-	TEST("should_cast_to_the_public_role_correctly_for_robot")
+	TEST("should cast to the public role correctly for robot")
 	{
 		Robot robot;
 

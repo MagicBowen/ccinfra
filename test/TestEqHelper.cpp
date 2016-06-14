@@ -32,7 +32,7 @@ namespace
 
 FIXTURE(EqHelperTest)
 {
-	TEST("should_compare_complex_correctly_when_defined_compare_operator_by_eq_helper")
+	TEST("should compare complex correctly when defined compare operator by eq helper")
 	{
 	    ASSERT_THAT(Complex(3, 1) == Complex(3, 1), be_true());
 	    ASSERT_THAT(Complex(3, 0) != Complex(3, 1), be_true());

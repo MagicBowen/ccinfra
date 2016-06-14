@@ -37,7 +37,7 @@ namespace
 
 FIXTURE(SmartPtrTest)
 {
-	TEST("should_ref_to_the_correct_addr")
+	TEST("should ref to the correct addr")
 	{
 		Foo foo;
 		SmartPtr<Foo> pf(&foo);
@@ -46,7 +46,7 @@ FIXTURE(SmartPtrTest)
 		ASSERT_THAT(pf.raw(), eq(&foo));
 	}
 
-	TEST("should_be_equal_when_point_to_same_addr")
+	TEST("should be equal when point to same addr")
 	{
 		Foo foo;
 		SmartPtr<Foo> pf1(&foo);
@@ -55,7 +55,7 @@ FIXTURE(SmartPtrTest)
 		ASSERT_THAT(pf1 == pf2, be_true());
 	}
 
-	TEST("should_increase_ref_when_assign_to_smart_ptr")
+	TEST("should increase ref when assign to smart ptr")
 	{
 		Foo foo;
 
@@ -69,7 +69,7 @@ FIXTURE(SmartPtrTest)
 		ASSERT_THAT(foo.getDestroyNum(), eq(1));
 	}
 
-	TEST("should_not_destory_when_ref_not_equal_zero")
+	TEST("should not destory when ref not equal zero")
 	{
 		Foo foo;
 
@@ -85,7 +85,7 @@ FIXTURE(SmartPtrTest)
 		ASSERT_THAT(foo.getDestroyNum(), eq(0));
 	}
 
-	TEST("should_add_ref_when_smart_ptr_construct_other_smart_ptr")
+	TEST("should add ref when smart ptr construct other smart ptr")
 	{
 		Foo foo;
 
@@ -101,7 +101,7 @@ FIXTURE(SmartPtrTest)
 		ASSERT_THAT(foo.getDestroyNum(), eq(0));
 	}
 
-	TEST("should_add_ref_when_smart_ptr_assign_to_other_smart_ptr")
+	TEST("should add ref when smart ptr assign to other smart ptr")
 	{
 		Foo foo;
 

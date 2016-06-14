@@ -5,14 +5,14 @@ USING_HAMCREST_NS
 
 FIXTURE(MaybeTest)
 {
-	TEST("should_be_unpresent_when_init")
+	TEST("should be unpresent when init")
 	{
 	    Maybe<int> x;
 
 	    ASSERT_THAT(x.isPresent(), be_false());
 	}
 
-	TEST("should_be_present_when_update")
+	TEST("should be present when update")
 	{
 	    Maybe<int> x;
 
@@ -22,7 +22,7 @@ FIXTURE(MaybeTest)
 	    ASSERT_THAT(*x, eq(5));
 	}
 
-	TEST("should_be_present_when_force_effective")
+	TEST("should be present when force effective")
 	{
 	    Maybe<int> x;
 
@@ -32,7 +32,7 @@ FIXTURE(MaybeTest)
 	    ASSERT_THAT(*x, eq(0));
 	}
 
-	TEST("should_compare_unequal_when_not_effective")
+	TEST("should compare unequal when not effective")
 	{
 	    Maybe<int> x;
 	    Maybe<int> y(2);
@@ -40,7 +40,7 @@ FIXTURE(MaybeTest)
 	    ASSERT_THAT(x == y, be_false());
 	}
 
-	TEST("should_compare_equal_when_effective")
+	TEST("should compare equal when effective")
 	{
 	    Maybe<int> x;
 	    Maybe<int> y(2);

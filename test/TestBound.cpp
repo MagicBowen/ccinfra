@@ -11,22 +11,22 @@ namespace
 
 FIXTURE(UpperBoundTest)
 {
-	TEST("shoud_find_the_upper_bound_in_middle_position_correct")
+	TEST("shoud find the upper bound in middle position correct")
 	{
 	    ASSERT_THAT(ccinfra_upper_bound(a, ARR_SIZE(a), 4), eq(2));
 	}
 
-	TEST("shoud_find_the_upper_bound_in_left_edge_position_correct")
+	TEST("shoud find the upper bound in left edge position correct")
 	{
 	    ASSERT_THAT(ccinfra_upper_bound(a, ARR_SIZE(a), 0), eq(0));
 	}
 
-	TEST("shoud_find_the_upper_bound_in_last_position_correct")
+	TEST("shoud find the upper bound in last position correct")
 	{
 	    ASSERT_THAT(ccinfra_upper_bound(a, ARR_SIZE(a), 7), eq(3));
 	}
 
-	TEST("shoud_find_the_upper_bound_out_of_right_position_correct")
+	TEST("shoud find the upper bound out of right position correct")
 	{
 	    ASSERT_THAT(ccinfra_upper_bound(a, ARR_SIZE(a), 8), eq(3));
 	}
@@ -34,22 +34,22 @@ FIXTURE(UpperBoundTest)
 
 FIXTURE(LowerBoundTest)
 {
-	TEST("shoud_find_the_upper_bound_in_middle_position_correct")
+	TEST("shoud find the upper bound in middle position correct")
 	{
 	    ASSERT_THAT(ccinfra_lower_bound(a, ARR_SIZE(a), 4), eq(1));
 	}
 
-	TEST("shoud_find_the_upper_bound_in_right_edge_position_correct")
+	TEST("shoud find the upper bound in right edge position correct")
 	{
 	    ASSERT_THAT(ccinfra_lower_bound(a, ARR_SIZE(a), 8), eq(3));
 	}
 
-	TEST("shoud_find_the_upper_bound_in_left_edge_position_correct")
+	TEST("shoud find the upper bound in left edge position correct")
 	{
 	    ASSERT_THAT(ccinfra_lower_bound(a, ARR_SIZE(a), 1), eq(0));
 	}
 
-	TEST("shoud_find_the_upper_bound_out_of_left_edge_position_correct")
+	TEST("shoud find the upper bound out of left edge position correct")
 	{
 	    ASSERT_THAT(ccinfra_lower_bound(a, ARR_SIZE(a), 0), eq(0));
 	}

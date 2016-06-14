@@ -13,7 +13,6 @@ namespace
 
 FIXTURE(AutoMsgTest)
 {
-	TEST("should alloc auto msg not in stack")
 	{
 	    AutoMsg<LargeMsg> msg;
 

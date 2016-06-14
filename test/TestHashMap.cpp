@@ -94,7 +94,7 @@ struct HashFn<Key, HASH_SIZE>
 FIXTURE(HashMapTest)
 {
 
-	TEST("should_be_empty_when_init")
+	TEST("should be empty when init")
 	{
 		HashMap<int, int> map;
 
@@ -103,7 +103,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map.size(), eq(0));
 	}
 
-	TEST("should_get_the_value_from_key_when_inserted_success")
+	TEST("should get the value from key when inserted success")
 	{
 		HashMap<int, int> map;
 
@@ -116,7 +116,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map[1], eq(2));
 	}
 
-	TEST("should_erase_the_map_correctly_when_only_on_node_in_map")
+	TEST("should erase the map correctly when only on node in map")
 	{
 		HashMap<int, int> map;
 
@@ -129,7 +129,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map.get(1), is(nil()));
 	}
 
-	TEST("should_erase_the_map_correctly_when_muti_node_in_map")
+	TEST("should erase the map correctly when muti node in map")
 	{
 		HashMap<int, int> map;
 
@@ -144,7 +144,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map.get(2), is(nil()));
 	}
 
-	TEST("should_clear_the_map_correctly")
+	TEST("should clear the map correctly")
 	{
 		HashMap<int, int> map;
 
@@ -158,7 +158,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map.get(1), is(nil()));
 	}
 
-	TEST("should_not_change_the_value_when_same_key_already_in")
+	TEST("should not change the value when same key already in")
 	{
 		HashMap<int, int> map;
 
@@ -169,7 +169,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map[1], eq(4));
 	}
 
-	TEST("should_be_full_when_reach_the_max_node_num")
+	TEST("should be full when reach the max node num")
 	{
 		HashMap<int, int, 1> map;
 
@@ -178,7 +178,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map.full(), be_true());
 	}
 
-	TEST("should_put_fail_when_map_is_full")
+	TEST("should put fail when map is full")
 	{
 		HashMap<int, int, 1> map;
 
@@ -189,7 +189,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map[1], eq(2));
 	}
 
-	TEST("should_put_already_in_success_when_map_is_full")
+	TEST("should put already in success when map is full")
 	{
 		HashMap<int, int, 1> map;
 
@@ -200,7 +200,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map[1], eq(4));
 	}
 
-	TEST("should_point_to_correct_node_by_iterator_when_map_is_empty")
+	TEST("should point to correct node by iterator when map is empty")
 	{
 		HashMap<int, int> map;
 
@@ -208,7 +208,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map.end().isNull(), be_true());
 	}
 
-	TEST("should_point_to_correct_node_by_iterator_when_map_has_valid_elem")
+	TEST("should point to correct node by iterator when map has valid elem")
 	{
 		HashMap<int, int> map;
 
@@ -220,7 +220,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map.end().isNull(), be_true());
 	}
 
-	TEST("should_point_to_correct_node_when_iterator_forward")
+	TEST("should point to correct node when iterator forward")
 	{
 		typedef HashMap<int, int> ThisMap;
 		ThisMap map;
@@ -235,7 +235,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(++p, eq(map.end()));
 	}
 
-	TEST("should_travel_the_map_by_iterator")
+	TEST("should travel the map by iterator")
 	{
 		typedef HashMap<int, int, 5, 5> ThisMap;
 		ThisMap map;
@@ -258,7 +258,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(valueSum, eq(2 + 6 + 16 + 10));
 	}
 
-	TEST("should_put_and_get_when_hash_string")
+	TEST("should put and get when hash string")
 	{
 		HashMap<const char*, int> map;
 
@@ -270,7 +270,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map["ni hao ma"], eq(9));
 	}
 
-	TEST("shoud_double_all_value_through_visitor")
+	TEST("shoud double all value through visitor")
 	{
 		HashMap<int, int> map;
 
@@ -283,7 +283,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map[2], eq(6));
 	}
 
-	TEST("should_dump_map_through_const_visitor")
+	TEST("should dump map through const visitor")
 	{
 		HashMap<int, const char*> map;
 
@@ -296,7 +296,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(printVisitor.result, eq(std::string("map[1] = one \nmap[2] = two \nmap[3] = three \n")));
 	}
 
-	TEST("should_work_with_user_defined_hash_and_equal_function")
+	TEST("should work with user defined hash and equal function")
 	{
 		HashMap<Key, Value> map;
 
@@ -308,7 +308,7 @@ FIXTURE(HashMapTest)
 		ASSERT_THAT(map.get(Key(2, 4)), is(nil()));
 	}
 
-	TEST("should_store_the_pointer_to_value")
+	TEST("should store the pointer to value")
 	{
 		Value v1("one");
 		Value v2("two");

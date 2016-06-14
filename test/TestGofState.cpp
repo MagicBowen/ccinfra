@@ -438,14 +438,14 @@ protected:
     Robot robot;
 
 
-	TEST("should_init_at_closed_state_mute_action_without_energy")
+	TEST("should init at closed state mute action without energy")
 	{
 		ASSERT_THAT(robot.getCurrentState(), eq(Robot::closed));
 		ASSERT_THAT(robot.isExhausted(), be_true());
 		ASSERT_THAT(isMuteNow(), be_true());
 	}
 
-	TEST("should_closed_and_mute_when_send_close_in_closed_state")
+	TEST("should closed and mute when send close in closed state")
 	{
 		robot.close();
 
@@ -454,7 +454,7 @@ protected:
 		ASSERT_THAT(isMuteNow(), be_true());
 	}
 
-	TEST("should_closed_and_bibi_when_send_open_in_closed_state_without_energy")
+	TEST("should closed and bibi when send open in closed state without energy")
 	{
 		robot.open();
 
@@ -464,7 +464,7 @@ protected:
 		ASSERT_THAT(isMuteNow(), be_false());
 	}
 
-	TEST("should_closed_and_mute_when_send_play_in_closed_state_without_energy")
+	TEST("should closed and mute when send play in closed state without energy")
 	{
 		robot.play();
 
@@ -473,7 +473,7 @@ protected:
 		ASSERT_THAT(isMuteNow(), be_true());
 	}
 
-	TEST("should_closed_and_mute_but_has_energy_when_send_charge_in_closed_state_without_energy")
+	TEST("should closed and mute but has energy when send charge in closed state without energy")
 	{
 		robot.charge();
 
@@ -482,7 +482,7 @@ protected:
 		ASSERT_THAT(isMuteNow(), be_true());
 	}
 
-	TEST("should_closed_and_mute_when_send_play_in_closed_state_with_energy")
+	TEST("should closed and mute when send play in closed state with energy")
 	{
 		robot.charge();
 		robot.play();
@@ -492,7 +492,7 @@ protected:
 		ASSERT_THAT(isMuteNow(), be_true());
 	}
 
-	TEST("should_open_and_mute_when_send_open_in_closed_state_with_energy")
+	TEST("should open and mute when send open in closed state with energy")
 	{
 		robot.charge();
 		robot.open();
@@ -502,7 +502,7 @@ protected:
 		ASSERT_THAT(isMuteNow(), be_true());
 	}
 
-	TEST("should_open_and_sing_when_send_play_in_open_state_with_energy")
+	TEST("should open and sing when send play in open state with energy")
 	{
 		robot.charge();
 		robot.open();
@@ -514,7 +514,7 @@ protected:
 		ASSERT_THAT(isMuteNow(), be_false());
 	}
 
-	TEST("should_closed_and_mute_when_send_close_after_sing")
+	TEST("should closed and mute when send close after sing")
 	{
 		robot.charge();
 		robot.open();
@@ -527,7 +527,7 @@ protected:
 		ASSERT_THAT(isMuteNow(), be_true());
 	}
 
-	TEST("should_closed_and_mute_when_send_close_in_open_state_with_energy")
+	TEST("should closed and mute when send close in open state with energy")
 	{
 		robot.charge();
 		robot.open();
@@ -538,7 +538,7 @@ protected:
 		ASSERT_THAT(isMuteNow(), be_true());
 	}
 
-	TEST("should_continue_sing_when_send_open_close_open_play_with_energy")
+	TEST("should continue sing when send open close open play with energy")
 	{
 		robot.charge();
 		robot.open();
@@ -551,7 +551,7 @@ protected:
 		ASSERT_THAT(getSingTimes(), eq(1));
 	}
 
-	TEST("should_goto_wait_charged_state_when_play_twice_in_open_state_with_energy")
+	TEST("should goto wait charged state when play twice in open state with energy")
 	{
 		robot.charge();
 		robot.open();
@@ -564,7 +564,7 @@ protected:
 		ASSERT_THAT(getSingTimes(), eq(2));
 	}
 
-	TEST("should_continue_play_when_charge_in_open_state")
+	TEST("should continue play when charge in open state")
 	{
 		robot.charge();
 		robot.open();
@@ -577,7 +577,7 @@ protected:
 		ASSERT_THAT(getSingTimes(), eq(2));
 	}
 
-	TEST("should_bibi_when_send_play_in_wait_charged_state")
+	TEST("should bibi when send play in wait charged state")
 	{
 		gotoExhaustedInWaitChargedState();
 		robot.play();
@@ -588,7 +588,7 @@ protected:
 		ASSERT_THAT(getBibiTimes(), eq(1));
 	}
 
-	TEST("should_bibi_when_send_open_in_wait_charged_state")
+	TEST("should bibi when send open in wait charged state")
 	{
 		gotoExhaustedInWaitChargedState();
 		robot.open();
@@ -600,7 +600,7 @@ protected:
 		ASSERT_THAT(isMuteNow(), be_false());
 	}
 
-	TEST("should_closed_and_mute_without_energy_when_send_close_in_wait_charged_state")
+	TEST("should closed and mute without energy when send close in wait charged state")
 	{
 		gotoExhaustedInWaitChargedState();
 		robot.close();
@@ -612,7 +612,7 @@ protected:
 		ASSERT_THAT(isMuteNow(), be_true());
 	}
 
-	TEST("should_goto_opened_when_charge_in_wait_charged_state")
+	TEST("should goto opened when charge in wait charged state")
 	{
 		gotoExhaustedInWaitChargedState();
 		robot.charge();
@@ -621,7 +621,7 @@ protected:
 		ASSERT_THAT(robot.isExhausted(), be_false());
 	}
 
-	TEST("should_continue_sing_when_opened_again_by_charging")
+	TEST("should continue sing when opened again by charging")
 	{
 		gotoExhaustedInWaitChargedState();
 		robot.charge();

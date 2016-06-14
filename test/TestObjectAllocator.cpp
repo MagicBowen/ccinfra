@@ -30,12 +30,12 @@ DEF_OBJ_ALLOCATOR(Foo, MAX_SLOT_NUM);
 
 FIXTURE(ObjectAllocatorTest)
 {
-	TEST("should_have_correct_free_slot_when_init")
+	TEST("should have correct free slot when init")
 	{
 	    ASSERT_THAT(FooAllocator.getFreeSlotNum(), eq(MAX_SLOT_NUM));
 	}
 
-	TEST("should_alloc_OK_when_has_free_slot")
+	TEST("should alloc OK when has free slot")
 	{
 	    Foo* foo = new Foo(3);
 	    ASSERT_THAT(__NOT_NULL(foo), be_true());
@@ -45,7 +45,7 @@ FIXTURE(ObjectAllocatorTest)
 	    ASSERT_THAT(FooAllocator.getFreeSlotNum(), eq(MAX_SLOT_NUM));
 	}
 
-	TEST("should_not_alloc_when_has_no_free_slot")
+	TEST("should not alloc when has no free slot")
 	{
 	    Foo* foos[MAX_SLOT_NUM] = {__null_ptr};
 
