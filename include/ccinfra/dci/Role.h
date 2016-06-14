@@ -1,6 +1,7 @@
 #ifndef H05B2224D_B926_4FC0_A936_87B52B8A98DB
 #define H05B2224D_B926_4FC0_A936_87B52B8A98DB
 
+#include <ccinfra/base/Keywords.h>
 
 #define ROLE(role) get##role()
 #define ROLE_PROTO_TYPE(role) role& ROLE(role) const
@@ -84,6 +85,7 @@ namespace details
 
 #define SELF(self, role) static_cast<role&>(self)
 #define SELF_P(self, role) SELF(*self, role)
+#define SELF_CONST(self, role) static_cast<const role&>(self)
 
 #endif
 
