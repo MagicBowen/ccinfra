@@ -64,7 +64,7 @@ private:
             return &getValue(id);
         }
         
-        DBG_LOG("MultiThreadWrapper: id(%d) overflow!", id);
+        DBG_LOG("ThreadData: id(%d) overflow!", id);
         return 0;
     }
 

@@ -1756,7 +1756,7 @@ Gof的State模式用于解决一个类的接口在不同状态下行为不同的
 - 具有三种状态：closed,  opened,  wait_charged；
 - 可以处理四类事件：close, open,  play,  charge
 - 具有五种行为：mute,  bibi,  sing,  chargeEnergy,  consumeEnergy
-- 内部有一个是否没电的属性：isExhausted。每次充电后，在收到play的消息后会sing一次，连续sing两次后，电量耗完。
+- 内部有一个是否没电的属性：isExhausted。每次充电后，在收到play的消息后会sing一次，连续sing两次后，电量耗完进入wait_charged状态，在wait_charged状态下收到play和open事件会bibi。
 
 不采用状态模式实现如下：
 
