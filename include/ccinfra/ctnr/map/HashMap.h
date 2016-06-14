@@ -47,7 +47,7 @@ struct HashMap
         }
 
         Iterator(const Iterator& rhs)
-        : elem(rhs.elem), index(rhs.index), nodeList(nodeList)
+        : elem(rhs.elem), index(rhs.index), nodeList(rhs.nodeList)
         {
         }
 

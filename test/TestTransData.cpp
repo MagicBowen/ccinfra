@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include <ccinfra/mem/TransData.h>
-#include <new>
+#include <stdlib.h>
 
 namespace
 {
