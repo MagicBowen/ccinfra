@@ -1,5 +1,7 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include <ccinfra/sched/Executor.h>
+
+USING_HAMCREST_NS
 
 namespace
 {
@@ -25,36 +27,38 @@ namespace
     };
 }
 
-struct ExecutorTest : testing::Test
+
+FIXTURE(ExecutorTest)
 {
-protected:
     Executor executor{2};
+
+    TEST("should_execute_normal_function")
+	{
+	    auto result = executor.execute(fib, 5);
+	    ASSERT_THAT(result.get(), eq(15));
+	}
+
+	TEST("should_execute_lambda")
+	{
+	    const int num = 5;
+	    auto result = executor.execute([=](){ return fib(num); });
+	    ASSERT_THAT(result.get(), eq(15));
+	}
+
+	TEST("should_execute_functor")
+	{
+	    auto result = executor.execute(Fib(5));
+	    ASSERT_THAT(result.get(), eq(15));
+	}
+
+	TEST("should_execute_muti_task_concurrently")
+	{
+	    auto result1 = executor.execute(Fib(5));
+	    auto result2 = executor.execute(Fib(6));
+
+	    ASSERT_THAT(result1.get(), eq(15));
+	    ASSERT_THAT(result2.get(), eq(21));
+	}
 };
 
-TEST_F(ExecutorTest, should_execute_normal_function)
-{
-    auto result = executor.execute(fib, 5);
-    ASSERT_EQ(15, result.get());
-}
 
-TEST_F(ExecutorTest, should_execute_lambda)
-{
-    const int num = 5;
-    auto result = executor.execute([=](){ return fib(num); });
-    ASSERT_EQ(15, result.get());
-}
-
-TEST_F(ExecutorTest, should_execute_functor)
-{
-    auto result = executor.execute(Fib(5));
-    ASSERT_EQ(15, result.get());
-}
-
-TEST_F(ExecutorTest, should_execute_muti_task_concurrently)
-{
-    auto result1 = executor.execute(Fib(5));
-    auto result2 = executor.execute(Fib(6));
-
-    ASSERT_EQ(15, result1.get());
-    ASSERT_EQ(21, result2.get());
-}

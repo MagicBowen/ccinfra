@@ -1,5 +1,7 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include <ccinfra/mem/AutoMsg.h>
+
+USING_HAMCREST_NS
 
 namespace
 {
@@ -9,9 +11,14 @@ namespace
     };
 }
 
-TEST(AutoMsgTest, should_alloc_auto_msg_not_in_stack)
+FIXTURE(AutoMsgTest)
 {
-    AutoMsg<LargeMsg> msg;
+	TEST("should alloc auto msg not in stack")
+	{
+	    AutoMsg<LargeMsg> msg;
 
-    ASSERT_TRUE(MsgAllocator::withIn(msg.getPointer()));
-}
+	    ASSERT_THAT(MsgAllocator::withIn(msg.getPointer()), be_true());
+	}
+};
+
+

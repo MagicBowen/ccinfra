@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include "ccinfra/dci/Role.h"
 #include "ccinfra/base/BaseTypes.h"
 #include "ccinfra/base/Keywords.h"
@@ -94,13 +94,16 @@ namespace
     };
 }
 
-TEST(HasRoleTest, should_visit_all_the_role_correctly_through_has_role_interface)
+FIXTURE(HasRoleTest)
 {
-    Human* human = HumanFactory::create();
+	TEST("should_visit_all_the_role_correctly_through_has_role_interface")
+	{
+		Human* human = HumanFactory::create();
 
-    human->ROLE(Worker).produce();
+		human->ROLE(Worker).produce();
 
-    ASSERT_EQ(1, human->ROLE(Worker).getProduceNum());
+		ASSERT_THAT(human->ROLE(Worker).getProduceNum(), eq(1));
 
-    delete human;
-}
+		delete human;
+	}
+};

@@ -1,5 +1,7 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include <ccinfra/sched/ThreadData.h>
+
+USING_HAMCREST_NS
 
 namespace
 {
@@ -24,26 +26,25 @@ namespace
     unsigned int ThreadInfo::index = 0;
 }
 
-struct ThreadDataTest : testing::Test
+FIXTURE(ThreadDataTest)
 {
-protected:
     ThreadData<int, ThreadInfo> data;
+
+	TEST("should_write_the_correct_thread_data_when_default_thread_id")
+	{
+		*data = 2;
+
+		ASSERT_THAT(*data, eq(2));
+		ASSERT_THAT(data[0], eq(2));
+	}
+
+	TEST("should_write_the_correct_thread_data_when_change_the_current_thread_id")
+	{
+		ThreadInfo::setCurrentId(1);
+
+		*data = 5;
+
+		ASSERT_THAT(*data, eq(5));
+		ASSERT_THAT(data[1], eq(5));
+	}
 };
-
-TEST_F(ThreadDataTest, should_write_the_correct_thread_data_when_default_thread_id)
-{
-    *data = 2;
-
-    ASSERT_EQ(2, *data);
-    ASSERT_EQ(2, data[0]);
-}
-
-TEST_F(ThreadDataTest, should_write_the_correct_thread_data_when_change_the_current_thread_id)
-{
-    ThreadInfo::setCurrentId(1);
-
-    *data = 5;
-
-    ASSERT_EQ(5, *data);
-    ASSERT_EQ(5, data[1]);
-}

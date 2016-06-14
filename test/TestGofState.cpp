@@ -1,9 +1,11 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include <ccinfra/algo/loop.h>
 #include "ccinfra/base/Keywords.h"
 #include "ccinfra/gof/Singleton.h"
 #include "ccinfra/base/NullPtr.h"
 #include "ccinfra/gof/State.h"
+
+USING_HAMCREST_NS
 
 // Assume exit a singing robot:
 // It has 3 states:          { closed,  opened,  wait_charged }
@@ -367,7 +369,7 @@ namespace
 
 }
 
-struct GofStateTest : testing::Test
+FIXTURE(GofStateTest)
 {
     GofStateTest() : robot(audio)
     {
@@ -431,202 +433,203 @@ protected:
         }
     };
 
-protected:
+
     MockAudio audio;
     Robot robot;
+
+
+	TEST("should_init_at_closed_state_mute_action_without_energy")
+	{
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::closed));
+		ASSERT_THAT(robot.isExhausted(), be_true());
+		ASSERT_THAT(isMuteNow(), be_true());
+	}
+
+	TEST("should_closed_and_mute_when_send_close_in_closed_state")
+	{
+		robot.close();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::closed));
+		ASSERT_THAT(robot.isExhausted(), be_true());
+		ASSERT_THAT(isMuteNow(), be_true());
+	}
+
+	TEST("should_closed_and_bibi_when_send_open_in_closed_state_without_energy")
+	{
+		robot.open();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::closed));
+		ASSERT_THAT(robot.isExhausted(), be_true());
+		ASSERT_THAT(getBibiTimes(), eq(1));
+		ASSERT_THAT(isMuteNow(), be_false());
+	}
+
+	TEST("should_closed_and_mute_when_send_play_in_closed_state_without_energy")
+	{
+		robot.play();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::closed));
+		ASSERT_THAT(robot.isExhausted(), be_true());
+		ASSERT_THAT(isMuteNow(), be_true());
+	}
+
+	TEST("should_closed_and_mute_but_has_energy_when_send_charge_in_closed_state_without_energy")
+	{
+		robot.charge();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::closed));
+		ASSERT_THAT(robot.isExhausted(), be_false());
+		ASSERT_THAT(isMuteNow(), be_true());
+	}
+
+	TEST("should_closed_and_mute_when_send_play_in_closed_state_with_energy")
+	{
+		robot.charge();
+		robot.play();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::closed));
+		ASSERT_THAT(robot.isExhausted(), be_false());
+		ASSERT_THAT(isMuteNow(), be_true());
+	}
+
+	TEST("should_open_and_mute_when_send_open_in_closed_state_with_energy")
+	{
+		robot.charge();
+		robot.open();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::opened));
+		ASSERT_THAT(robot.isExhausted(), be_false());
+		ASSERT_THAT(isMuteNow(), be_true());
+	}
+
+	TEST("should_open_and_sing_when_send_play_in_open_state_with_energy")
+	{
+		robot.charge();
+		robot.open();
+		robot.play();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::opened));
+		ASSERT_THAT(robot.isExhausted(), be_false());
+		ASSERT_THAT(getSingTimes(), eq(1));
+		ASSERT_THAT(isMuteNow(), be_false());
+	}
+
+	TEST("should_closed_and_mute_when_send_close_after_sing")
+	{
+		robot.charge();
+		robot.open();
+		robot.play();
+		robot.close();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::closed));
+		ASSERT_THAT(robot.isExhausted(), be_false());
+		ASSERT_THAT(getSingTimes(), eq(1));
+		ASSERT_THAT(isMuteNow(), be_true());
+	}
+
+	TEST("should_closed_and_mute_when_send_close_in_open_state_with_energy")
+	{
+		robot.charge();
+		robot.open();
+		robot.close();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::closed));
+		ASSERT_THAT(robot.isExhausted(), be_false());
+		ASSERT_THAT(isMuteNow(), be_true());
+	}
+
+	TEST("should_continue_sing_when_send_open_close_open_play_with_energy")
+	{
+		robot.charge();
+		robot.open();
+		robot.close();
+		robot.open();
+		robot.play();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::opened));
+		ASSERT_THAT(robot.isExhausted(), be_false());
+		ASSERT_THAT(getSingTimes(), eq(1));
+	}
+
+	TEST("should_goto_wait_charged_state_when_play_twice_in_open_state_with_energy")
+	{
+		robot.charge();
+		robot.open();
+
+		robot.play();
+		robot.play();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::wait_charged));
+		ASSERT_THAT(robot.isExhausted(), be_true());
+		ASSERT_THAT(getSingTimes(), eq(2));
+	}
+
+	TEST("should_continue_play_when_charge_in_open_state")
+	{
+		robot.charge();
+		robot.open();
+		robot.play();
+		robot.charge();
+		robot.play();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::opened));
+		ASSERT_THAT(robot.isExhausted(), be_false());
+		ASSERT_THAT(getSingTimes(), eq(2));
+	}
+
+	TEST("should_bibi_when_send_play_in_wait_charged_state")
+	{
+		gotoExhaustedInWaitChargedState();
+		robot.play();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::wait_charged));
+		ASSERT_THAT(robot.isExhausted(), be_true());
+		ASSERT_THAT(getSingTimes(), eq(2));
+		ASSERT_THAT(getBibiTimes(), eq(1));
+	}
+
+	TEST("should_bibi_when_send_open_in_wait_charged_state")
+	{
+		gotoExhaustedInWaitChargedState();
+		robot.open();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::wait_charged));
+		ASSERT_THAT(robot.isExhausted(), be_true());
+		ASSERT_THAT(getSingTimes(), eq(2));
+		ASSERT_THAT(getBibiTimes(), eq(1));
+		ASSERT_THAT(isMuteNow(), be_false());
+	}
+
+	TEST("should_closed_and_mute_without_energy_when_send_close_in_wait_charged_state")
+	{
+		gotoExhaustedInWaitChargedState();
+		robot.close();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::closed));
+		ASSERT_THAT(robot.isExhausted(), be_true());
+		ASSERT_THAT(getSingTimes(), eq(2));
+		ASSERT_THAT(getBibiTimes(), eq(0));
+		ASSERT_THAT(isMuteNow(), be_true());
+	}
+
+	TEST("should_goto_opened_when_charge_in_wait_charged_state")
+	{
+		gotoExhaustedInWaitChargedState();
+		robot.charge();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::opened));
+		ASSERT_THAT(robot.isExhausted(), be_false());
+	}
+
+	TEST("should_continue_sing_when_opened_again_by_charging")
+	{
+		gotoExhaustedInWaitChargedState();
+		robot.charge();
+		robot.play();
+
+		ASSERT_THAT(robot.getCurrentState(), eq(Robot::opened));
+		ASSERT_THAT(robot.isExhausted(), be_false());
+		ASSERT_THAT(getSingTimes(), eq(3));
+		ASSERT_THAT(isMuteNow(), be_false());
+	}
 };
-
-TEST_F(GofStateTest, should_init_at_closed_state_mute_action_without_energy)
-{
-    ASSERT_EQ(Robot::closed, robot.getCurrentState());
-    ASSERT_TRUE(robot.isExhausted());
-    ASSERT_TRUE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_closed_and_mute_when_send_close_in_closed_state)
-{
-    robot.close();
-
-    ASSERT_EQ(Robot::closed, robot.getCurrentState());
-    ASSERT_TRUE(robot.isExhausted());
-    ASSERT_TRUE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_closed_and_bibi_when_send_open_in_closed_state_without_energy)
-{
-    robot.open();
-
-    ASSERT_EQ(Robot::closed, robot.getCurrentState());
-    ASSERT_TRUE(robot.isExhausted());
-    ASSERT_EQ(1, getBibiTimes());
-    ASSERT_FALSE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_closed_and_mute_when_send_play_in_closed_state_without_energy)
-{
-    robot.play();
-
-    ASSERT_EQ(Robot::closed, robot.getCurrentState());
-    ASSERT_TRUE(robot.isExhausted());
-    ASSERT_TRUE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_closed_and_mute_but_has_energy_when_send_charge_in_closed_state_without_energy)
-{
-    robot.charge();
-
-    ASSERT_EQ(Robot::closed, robot.getCurrentState());
-    ASSERT_FALSE(robot.isExhausted());
-    ASSERT_TRUE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_closed_and_mute_when_send_play_in_closed_state_with_energy)
-{
-    robot.charge();
-    robot.play();
-
-    ASSERT_EQ(Robot::closed, robot.getCurrentState());
-    ASSERT_FALSE(robot.isExhausted());
-    ASSERT_TRUE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_open_and_mute_when_send_open_in_closed_state_with_energy)
-{
-    robot.charge();
-    robot.open();
-
-    ASSERT_EQ(Robot::opened,  robot.getCurrentState());
-    ASSERT_FALSE(robot.isExhausted());
-    ASSERT_TRUE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_open_and_sing_when_send_play_in_open_state_with_energy)
-{
-    robot.charge();
-    robot.open();
-    robot.play();
-
-    ASSERT_EQ(Robot::opened, robot.getCurrentState());
-    ASSERT_FALSE(robot.isExhausted());
-    ASSERT_EQ(1, getSingTimes());
-    ASSERT_FALSE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_closed_and_mute_when_send_close_after_sing)
-{
-    robot.charge();
-    robot.open();
-    robot.play();
-    robot.close();
-
-    ASSERT_EQ(Robot::closed, robot.getCurrentState());
-    ASSERT_FALSE(robot.isExhausted());
-    ASSERT_EQ(1, getSingTimes());
-    ASSERT_TRUE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_closed_and_mute_when_send_close_in_open_state_with_energy)
-{
-    robot.charge();
-    robot.open();
-    robot.close();
-
-    ASSERT_EQ(Robot::closed, robot.getCurrentState());
-    ASSERT_FALSE(robot.isExhausted());
-    ASSERT_TRUE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_continue_sing_when_send_open_close_open_play_with_energy)
-{
-    robot.charge();
-    robot.open();
-    robot.close();
-    robot.open();
-    robot.play();
-
-    ASSERT_EQ(Robot::opened, robot.getCurrentState());
-    ASSERT_FALSE(robot.isExhausted());
-    ASSERT_EQ(1, getSingTimes());
-}
-
-TEST_F(GofStateTest, should_goto_wait_charged_state_when_play_twice_in_open_state_with_energy)
-{
-    robot.charge();
-    robot.open();
-
-    robot.play();
-    robot.play();
-
-    ASSERT_EQ(Robot::wait_charged, robot.getCurrentState());
-    ASSERT_TRUE(robot.isExhausted());
-    ASSERT_EQ(2, getSingTimes());
-}
-
-TEST_F(GofStateTest, should_continue_play_when_charge_in_open_state)
-{
-    robot.charge();
-    robot.open();
-    robot.play();
-    robot.charge();
-    robot.play();
-
-    ASSERT_EQ(Robot::opened, robot.getCurrentState());
-    ASSERT_FALSE(robot.isExhausted());
-    ASSERT_EQ(2, getSingTimes());
-}
-
-TEST_F(GofStateTest, should_bibi_when_send_play_in_wait_charged_state)
-{
-    gotoExhaustedInWaitChargedState();
-    robot.play();
-
-    ASSERT_EQ(Robot::wait_charged, robot.getCurrentState());
-    ASSERT_TRUE(robot.isExhausted());
-    ASSERT_EQ(2, getSingTimes());
-    ASSERT_EQ(1, getBibiTimes());
-}
-
-TEST_F(GofStateTest, should_bibi_when_send_open_in_wait_charged_state)
-{
-    gotoExhaustedInWaitChargedState();
-    robot.open();
-
-    ASSERT_EQ(Robot::wait_charged, robot.getCurrentState());
-    ASSERT_TRUE(robot.isExhausted());
-    ASSERT_EQ(2, getSingTimes());
-    ASSERT_EQ(1, getBibiTimes());
-    ASSERT_FALSE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_closed_and_mute_without_energy_when_send_close_in_wait_charged_state)
-{
-    gotoExhaustedInWaitChargedState();
-    robot.close();
-
-    ASSERT_EQ(Robot::closed, robot.getCurrentState());
-    ASSERT_TRUE(robot.isExhausted());
-    ASSERT_EQ(2, getSingTimes());
-    ASSERT_EQ(0, getBibiTimes());
-    ASSERT_TRUE(isMuteNow());
-}
-
-TEST_F(GofStateTest, should_goto_opened_when_charge_in_wait_charged_state)
-{
-    gotoExhaustedInWaitChargedState();
-    robot.charge();
-
-    ASSERT_EQ(Robot::opened, robot.getCurrentState());
-    ASSERT_FALSE(robot.isExhausted());
-}
-
-TEST_F(GofStateTest, should_continue_sing_when_opened_again_by_charging)
-{
-    gotoExhaustedInWaitChargedState();
-    robot.charge();
-    robot.play();
-
-    ASSERT_EQ(Robot::opened, robot.getCurrentState());
-    ASSERT_FALSE(robot.isExhausted());
-    ASSERT_EQ(3, getSingTimes());
-    ASSERT_FALSE(isMuteNow());
-}

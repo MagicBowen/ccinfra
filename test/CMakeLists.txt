@@ -1,9 +1,6 @@
 project(ccinfra-test)
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}"
-                                     "${GTEST_ROOT}/include")
-                                     
-link_directories("${GTEST_ROOT}/lib")                                     
+include_directories(${MAGELLAN_INCLUDE_DIR})
 
 FILE(GLOB_RECURSE all_files
 *.cpp
@@ -12,5 +9,5 @@ FILE(GLOB_RECURSE all_files
 *.c
 *.C)
 
-add_executable(ccinfra-test  ${all_files})
-target_link_libraries(ccinfra-test gtest pthread ccinfra)
+add_executable(ccinfra-test ${all_files})
+target_link_libraries(ccinfra-test hamcrest magellan ccinfra)

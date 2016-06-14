@@ -277,9 +277,9 @@ TEST(...)
     Shape2D *rectangle = new Rectangle(2, 3);
     Shape2D *triangle = new Triangle();
 
-    ASSERT_EQ(25, square->getArea());
-    ASSERT_EQ(6,  rectangle->getArea());
-    ASSERT_EQ(0,  triangle->getArea());
+    ASSERT_THAT(25, square->getArea());
+    ASSERT_THAT(6,  rectangle->getArea());
+    ASSERT_THAT(0,  triangle->getArea());
 
     Shape *r = rectangle;
     Shape *c = new Circle();
@@ -548,7 +548,7 @@ TEST(...)
 {
     Human human;
     SELF(human, Worker).produce();
-    ASSERT_EQ(1, SELF(human, Worker).getProduceNum());
+    ASSERT_THAT(1, SELF(human, Worker).getProduceNum());
 
     Robot robot;
     SELF(robot, ChargeEnergy).charge();
@@ -556,7 +556,7 @@ TEST(...)
     {
         SELF(robot, Worker).produce();
     }
-    ASSERT_EQ(100, SELF(robot, Worker).getProduceNum());
+    ASSERT_THAT(100, SELF(robot, Worker).getProduceNum());
 }
 ~~~
 
@@ -611,7 +611,7 @@ TEST(...)
 
     human->ROLE(Worker).produce();
 
-    ASSERT_EQ(1, human->ROLE(Worker).getProduceNum());
+    ASSERT_THAT(1, human->ROLE(Worker).getProduceNum());
 
     delete human;
 }
@@ -652,7 +652,7 @@ TEST(...)
 
     worker->produce();
 
-    ASSERT_EQ(1, worker->getProduceNum());
+    ASSERT_THAT(1, worker->getProduceNum());
 
     delete actor;
 }
@@ -700,7 +700,7 @@ TEST(...)
 
     worker->produce();
 
-    ASSERT_EQ(1, worker->getProduceNum());
+    ASSERT_THAT(1, worker->getProduceNum());
 
     delete unknown;
 }
@@ -749,10 +749,10 @@ TEST(...)
 
     Student *student = new (studentMemory.alloc()) Student(5);
 
-    ASSERT_EQ(5, student->getId());
-    ASSERT_EQ(5, studentMemory.getRef().getId());
-    ASSERT_EQ(5, studentMemory->getId());
-    ASSERT_EQ(5, (*studentMemory).getId());
+    ASSERT_THAT(5, student->getId());
+    ASSERT_THAT(5, studentMemory.getRef().getId());
+    ASSERT_THAT(5, studentMemory->getId());
+    ASSERT_THAT(5, (*studentMemory).getId());
 
     studentMemory.destroy();
 }
@@ -777,7 +777,7 @@ TEST(...)
 
     for(int i = 0; i < MAX_NUM; i++)
     {
-        ASSERT_EQ(i, students[i]->getId());
+        ASSERT_THAT(i, students[i]->getId());
     }
 }
 ~~~
@@ -1014,15 +1014,15 @@ LinkedAllocator<int, ARR_SIZE(array)> allocator(MAX_ALLOC_NUM);
 
 const int* x0 = allocator.alloc();
 ASSERT_TRUE(__NOT_NULL(x0));
-ASSERT_EQ(0, *x0);
+ASSERT_THAT(0, *x0);
 
 const int* x1 = allocator.alloc();
 ASSERT_TRUE(__NOT_NULL(x1));
-ASSERT_EQ(1, *x1);
+ASSERT_THAT(1, *x1);
 
 const int* x2 = allocator.alloc();
 ASSERT_TRUE(__NOT_NULL(x2));
-ASSERT_EQ(2, *x2);
+ASSERT_THAT(2, *x2);
 
 const int* x3 = allocator.alloc();
 ASSERT_TRUE(__IS_NULL(x3));
@@ -1031,7 +1031,7 @@ allocator.dealloc(*x2);
 
 const int* x3 = allocator.alloc();
 ASSERT_TRUE(__NOT_NULL(x3));
-ASSERT_EQ(2, *x3);
+ASSERT_THAT(2, *x3);
 ~~~
 
 #### AutoMsg
@@ -1094,10 +1094,10 @@ private:
 ~~~cpp
 SmartPtr<Foo> pf(new Foo(3));
 
-ASSERT_EQ(3, pf->getId());
+ASSERT_THAT(3, pf->getId());
 
 SmartPtr<Foo> pf1 = pf;
-ASSERT_EQ(3, pf1->getId());
+ASSERT_THAT(3, pf1->getId());
 ~~~
 
 默认在引用计数变为0后，会调用delete操作符删除对象。如果对象有自定义的销毁方式，需要继承SharedObject后覆写`bool needDestroy()`和`void destroy()`接口。例如上例可以改为：
@@ -1151,24 +1151,24 @@ struct Msg
 TEST(...)
 {
     StructObject<Msg> msg;
-    ASSERT_EQ(0, msg.id);
-    ASSERT_EQ(0, msg.transNum);
+    ASSERT_THAT(0, msg.id);
+    ASSERT_THAT(0, msg.transNum);
 
     memset(&msg, 0xff, sizeof(msg));
-    ASSERT_EQ(0xffffffff, msg.id);
-    ASSERT_EQ(0xffffffff, msg.transNum);}
+    ASSERT_THAT(0xffffffff, msg.id);
+    ASSERT_THAT(0xffffffff, msg.transNum);}
 ~~~
 
 当然StructObject提供的其它接口也支持你像指针一样地去使用它：
 
 ~~~cpp
     StructObject<Msg> msg;
-    ASSERT_EQ(0, msg->id);
-    ASSERT_EQ(0, msg->transNum);
+    ASSERT_THAT(0, msg->id);
+    ASSERT_THAT(0, msg->transNum);
 
     memset(msg.getPointer(), 0x0ff, sizeof(msg));
-    ASSERT_EQ(0xffffffff, (*msg).id);
-    ASSERT_EQ(0xffffffff, (*msg).transNum);
+    ASSERT_THAT(0xffffffff, (*msg).id);
+    ASSERT_THAT(0xffffffff, (*msg).transNum);
 ~~~
 
 #### StructWrapper
@@ -1207,7 +1207,7 @@ TEST(...)
     DomainEvent& event = DomainEvent::by(msg);
 
     ASSERT_TRUE(event.isValid());
-    ASSERT_EQ(4, event.transNum);
+    ASSERT_THAT(4, event.transNum);
 }
 ~~~
 
@@ -1223,7 +1223,7 @@ ASSERT_FALSE(x.isPresent());
 x.update(5);
 
 ASSERT_TRUE(x.isPresent());
-ASSERT_EQ(5, *x);
+ASSERT_THAT(5, *x);
 ~~~
 
 如上当用Maybe封装后，新的类型支持update和isPresent操作。如果执行过update操作，则isPresent为真，否则为假。除了增加上面的接口外，Maybe的其它用法和使用被封装类型的指针一样，但是需要注意两点：
@@ -1291,10 +1291,10 @@ TEST(...)
     data.confirm();
 
     data.update(ObjectInfo(3));
-    ASSERT_EQ(3, data->getValue());
+    ASSERT_THAT(3, data->getValue());
 
     data.revert();
-    ASSERT_EQ(2, data->getValue());
+    ASSERT_THAT(2, data->getValue());
 }
 ~~~
 
@@ -1342,16 +1342,16 @@ TEST(...)
 {
     Array<Object, 2> objects;
 
-    ASSERT_EQ(Object::INVALID_VALUE, objects[0].getValue());
-    ASSERT_EQ(Object::INVALID_VALUE, objects[1].getValue());
+    ASSERT_THAT(Object::INVALID_VALUE, objects[0].getValue());
+    ASSERT_THAT(Object::INVALID_VALUE, objects[1].getValue());
 }
 
 TEST(...)
 {
     Array<Object, 2> objects(5);
 
-    ASSERT_EQ(5, objects[0].getValue());
-    ASSERT_EQ(5, objects[1].getValue());
+    ASSERT_THAT(5, objects[0].getValue());
+    ASSERT_THAT(5, objects[1].getValue());
 }
 
 TEST(...)
@@ -1360,8 +1360,8 @@ TEST(...)
 
     objects.emplace(1, 5);
 
-    ASSERT_EQ(Object::INVALID_VALUE, objects[0].getValue());
-    ASSERT_EQ(5, objects[1].getValue());
+    ASSERT_THAT(Object::INVALID_VALUE, objects[0].getValue());
+    ASSERT_THAT(5, objects[1].getValue());
 }
 
 TEST(...)
@@ -1371,17 +1371,17 @@ TEST(...)
 
 
     ThisArray::Iterator i = objects.begin();
-    ASSERT_EQ(Object::INVALID_VALUE, i->getValue());
+    ASSERT_THAT(Object::INVALID_VALUE, i->getValue());
 
     objects[1].update(5);
     i++;
-    ASSERT_EQ(5, i->getValue());
+    ASSERT_THAT(5, i->getValue());
 
     i->update(10);
-    ASSERT_EQ(10, objects[1].getValue());
+    ASSERT_THAT(10, objects[1].getValue());
 
     ASSERT_NE(objects.end(), i);
-    ASSERT_EQ(objects.end(), ++i);
+    ASSERT_THAT(objects.end(), ++i);
 }
 
 TEST(...)
@@ -1396,7 +1396,7 @@ TEST(...)
     {
         sum += i->getValue();
     }
-    ASSERT_EQ(15, sum);
+    ASSERT_THAT(15, sum);
 }
 ~~~
 
@@ -1458,7 +1458,7 @@ TEST(...)
     List<Foo> elems;
 
 	ASSERT_TRUE(elems.isEmpty());
-    ASSERT_EQ(0, elems.size());
+    ASSERT_THAT(0, elems.size());
 
 	Foo elem1(1), elem2(2), elem3(3);
 
@@ -1466,18 +1466,18 @@ TEST(...)
     elems.pushBack(elem2);
     elems.pushBack(elem3);
 
-    ASSERT_EQ(&elem1, elems.getFirst());
-    ASSERT_EQ(&elem3, elems.getLast());
-    ASSERT_EQ(3, elems.size());
+    ASSERT_THAT(&elem1, elems.getFirst());
+    ASSERT_THAT(&elem3, elems.getLast());
+    ASSERT_THAT(3, elems.size());
 
     Foo* first = elems.popFront();
-    ASSERT_EQ(1, first->getValue());
-    ASSERT_EQ(2, elems.size());
+    ASSERT_THAT(1, first->getValue());
+    ASSERT_THAT(2, elems.size());
 
 	int i = 2;
     LIST_FOREACH(Foo, elem, elems)
     {
-        ASSERT_EQ(i++, elem->getValue());
+        ASSERT_THAT(i++, elem->getValue());
     }
 }
 ~~~
@@ -1576,9 +1576,9 @@ TEST(...)
     map.put(Key(1, 3), Value("four"));
     map[Key(2, 3)] = Value("five");
 
-    ASSERT_EQ(Value("four"), map[Key(1, 3)]);
-    ASSERT_EQ(Value("five"), *map.get(Key(2, 3)));
-    ASSERT_EQ(__null_ptr,  map.get(Key(2, 4)));
+    ASSERT_THAT(Value("four"), map[Key(1, 3)]);
+    ASSERT_THAT(Value("five"), *map.get(Key(2, 3)));
+    ASSERT_THAT(__null_ptr,  map.get(Key(2, 4)));
 }
 ~~~
 
@@ -1600,8 +1600,8 @@ ASSERT_TRUE((r1 << 2) == (r2 >> 11));
 Algo包含了一些简单的算法和一些辅助宏。
 
 - bits.h：提供了比特操作的一些宏和方法。如以下示例：
-	- `ASSERT_EQ(0x7F,   BIT_MASK(7));`
-	- `ASSERT_EQ(0x5,    GET_BITS_VALUE(0xaa, 3, 3));`
+	- `ASSERT_THAT(0x7F,   BIT_MASK(7));`
+	- `ASSERT_THAT(0x5,    GET_BITS_VALUE(0xaa, 3, 3));`
 	- `ASSERT_TRUE(IS_BIT_ON(0xaa, 1));`
 - bound.h：提供了在有序数组中找到某一元素的low-bound和upper-bound元素的下标，在找不到的情况下该下标并不越界。
 - search.h：提供了一个在嵌入式下替代STL库中`binary_search`的函数。
@@ -1646,9 +1646,9 @@ TEST()
     auto result2 = executor.execute(Fib(6));
     auto result3 = executor.execute([](){ return fib(7); });
 
-    ASSERT_EQ(15, result1.get());
-    ASSERT_EQ(21, result2.get());
-    ASSERT_EQ(28, result2.get());
+    ASSERT_THAT(15, result1.get());
+    ASSERT_THAT(21, result2.get());
+    ASSERT_THAT(28, result2.get());
 }
 ~~~
 
@@ -1714,12 +1714,12 @@ TEST(...)
 	ThreadData<int, ThreadInfoStub> data;
 
     *data = 2;
-    ASSERT_EQ(2, *data);
+    ASSERT_THAT(2, *data);
 
 	ThreadInfoStub::setCurrentId(1);
 
     *data = 5;
-    ASSERT_EQ(5, *data);
+    ASSERT_THAT(5, *data);
 }
 ~~~
 

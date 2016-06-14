@@ -1,6 +1,8 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include <ccinfra/mem/TransData.h>
 #include <stdlib.h>
+
+USING_HAMCREST_NS
 
 namespace
 {
@@ -38,7 +40,7 @@ namespace
             {
                 if(alloc_blocks == 0) 
                 {
-                    GTEST_FAIL();
+                    throw std::exception();
                 }
 
                 alloc_blocks--;
@@ -104,113 +106,115 @@ namespace
 
 }
 
-struct TestInitTransData : testing::Test
+FIXTURE(TestInitTransData)
 {
     TransData<Object> data;
 
+    TEST("the_state_should_be_correct_for_an_uninitialized_trans_data")
+    {
+        assertInit();
+    }
+
+    TEST("should_in_NEW_state_after_updating")
+    {
+        data.update(Object(2));
+
+        assertUpdated();
+    }
+
+    TEST("should_in_NEW_state_after_force_updating")
+    {
+        data.forceUpdate();
+        data.update(Object(2));
+
+        assertUpdated();
+    }
+
+    TEST("should_in_ACTIVE_state_after_updating_then_confirming")
+    {
+        data.update(Object(2));
+        data.confirm();
+
+        ASSERT_THAT(data.isStable(), be_true());
+
+        ASSERT_THAT(data.isPresent(), be_true());
+        ASSERT_THAT(data->getValue(), eq(2));
+
+        ASSERT_THAT(data.isOldPresent(), be_false());
+        ASSERT_THAT(data.isChanged(), be_false());
+        ASSERT_THAT(data.isChanged(true), be_true());
+        ASSERT_THAT(alloc_blocks, eq(1));
+    }
+
+    TEST("should_return_to_INIT_after_updating_then_reverting")
+    {
+        data.update(Object(2));
+        data.revert();
+
+        assertInit();
+    }
+
+    TEST("touch_should_have_no_effect")
+    {
+        data.touch();
+
+        assertInit();
+    }
+
+    TEST("release_should_have_no_effect")
+    {
+        data.release();
+
+        assertInit();
+    }
+
+    TEST("reset_should_have_no_effect")
+    {
+        data.reset();
+
+        assertInit();
+    }
+
+    TEST("should_not_allow_to_modify")
+    {
+        ASSERT_THAT(data.modify(), ne(CCINFRA_SUCCESS));
+
+        assertInit();
+    }
+
     void assertInit()
     {
-        ASSERT_TRUE(data.isStable());
+    	ASSERT_THAT(data.isStable(), be_true());
 
-        ASSERT_FALSE(data.isPresent());
-        ASSERT_FALSE(data.isOldPresent());
-        ASSERT_FALSE(data.isChanged());
-        ASSERT_FALSE(data.isChanged(true));
-        ASSERT_EQ(0, alloc_blocks);
+    	ASSERT_THAT(data.isPresent(), be_false());
+    	ASSERT_THAT(data.isOldPresent(), be_false());
+    	ASSERT_THAT(data.isChanged(), be_false());
+    	ASSERT_THAT(data.isChanged(true), be_false());
+        ASSERT_THAT(alloc_blocks, eq(0));
     }
 
     void assertUpdated()
     {
-        ASSERT_FALSE(data.isStable());
+    	ASSERT_THAT(data.isStable(), be_false());
 
-        ASSERT_TRUE(data.isPresent());
-        ASSERT_EQ(2, data->getValue());
+    	ASSERT_THAT(data.isPresent(), be_true());
+        ASSERT_THAT(data->getValue(), eq(2));
 
-        ASSERT_FALSE(data.isOldPresent());
-        ASSERT_TRUE(data.isChanged());
-        ASSERT_TRUE(data.isChanged(true));
-        ASSERT_EQ(1, alloc_blocks);
+        ASSERT_THAT(data.isOldPresent(), be_false());
+        ASSERT_THAT(data.isChanged(), be_true());
+        ASSERT_THAT(data.isChanged(true), be_true());
+        ASSERT_THAT(alloc_blocks, eq(1));
     }
 };
 
-TEST_F(TestInitTransData, the_state_should_be_correct_for_an_uninitialized_trans_data)
-{
-    assertInit();
-}
 
-TEST_F(TestInitTransData, should_in_NEW_state_after_updating)
-{
-    data.update(Object(2));
-
-    assertUpdated();
-}
-
-TEST_F(TestInitTransData, should_in_NEW_state_after_force_updating)
-{
-    data.forceUpdate();
-    data.update(Object(2));
-
-    assertUpdated();
-}
-
-TEST_F(TestInitTransData, should_in_ACTIVE_state_after_updating_then_confirming)
-{
-    data.update(Object(2));
-    data.confirm();
-
-    ASSERT_TRUE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-    ASSERT_FALSE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestInitTransData, should_return_to_INIT_after_updating_then_reverting)
-{
-    data.update(Object(2));
-    data.revert();
-
-    assertInit();
-}
-
-TEST_F(TestInitTransData, touch_should_have_no_effect)
-{
-    data.touch();
-
-    assertInit();
-}
-
-TEST_F(TestInitTransData, release_should_have_no_effect)
-{
-    data.release();
-
-    assertInit();
-}
-
-TEST_F(TestInitTransData, reset_should_have_no_effect)
-{
-    data.reset();
-
-    assertInit();
-}
-
-TEST_F(TestInitTransData, should_not_allow_to_modify)
-{
-    ASSERT_NE(CCINFRA_SUCCESS, data.modify());
-
-    assertInit();
-}
 
 //////////////////////////////////////////////////////////////////////////
-struct TestActiveTransData : testing::Test
+FIXTURE(TestActiveTransData)
 {
     TransData<Object> data;
 
-    void SetUp()
+    SETUP()
     {
         data.update(Object(2));
         data.confirm();
@@ -218,160 +222,161 @@ struct TestActiveTransData : testing::Test
 
     void assertInit()
     {
-        ASSERT_TRUE(data.isStable());
+        ASSERT_THAT(data.isStable(), be_true());
 
-        ASSERT_FALSE(data.isPresent());
-        ASSERT_FALSE(data.isOldPresent());
-        ASSERT_FALSE(data.isChanged());
-        ASSERT_FALSE(data.isChanged(true));
-        ASSERT_EQ(0, alloc_blocks);
+        ASSERT_THAT(data.isPresent(), be_false());
+        ASSERT_THAT(data.isOldPresent(), be_false());
+        ASSERT_THAT(data.isChanged(), be_false());
+        ASSERT_THAT(data.isChanged(true), be_false());
+        ASSERT_THAT(alloc_blocks, eq(0));
     }
 
     void update()
     {
         data.update(Object(3));
 
-        ASSERT_FALSE(data.isStable());
+        ASSERT_THAT(data.isStable(), be_false());
 
-        ASSERT_TRUE(data.isPresent());
-        ASSERT_EQ(3, data->getValue());
+        ASSERT_THAT(data.isPresent(), be_true());
+        ASSERT_THAT(data->getValue(), eq(3));
 
-        ASSERT_TRUE(data.isOldPresent());
-        ASSERT_EQ(2, data.getOldValue().getValue());
+        ASSERT_THAT(data.isOldPresent(), be_true());
+        ASSERT_THAT(data.getOldValue().getValue(), eq(2));
 
-        ASSERT_TRUE(data.isChanged());
-        ASSERT_TRUE(data.isChanged(true));
-        ASSERT_EQ(2, alloc_blocks);
+        ASSERT_THAT(data.isChanged(), be_true());
+        ASSERT_THAT(data.isChanged(true), be_true());
+        ASSERT_THAT(alloc_blocks, eq(2));
     }
+
+	TEST("after_reset_should_return_to_idle")
+	{
+		data.reset();
+		assertInit();
+	}
+
+	TEST("should_in_MODIFIED_state_after_updating")
+	{
+		update();
+	}
+
+	TEST("should_in_MODIFIED_state_after_force_updating")
+	{
+		data.forceUpdate();
+		update();
+	}
+
+	TEST("should_in_ACTIVE_state_after_updating_and_confirming")
+	{
+		data.update(Object(3));
+		data.confirm();
+
+		ASSERT_THAT(data.isStable(), be_true());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(3));
+
+		ASSERT_THAT(data.isOldPresent(), be_false());
+
+		ASSERT_THAT(data.isChanged(), be_false());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_not_be_changed_after_updating_a_identical_value")
+	{
+		data.update(Object(2));
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isChanged(), be_false());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(2));
+	}
+
+	TEST("should_be_able_to_modify")
+	{
+		ASSERT_THAT(data.modify(), eq(CCINFRA_SUCCESS));
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isChanged(), be_false());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(2));
+	}
+
+	TEST("should_in_ACTIVE_state_after_updating_and_reverting")
+	{
+		data.update(Object(3));
+		data.revert();
+
+		ASSERT_THAT(data.isStable(), be_true());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_false());
+
+		ASSERT_THAT(data.isChanged(), be_false());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_in_TOUCHED_state_after_touch")
+	{
+		data.touch();
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_false());
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_in_RELEASED_state_after_release")
+	{
+		data.release();
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_false());
+
+		ASSERT_THAT(data.isOldPresent(), be_true());
+		ASSERT_THAT(data.getOldValue().getValue(), eq(2));
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_false());
+		ASSERT_THAT(alloc_blocks, eq(1));
+
+		data.confirm();
+
+		assertInit();
+	}
+
 };
 
-TEST_F(TestActiveTransData, after_reset_should_return_to_idle)
-{
-    data.reset();
-    assertInit();
-}
-
-TEST_F(TestActiveTransData, should_in_MODIFIED_state_after_updating)
-{
-    update();
-}
-
-TEST_F(TestActiveTransData, should_in_MODIFIED_state_after_force_updating)
-{
-    data.forceUpdate();
-    update();
-}
-
-TEST_F(TestActiveTransData, should_in_ACTIVE_state_after_updating_and_confirming)
-{
-    data.update(Object(3));
-    data.confirm();
-
-    ASSERT_TRUE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(3, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-
-    ASSERT_FALSE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestActiveTransData, should_not_be_changed_after_updating_a_identical_value)
-{
-    data.update(Object(2));
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_TRUE(data.isOldPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(2, alloc_blocks);
-}
-
-TEST_F(TestActiveTransData, should_be_able_to_modify)
-{
-    ASSERT_EQ(CCINFRA_SUCCESS, data.modify());
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_TRUE(data.isOldPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(2, alloc_blocks);
-}
-
-TEST_F(TestActiveTransData, should_in_ACTIVE_state_after_updating_and_reverting)
-{
-    data.update(Object(3));
-    data.revert();
-
-    ASSERT_TRUE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-
-    ASSERT_FALSE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestActiveTransData, should_in_TOUCHED_state_after_touch)
-{
-    data.touch();
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestActiveTransData, should_in_RELEASED_state_after_release)
-{
-    data.release();
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_FALSE(data.isPresent());
-
-    ASSERT_TRUE(data.isOldPresent());
-    ASSERT_EQ(2, data.getOldValue().getValue());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_FALSE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-
-    data.confirm();
-
-    assertInit();
-}
-
 //////////////////////////////////////////////////////////////////////////
-struct TestTouchTransData : testing::Test
+FIXTURE(TestTouchTransData)
 {
     TransData<Object> data;
 
-    void SetUp()
+    SETUP()
     {
         data.update(Object(2));
         data.confirm();
@@ -380,173 +385,174 @@ struct TestTouchTransData : testing::Test
 
     void assertInit()
     {
-        ASSERT_TRUE(data.isStable());
+        ASSERT_THAT(data.isStable(), be_true());
 
-        ASSERT_FALSE(data.isPresent());
-        ASSERT_FALSE(data.isOldPresent());
-        ASSERT_FALSE(data.isChanged());
-        ASSERT_FALSE(data.isChanged(true));
-        ASSERT_EQ(0, alloc_blocks);
+        ASSERT_THAT(data.isPresent(), be_false());
+        ASSERT_THAT(data.isOldPresent(), be_false());
+        ASSERT_THAT(data.isChanged(), be_false());
+        ASSERT_THAT(data.isChanged(true), be_false());
+        ASSERT_THAT(alloc_blocks, eq(0));
     }
+
+
+	TEST("should_be_in_shadow_state")
+	{
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_false());
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(1));
+
+		data.confirm();
+
+		ASSERT_THAT(data.isStable(), be_true());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_false());
+
+		ASSERT_THAT(data.isChanged(), be_false());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_not_allow_modify")
+	{
+		ASSERT_THAT(data.modify(), ne(CCINFRA_SUCCESS));
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_false());
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_be_in_shadow_state_after_updating")
+	{
+		data.update(Object(2));
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_true());
+		ASSERT_THAT(data.getOldValue().getValue(), eq(2));
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(2));
+	}
+
+	TEST("should_use_new_data_after_updating")
+	{
+		data.update(Object(3));
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(3));
+
+		ASSERT_THAT(data.isOldPresent(), be_true());
+		ASSERT_THAT(data.getOldValue().getValue(), eq(2));
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(2));
+	}
+
+	TEST("should_in_ACTIVE_state_after_confirm")
+	{
+		data.confirm();
+
+		ASSERT_THAT(data.isStable(), be_true());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_false());
+
+		ASSERT_THAT(data.isChanged(), be_false());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_in_ACTIVE_state_after_reverting")
+	{
+		data.revert();
+
+		ASSERT_THAT(data.isStable(), be_true());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_false());
+
+		ASSERT_THAT(data.isChanged(), be_false());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_in_RELEASED_state_after_releasing")
+	{
+		data.release();
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_false());
+
+		ASSERT_THAT(data.isOldPresent(), be_true());
+		ASSERT_THAT(data.getOldValue().getValue(), eq(2));
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_false());
+		ASSERT_THAT(alloc_blocks, eq(1));
+
+		data.confirm();
+		assertInit();
+	}
+
+	TEST("should_in_ACTIVE_state_after_releasing_and_reverting")
+	{
+		data.release();
+		data.revert();
+
+		ASSERT_THAT(data.isStable(), be_true());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_false());
+
+		ASSERT_THAT(data.isChanged(), be_false());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_in_IDLE_state_after_reset")
+	{
+		data.reset();
+		assertInit();
+	}
 };
 
-TEST_F(TestTouchTransData, should_be_in_shadow_state)
-{
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-
-    data.confirm();
-
-    ASSERT_TRUE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-
-    ASSERT_FALSE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestTouchTransData, should_not_allow_modify)
-{
-    ASSERT_NE(CCINFRA_SUCCESS, data.modify());
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestTouchTransData, should_be_in_shadow_state_after_updating)
-{
-    data.update(Object(2));
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_TRUE(data.isOldPresent());
-    ASSERT_EQ(2, data.getOldValue().getValue());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(2, alloc_blocks);
-}
-
-TEST_F(TestTouchTransData, should_use_new_data_after_updating)
-{
-    data.update(Object(3));
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(3, data->getValue());
-
-    ASSERT_TRUE(data.isOldPresent());
-    ASSERT_EQ(2, data.getOldValue().getValue());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(2, alloc_blocks);
-}
-
-TEST_F(TestTouchTransData, should_in_ACTIVE_state_after_confirm)
-{
-    data.confirm();
-
-    ASSERT_TRUE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-
-    ASSERT_FALSE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestTouchTransData, should_in_ACTIVE_state_after_reverting)
-{
-    data.revert();
-
-    ASSERT_TRUE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-
-    ASSERT_FALSE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestTouchTransData, should_in_RELEASED_state_after_releasing)
-{
-    data.release();
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_FALSE(data.isPresent());
-
-    ASSERT_TRUE(data.isOldPresent());
-    ASSERT_EQ(2, data.getOldValue().getValue());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_FALSE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-
-    data.confirm();
-    assertInit();
-}
-
-TEST_F(TestTouchTransData, should_in_ACTIVE_state_after_releasing_and_reverting)
-{
-    data.release();
-    data.revert();
-
-    ASSERT_TRUE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-
-    ASSERT_FALSE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestTouchTransData, should_in_IDLE_state_after_reset)
-{
-    data.reset();
-    assertInit();
-}
-
 //////////////////////////////////////////////////////////////////////////
-struct TestReleaseTransData : testing::Test
+FIXTURE(TestReleaseTransData)
 {
     TransData<Object> data;
 
-    void SetUp()
+    SETUP()
     {
         data.update(Object(2));
         data.confirm();
@@ -555,142 +561,142 @@ struct TestReleaseTransData : testing::Test
 
     void assertInit()
     {
-        ASSERT_TRUE(data.isStable());
+    	ASSERT_THAT(data.isStable(), be_true());
 
-        ASSERT_FALSE(data.isPresent());
-        ASSERT_FALSE(data.isOldPresent());
-        ASSERT_FALSE(data.isChanged());
-        ASSERT_FALSE(data.isChanged(true));
-        ASSERT_EQ(0, alloc_blocks);
+    	ASSERT_THAT(data.isPresent(), be_false());
+    	ASSERT_THAT(data.isOldPresent(), be_false());
+    	ASSERT_THAT(data.isChanged(), be_false());
+    	ASSERT_THAT(data.isChanged(true), be_false());
+        ASSERT_THAT(alloc_blocks, eq(0));
     }
+
+	TEST("should_in_IDLE_state_after_reseting")
+	{
+		data.reset();
+		assertInit();
+	}
+
+	TEST("should_in_IDLE_state_after_confirming")
+	{
+		data.confirm();
+		assertInit();
+	}
+
+	TEST("should_in_ACTIVE_state_after_reverting")
+	{
+		data.revert();
+
+		ASSERT_THAT(data.isStable(), be_true());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_false());
+
+		ASSERT_THAT(data.isChanged(), be_false());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_in_RELEASED_state")
+	{
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_false());
+
+		ASSERT_THAT(data.isOldPresent(), be_true());
+		ASSERT_THAT(data.getOldValue().getValue(), eq(2));
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_false());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_in_SHADOWN_state_after_updating")
+	{
+		data.update(Object(2));
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_true());
+		ASSERT_THAT(data.getOldValue().getValue(), eq(2));
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(2));
+	}
+
+	TEST("should_use_new_value_state_after_updating")
+	{
+		data.update(Object(3));
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(3));
+
+		ASSERT_THAT(data.isOldPresent(), be_true());
+		ASSERT_THAT(data.getOldValue().getValue(), eq(2));
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(2));
+	}
+
+	TEST("should_in_ACTIVE_state_after_updating_and_reverting")
+	{
+		data.update(Object(3));
+		data.revert();
+
+		ASSERT_THAT(data.isStable(), be_true());
+
+		ASSERT_THAT(data.isPresent(), be_true());
+		ASSERT_THAT(data->getValue(), eq(2));
+
+		ASSERT_THAT(data.isOldPresent(), be_false());
+
+		ASSERT_THAT(data.isChanged(), be_false());
+		ASSERT_THAT(data.isChanged(true), be_true());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_not_allow_modify")
+	{
+		ASSERT_THAT(data.modify(), ne(CCINFRA_SUCCESS));
+	}
+
+	TEST("should_have_no_effect_for_touching")
+	{
+		data.touch();
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_false());
+
+		ASSERT_THAT(data.isOldPresent(), be_true());
+		ASSERT_THAT(data.getOldValue().getValue(), eq(2));
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_false());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
+
+	TEST("should_have_no_effect_for_releasing")
+	{
+		data.release();
+
+		ASSERT_THAT(data.isStable(), be_false());
+
+		ASSERT_THAT(data.isPresent(), be_false());
+
+		ASSERT_THAT(data.isOldPresent(), be_true());
+		ASSERT_THAT(data.getOldValue().getValue(), eq(2));
+
+		ASSERT_THAT(data.isChanged(), be_true());
+		ASSERT_THAT(data.isChanged(true), be_false());
+		ASSERT_THAT(alloc_blocks, eq(1));
+	}
 };
-
-TEST_F(TestReleaseTransData, should_in_IDLE_state_after_reseting)
-{
-    data.reset();
-    assertInit();
-}
-
-TEST_F(TestReleaseTransData, should_in_IDLE_state_after_confirming)
-{
-    data.confirm();
-    assertInit();
-}
-
-TEST_F(TestReleaseTransData, should_in_ACTIVE_state_after_reverting)
-{
-    data.revert();
-
-    ASSERT_TRUE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-
-    ASSERT_FALSE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestReleaseTransData, should_in_RELEASED_state)
-{
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_FALSE(data.isPresent());
-
-    ASSERT_TRUE(data.isOldPresent());
-    ASSERT_EQ(2, data.getOldValue().getValue());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_FALSE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestReleaseTransData, should_in_SHADOWN_state_after_updating)
-{
-    data.update(Object(2));
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_TRUE(data.isOldPresent());
-    ASSERT_EQ(2, data.getOldValue().getValue());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(2, alloc_blocks);
-}
-
-TEST_F(TestReleaseTransData, should_use_new_value_state_after_updating)
-{
-    data.update(Object(3));
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(3, data->getValue());
-
-    ASSERT_TRUE(data.isOldPresent());
-    ASSERT_EQ(2, data.getOldValue().getValue());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(2, alloc_blocks);
-}
-
-TEST_F(TestReleaseTransData, should_in_ACTIVE_state_after_updating_and_reverting)
-{
-    data.update(Object(3));
-    data.revert();
-
-    ASSERT_TRUE(data.isStable());
-
-    ASSERT_TRUE(data.isPresent());
-    ASSERT_EQ(2, data->getValue());
-
-    ASSERT_FALSE(data.isOldPresent());
-
-    ASSERT_FALSE(data.isChanged());
-    ASSERT_TRUE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestReleaseTransData, should_not_allow_modify)
-{
-    ASSERT_NE(CCINFRA_SUCCESS, data.modify());
-}
-
-TEST_F(TestReleaseTransData, should_have_no_effect_for_touching)
-{
-    data.touch();
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_FALSE(data.isPresent());
-
-    ASSERT_TRUE(data.isOldPresent());
-    ASSERT_EQ(2, data.getOldValue().getValue());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_FALSE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}
-
-TEST_F(TestReleaseTransData, should_have_no_effect_for_releasing)
-{
-    data.release();
-
-    ASSERT_FALSE(data.isStable());
-
-    ASSERT_FALSE(data.isPresent());
-
-    ASSERT_TRUE(data.isOldPresent());
-    ASSERT_EQ(2, data.getOldValue().getValue());
-
-    ASSERT_TRUE(data.isChanged());
-    ASSERT_FALSE(data.isChanged(true));
-    ASSERT_EQ(1, alloc_blocks);
-}

@@ -1,5 +1,7 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include "ccinfra/base/EqHelper.h"
+
+USING_HAMCREST_NS
 
 namespace
 {
@@ -28,15 +30,20 @@ namespace
     }
 }
 
-TEST(EqHelperTest, should_compare_complex_correctly_when_defined_compare_operator_by_eq_helper)
+FIXTURE(EqHelperTest)
 {
-    ASSERT_TRUE(Complex(3, 1) == Complex(3, 1));
-    ASSERT_TRUE(Complex(3, 0) != Complex(3, 1));
-    ASSERT_TRUE(Complex(3, 0) < Complex(3, 1));
-    ASSERT_TRUE(Complex(2, 8) < Complex(3, 0));
-    ASSERT_TRUE(Complex(2, 8) <= Complex(3, 0));
-    ASSERT_TRUE(Complex(2, 8) > Complex(1, 10));
-    ASSERT_TRUE(Complex(2, 8) >= Complex(2, 7));
-    ASSERT_TRUE(Complex(2, 8) >= Complex(2, 8));
-}
+	TEST("should_compare_complex_correctly_when_defined_compare_operator_by_eq_helper")
+	{
+	    ASSERT_THAT(Complex(3, 1) == Complex(3, 1), be_true());
+	    ASSERT_THAT(Complex(3, 0) != Complex(3, 1), be_true());
+	    ASSERT_THAT(Complex(3, 0) < Complex(3, 1), be_true());
+	    ASSERT_THAT(Complex(2, 8) < Complex(3, 0), be_true());
+	    ASSERT_THAT(Complex(2, 8) <= Complex(3, 0), be_true());
+	    ASSERT_THAT(Complex(2, 8) > Complex(1, 10), be_true());
+	    ASSERT_THAT(Complex(2, 8) >= Complex(2, 7), be_true());
+	    ASSERT_THAT(Complex(2, 8) >= Complex(2, 8), be_true());
+	}
+};
+
+
 

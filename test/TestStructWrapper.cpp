@@ -1,6 +1,8 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include "ccinfra/base/BaseTypes.h"
 #include "ccinfra/mem/StructWrapper.h"
+
+USING_HAMCREST_NS
 
 namespace
 {
@@ -25,12 +27,17 @@ namespace
     };
 }
 
-TEST(StructWrapperTest, should_use_the_method_when_wrappered)
+FIXTURE(StructWrapperTest)
 {
-    PlainMsg msg{2, 4};
+	TEST("should_use_the_method_when_wrappered")
+	{
+	    PlainMsg msg{2, 4};
 
-    DomainEvent& event = DomainEvent::by(msg);
+	    DomainEvent& event = DomainEvent::by(msg);
 
-    ASSERT_TRUE(event.isValid());
-    ASSERT_EQ(4, event.transNum);
-}
+	    ASSERT_THAT(event.isValid(), be_true());
+	    ASSERT_THAT(event.transNum, eq(4));
+	}
+};
+
+

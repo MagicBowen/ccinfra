@@ -1,7 +1,9 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include "ccinfra/dci/Role.h"
 #include "ccinfra/base/BaseTypes.h"
 #include "ccinfra/base/Keywords.h"
+
+USING_HAMCREST_NS
 
 namespace
 {
@@ -11,13 +13,10 @@ namespace
         ABSTRACT(bool isExhausted() const);
     };
 
-    struct HumanEnergy : Energy
-    {
-        enum
-        {
-            MAX_CONSUME_TIMES = 10
-        };
+	const int MAX_CONSUME_TIMES = 10;
 
+	struct HumanEnergy : Energy
+    {
         HumanEnergy()
         : isHungry(false), consumeTimes(0)
         {
@@ -50,14 +49,11 @@ namespace
         U8 consumeTimes;
     };
 
+	const int FULL_PERCENT = 100;
+	const int CONSUME_PERCENT = 1;
+
     struct ChargeEnergy : Energy
     {
-        enum
-        {
-            FULL_PERCENT = 100,
-            CONSUME_PERCENT = 1
-        };
-
         ChargeEnergy() : percent(0)
         {
         }
@@ -125,30 +121,33 @@ namespace
     };
 }
 
-TEST(RoleTest, should_cast_to_the_public_role_correctly_for_human)
+FIXTURE(RoleTest)
 {
-    Human human;
+	TEST("should_cast_to_the_public_role_correctly_for_human")
+	{
+		Human human;
 
-    while(!SELF(human, Energy).isExhausted())
-    {
-        SELF(human, Worker).produce();
-    }
-    ASSERT_EQ(Human::MAX_CONSUME_TIMES, SELF(human, Worker).getProduceNum());
+		while(!SELF(human, Energy).isExhausted())
+		{
+			SELF(human, Worker).produce();
+		}
+		ASSERT_THAT(SELF(human, Worker).getProduceNum(), eq(MAX_CONSUME_TIMES));
 
-    human.supplyByFood();
-    ASSERT_FALSE(SELF(human, Energy).isExhausted());
-}
+		human.supplyByFood();
+		ASSERT_THAT(SELF(human, Energy).isExhausted(), be_false());
+	}
 
-TEST(RoleTest, should_cast_to_the_public_role_correctly_for_robot)
-{
-    Robot robot;
+	TEST("should_cast_to_the_public_role_correctly_for_robot")
+	{
+		Robot robot;
 
-    SELF(robot, ChargeEnergy).charge();
+		SELF(robot, ChargeEnergy).charge();
 
-    while(!SELF(robot, Energy).isExhausted())
-    {
-        SELF(robot, Worker).produce();
-    }
-    ASSERT_EQ(ChargeEnergy::FULL_PERCENT / ChargeEnergy::CONSUME_PERCENT,
-              SELF(robot, Worker).getProduceNum());
-}
+		while(!SELF(robot, Energy).isExhausted())
+		{
+			SELF(robot, Worker).produce();
+		}
+		ASSERT_THAT(SELF(robot, Worker).getProduceNum(),
+				eq(FULL_PERCENT/CONSUME_PERCENT));
+	}
+};

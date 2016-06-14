@@ -1,7 +1,9 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include "ccinfra/base/BaseTypes.h"
 #include "ccinfra/dci/Unknown.h"
 #include "ccinfra/base/NullPtr.h"
+
+USING_HAMCREST_NS
 
 namespace
 {
@@ -96,35 +98,40 @@ namespace
     };
 }
 
-TEST(UnknownTest, should_cast_to_the_exist_interface)
+FIXTURE(UnknownTest)
 {
-    Human human;
-    dci::Unknown * unknown = &human;
+	TEST("should cast to the exist interface")
+	{
+	    Human human;
+	    dci::Unknown * unknown = &human;
 
-    Worker* worker = dci::unknown_cast<Worker>(unknown);
-    ASSERT_TRUE(__NOT_NULL(worker));
+	    Worker* worker = dci::unknown_cast<Worker>(unknown);
+	    ASSERT_THAT(__NOT_NULL(worker), be_true());
 
-    worker->produce();
-    ASSERT_EQ(1, worker->getProduceNum());
+	    worker->produce();
+	    ASSERT_THAT(worker->getProduceNum(), eq(1));
 
-    SleepInfo * info = dci::unknown_cast<SleepInfo>(unknown);
-    ASSERT_TRUE(__NOT_NULL(info));
+	    SleepInfo * info = dci::unknown_cast<SleepInfo>(unknown);
+	    ASSERT_THAT(__NOT_NULL(info), be_true());
 
-    info->sleep();
-    ASSERT_TRUE(info->isSleeping());
+	    info->sleep();
+	    ASSERT_THAT(info->isSleeping(), be_true());
 
-    info->wakeup();
-    ASSERT_FALSE(info->isSleeping());
-}
+	    info->wakeup();
+	    ASSERT_THAT(info->isSleeping(), be_false());
+	}
 
-TEST(UnknownTest, should_return_null_when_cast_to_unexist_interface)
-{
-    Robot robot;
-    dci::Unknown * unknown = &robot;
+	TEST("should return null when cast to unexist interface")
+	{
+	    Robot robot;
+	    dci::Unknown * unknown = &robot;
 
-    Worker* worker = dci::unknown_cast<Worker>(unknown);
-    ASSERT_TRUE(__NOT_NULL(worker));
+	    Worker* worker = dci::unknown_cast<Worker>(unknown);
+	    ASSERT_THAT(__NOT_NULL(worker), be_true());
 
-    SleepInfo * info = dci::unknown_cast<SleepInfo>(unknown);
-    ASSERT_TRUE(__IS_NULL(info));
-}
+	    SleepInfo * info = dci::unknown_cast<SleepInfo>(unknown);
+	    ASSERT_THAT(__IS_NULL(info), be_true());
+	}
+};
+
+

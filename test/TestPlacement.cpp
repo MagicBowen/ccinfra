@@ -1,9 +1,11 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include "ccinfra/base/BaseTypes.h"
 #include "ccinfra/mem/Placement.h"
 #include "ccinfra/base/Keywords.h"
 #include "ccinfra/dci/Role.h"
 #include <ccinfra/base/NullPtr.h>
+
+USING_HAMCREST_NS
 
 namespace
 {
@@ -23,38 +25,43 @@ namespace
     };
 }
 
-TEST(PlacementTest, should_new_object_on_placement_memory)
+FIXTURE(PlacementTest1)
 {
-    Placement<Student> studentMemory;
+	TEST("should_new_object_on_placement_memory")
+	{
+		Placement<Student> studentMemory;
 
-    Student *student = new (studentMemory.alloc()) Student(5);
+		Student *student = new (studentMemory.alloc()) Student(5);
 
-    ASSERT_EQ(5, student->getId());
-    ASSERT_EQ(5, studentMemory.getRef().getId());
-    ASSERT_EQ(5, studentMemory->getId());
-    ASSERT_EQ(5, (*studentMemory).getId());
+		ASSERT_THAT(student->getId(), eq(5));
+		ASSERT_THAT(studentMemory.getRef().getId(), eq(5));
+		ASSERT_THAT(studentMemory->getId(), eq(5));
+		ASSERT_THAT((*studentMemory).getId(), eq(5));
 
-    studentMemory.destroy();
-}
+		studentMemory.destroy();
+	}
 
-TEST(PlacementTest, should_new_object_array_on_placement)
-{
-    const U8 MAX_ENGINE = 5;
-    Placement<Student> students[MAX_ENGINE];
+	TEST("should_new_object_array_on_placement")
+	{
+		const U8 MAX_ENGINE = 5;
+		Placement<Student> students[MAX_ENGINE];
 
-    for(int i = 0; i < MAX_ENGINE; i++)
-    {
-        new (students[i].alloc()) Student(i);
-    }
+		for(int i = 0; i < MAX_ENGINE; i++)
+		{
+			new (students[i].alloc()) Student(i);
+		}
 
-    for(int i = 0; i < MAX_ENGINE; i++)
-    {
-        ASSERT_EQ(i, students[i]->getId());
-    }
-}
+		for(int i = 0; i < MAX_ENGINE; i++)
+		{
+			ASSERT_THAT(students[i]->getId(), eq(i));
+		}
+	}
+};
 
 namespace
 {
+    const unsigned int INVALID_ID = 0xFFFFFFFF;
+
     struct Member
     {
         Member(U32 id) : id(id)
@@ -93,26 +100,24 @@ namespace
             if(__NOT_NULL(member)) memory.destroy();
         }
 
-        enum
-        {
-            INVALID_ID = 0xFFFFFFFF
-        };
-
     private:
         Member* member;
         Placement<Member> memory;
     };
 }
 
-TEST(PlacementTest, should_delay_init_the_member_object_in_placement)
+FIXTURE(PlacementTest2)
 {
-    Object object;
+	TEST("should_delay_init_the_member_object_in_placement")
+	{
+		Object object;
 
-    ASSERT_EQ(Object::INVALID_ID, object.getId());
+		ASSERT_THAT(object.getId(), eq(INVALID_ID));
 
-    object.updateId(5);
-    ASSERT_EQ(5, object.getId());
-}
+		object.updateId(5);
+		ASSERT_THAT(object.getId(), eq(5));
+	}
+};
 
 namespace
 {
@@ -122,13 +127,10 @@ namespace
         ABSTRACT(bool isExhausted() const);
     };
 
+    const int MAX_CONSUME_TIMES = 10;
+
     struct HumanEnergy : Energy
     {
-        enum
-        {
-            MAX_CONSUME_TIMES = 10
-        };
-
         HumanEnergy()
         : isHungry(false), consumeTimes(0)
         {
@@ -155,14 +157,11 @@ namespace
         U8 consumeTimes;
     };
 
+	const int FULL_PERCENT = 100;
+    const int CONSUME_PERCENT = 1;
+
     struct ChargeEnergy : Energy
     {
-        enum
-        {
-            FULL_PERCENT = 100,
-            CONSUME_PERCENT = 1
-        };
-
         ChargeEnergy() : percent(FULL_PERCENT)
         {
         }
@@ -250,26 +249,28 @@ namespace
     };
 }
 
-
-TEST(PlacementTest, should_cast_to_the_public_role_correctly_for_human)
+FIXTURE(PlacementTest3)
 {
-    WorkerObject human(HUMAN);
+	TEST("should_cast_to_the_public_role_correctly_for_human")
+	{
+		WorkerObject human(HUMAN);
 
-    while(!SELF(human, Worker).isExhausted())
-    {
-        SELF(human, Worker).produce();
-    }
-    ASSERT_EQ(HumanEnergy::MAX_CONSUME_TIMES, SELF(human, Worker).getProduceNum());
-}
+		while(!SELF(human, Worker).isExhausted())
+		{
+			SELF(human, Worker).produce();
+		}
+		ASSERT_THAT(SELF(human, Worker).getProduceNum(), eq(MAX_CONSUME_TIMES));
+	}
 
-TEST(PlacementTest, should_cast_to_the_public_role_correctly_for_robot)
-{
-    WorkerObject robot(ROBOT);
+	TEST("should_cast_to_the_public_role_correctly_for_robot")
+	{
+		WorkerObject robot(ROBOT);
 
-    while(!SELF(robot, Worker).isExhausted())
-    {
-        SELF(robot, Worker).produce();
-    }
-    ASSERT_EQ(ChargeEnergy::FULL_PERCENT / ChargeEnergy::CONSUME_PERCENT,
-              SELF(robot, Worker).getProduceNum());
-}
+		while(!SELF(robot, Worker).isExhausted())
+		{
+			SELF(robot, Worker).produce();
+		}
+		ASSERT_THAT(SELF(robot, Worker).getProduceNum(),
+				eq(FULL_PERCENT/CONSUME_PERCENT));
+	}
+};

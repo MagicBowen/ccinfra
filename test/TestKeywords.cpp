@@ -1,5 +1,7 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include "ccinfra/base/Keywords.h"
+
+USING_HAMCREST_NS
 
 namespace
 {
@@ -75,24 +77,28 @@ namespace
     };
 }
 
-TEST(KeywordsTest, should_override_the_correct_interface_when_inherit_the_interface)
+FIXTURE(KeywordsTest)
 {
-    Shape2D *square = new Square(5);
-    Shape2D *rectangle = new Rectangle(2, 3);
-    Shape2D *triangle = new Triangle();
+	TEST("should_override_the_correct_interface_when_inherit_the_interface")
+	{
+	    Shape2D *square = new Square(5);
+	    Shape2D *rectangle = new Rectangle(2, 3);
+	    Shape2D *triangle = new Triangle();
 
-    ASSERT_EQ(25, square->getArea());
-    ASSERT_EQ(6,  rectangle->getArea());
-    ASSERT_EQ(0,  triangle->getArea());
+	    ASSERT_THAT(square->getArea(), eq(25));
+	    ASSERT_THAT(rectangle->getArea(), eq(6));
+	    ASSERT_THAT(triangle->getArea(), eq(0));
 
-    Shape *r = rectangle;
-    Shape *c = new Circle();
+	    Shape *r = rectangle;
+	    Shape *c = new Circle();
 
-    ASSERT_FALSE(r->isCentrosymmetry());
-    ASSERT_TRUE(c->isCentrosymmetry());
+	    ASSERT_THAT(r->isCentrosymmetry(), be_false());
+	    ASSERT_THAT(c->isCentrosymmetry(), be_true());
 
-    delete r;
-    delete c;
-    delete square;
-    delete triangle;
-}
+	    delete r;
+	    delete c;
+	    delete square;
+	    delete triangle;
+	}
+};
+

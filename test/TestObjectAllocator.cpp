@@ -1,6 +1,8 @@
-#include "gtest/gtest.h"
+#include "magellan/magellan.hpp"
 #include <ccinfra/mem/ObjectAllocator.h>
 #include <ccinfra/algo/loop.h>
+
+USING_HAMCREST_NS
 
 namespace
 {
@@ -26,40 +28,45 @@ namespace
 
 DEF_OBJ_ALLOCATOR(Foo, MAX_SLOT_NUM);
 
-TEST(ObjectAllocatorTest, should_have_correct_free_slot_when_init)
+FIXTURE(ObjectAllocatorTest)
 {
-    ASSERT_EQ(MAX_SLOT_NUM, FooAllocator.getFreeSlotNum());
-}
+	TEST("should_have_correct_free_slot_when_init")
+	{
+	    ASSERT_THAT(FooAllocator.getFreeSlotNum(), eq(MAX_SLOT_NUM));
+	}
 
-TEST(ObjectAllocatorTest, should_alloc_OK_when_has_free_slot)
-{
-    Foo* foo = new Foo(3);
-    ASSERT_TRUE(__NOT_NULL(foo));
-    ASSERT_EQ(MAX_SLOT_NUM - 1, FooAllocator.getFreeSlotNum());
+	TEST("should_alloc_OK_when_has_free_slot")
+	{
+	    Foo* foo = new Foo(3);
+	    ASSERT_THAT(__NOT_NULL(foo), be_true());
+	    ASSERT_THAT(FooAllocator.getFreeSlotNum(), eq(MAX_SLOT_NUM - 1));
 
-    delete foo;
-    ASSERT_EQ(MAX_SLOT_NUM, FooAllocator.getFreeSlotNum());
-}
+	    delete foo;
+	    ASSERT_THAT(FooAllocator.getFreeSlotNum(), eq(MAX_SLOT_NUM));
+	}
 
-TEST(ObjectAllocatorTest, should_not_alloc_when_has_no_free_slot)
-{
-    Foo* foos[MAX_SLOT_NUM] = {__null_ptr};
+	TEST("should_not_alloc_when_has_no_free_slot")
+	{
+	    Foo* foos[MAX_SLOT_NUM] = {__null_ptr};
 
-    FOR_EACH_0(i, MAX_SLOT_NUM)
-    {
-        foos[i] = new Foo(0);
-    }
+	    FOR_EACH_0(i, MAX_SLOT_NUM)
+	    {
+	        foos[i] = new Foo(0);
+	    }
 
-    Foo* foo = new Foo(0);
-    ASSERT_TRUE(__IS_NULL(foo));
+	    Foo* foo = new Foo(0);
+	    ASSERT_THAT(__IS_NULL(foo), be_true());
 
-    FOR_EACH_0(i, MAX_SLOT_NUM)
-    {
-        ASSERT_TRUE(__NOT_NULL(foos[i]));
-        delete foos[i];
-    }
+	    FOR_EACH_0(i, MAX_SLOT_NUM)
+	    {
+	    	ASSERT_THAT(__NOT_NULL(foos[i]), be_true());
+	        delete foos[i];
+	    }
 
-    foo = new Foo(0);
-    ASSERT_TRUE(__NOT_NULL(foo));
-    delete foo;
-}
+	    foo = new Foo(0);
+	    ASSERT_THAT(__NOT_NULL(foo), be_true());
+	    delete foo;
+	}
+};
+
+
