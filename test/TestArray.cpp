@@ -41,6 +41,7 @@ namespace
 
 FIXTURE(ArrayTest)
 {
+	TEST("should define plain object array")
 	{
 	    Array<PlainObject, 2> objects;
 
@@ -52,6 +53,7 @@ FIXTURE(ArrayTest)
 	    ASSERT_THAT(objects[1].b, eq(2));
 	}
 
+    TEST("should define object array with default constructor")
 	{
 	    Array<Object, 2> objects;
 
@@ -59,6 +61,7 @@ FIXTURE(ArrayTest)
 	    ASSERT_THAT(objects[1].getValue(), eq(INVALID_VALUE));
 	}
 
+	TEST("should define object array with para constructor")
 	{
 	    Array<Object, 2> objects(5);
 
@@ -66,6 +69,7 @@ FIXTURE(ArrayTest)
 	    ASSERT_THAT(objects[1].getValue(), eq(5));
 	}
 
+    TEST("should invoke unconst method of array elem")
 	{
 	    Array<Object, 2> objects(5);
 
@@ -75,6 +79,7 @@ FIXTURE(ArrayTest)
 	    ASSERT_THAT(objects[1].getValue(), eq(10));
 	}
 
+    TEST("should emplace a array elem")
 	{
 	    Array<Object, 2> objects;
 
@@ -84,6 +89,7 @@ FIXTURE(ArrayTest)
 	    ASSERT_THAT(objects[1].getValue(), eq(5));
 	}
 
+    TEST("should use the iterator of array")
 	{
 	    typedef Array<Object, 2> ThisArray;
 	    ThisArray objects;
@@ -103,6 +109,7 @@ FIXTURE(ArrayTest)
 	    ASSERT_THAT(++i, eq(objects.end()));
 	}
 
+    TEST("should travel array")
 	{
 	    typedef Array<Object, 2> ThisArray;
 	    ThisArray objects(10);

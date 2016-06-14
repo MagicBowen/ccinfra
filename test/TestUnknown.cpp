@@ -100,6 +100,7 @@ namespace
 
 FIXTURE(UnknownTest)
 {
+    TEST("should cast to the exist interface")
 	{
 	    Human human;
 	    dci::Unknown * unknown = &human;
@@ -120,6 +121,7 @@ FIXTURE(UnknownTest)
 	    ASSERT_THAT(info->isSleeping(), be_false());
 	}
 
+    TEST("should return null when cast to unexist interface")
 	{
 	    Robot robot;
 	    dci::Unknown * unknown = &robot;

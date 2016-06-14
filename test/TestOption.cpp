@@ -38,16 +38,7 @@ FIXTURE(OptionTest)
     #define and_expect_has_option then_expect_has_option
     #define and_expect_option_with_value then_expect_option_with_value
 
-    {
-        give_option_config({
-            {"help",   "produce help message"},
-            {"filter", "set filter"},
-        });
-
-        when_parse_program_options({"","--help"});
-        then_expect_has_option("help", be_true());
-    }
-
+    TEST("--filter=1")
     {
         give_option_config({
             {"help",   "produce help message"},
@@ -58,6 +49,7 @@ FIXTURE(OptionTest)
         then_expect_option_with_value("filter", "1");
     }
 
+    TEST("invalid option")
     {
         give_option_config({
             {"help",   "produce help message"},
@@ -70,6 +62,7 @@ FIXTURE(OptionTest)
         and_expect_has_option("hello", be_false());
     }
 
+    TEST("short prefix with no value")
     {
         give_option_config({
             {"help,h", "produce help message"},
@@ -84,6 +77,7 @@ FIXTURE(OptionTest)
         and_expect_has_option("data", be_false());
     }
 
+    TEST("'-hf' == '-h -f'")
     {
         give_option_config({
             {"help,h", "produce help message"},
@@ -96,6 +90,7 @@ FIXTURE(OptionTest)
         and_expect_has_option("filter", be_true());
     }
 
+    TEST("'-f=1' parse as 'filter' with value '1'")
     {
         give_option_config({
             {"help,h", "produce help message"},
@@ -106,6 +101,7 @@ FIXTURE(OptionTest)
         then_expect_option_with_value("filter", "1");
     }
 
+    TEST("'--f' is not valid")
     {
         give_option_config({
             {"help,h", "produce help message"},
@@ -116,6 +112,7 @@ FIXTURE(OptionTest)
         then_expect_has_option("filter", be_false());
     }
 
+    TEST("'-hf=1' parse as 'help' and 'filter' with value '1'")
     {
         give_option_config({
             {"help,h", "produce help message"},

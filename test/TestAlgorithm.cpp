@@ -26,6 +26,7 @@ namespace
 
 FIXTURE(AlgorithmTest)
 {
+   TEST("find support non const container")
     {
         auto found = ccinfra::find(v1, 3);
 
@@ -33,6 +34,7 @@ FIXTURE(AlgorithmTest)
         ASSERT_THAT(*found, is(3));
     }
 
+    TEST("find support const container")
     {
         auto found = ccinfra::find(v2, 3);
 
@@ -40,7 +42,7 @@ FIXTURE(AlgorithmTest)
         ASSERT_THAT(*found, is(3));
     }
 
-    TEST("find if support non const container")
+    TEST("find_if support non const container")
     {
         auto found = ccinfra::find_if(v1, [](int e) { return e > 0; });
 
@@ -48,7 +50,7 @@ FIXTURE(AlgorithmTest)
         ASSERT_THAT(*found, is(3));
     }
 
-    TEST("find if support const container")
+    TEST("find_if support const container")
     {
         auto found = ccinfra::find_if(v2, [](int e) { return e > 0; });
 
@@ -56,6 +58,7 @@ FIXTURE(AlgorithmTest)
         ASSERT_THAT(*found, is(3));
     }
 
+    TEST("map")
     {
         std::vector<int> v;
         ccinfra::map(v1, std::back_inserter(v), [](int e) { return e > 0 ? e : -e; });
@@ -66,12 +69,14 @@ FIXTURE(AlgorithmTest)
         ASSERT_THAT(v[3], is(4));
     }
 
+    TEST("reduce")
     {
         auto sum = ccinfra::reduce(arr, 0, [](int& sum, int e) { sum += e; });
 
         ASSERT_THAT(sum, is(4));
     }
 
+    TEST("filter")
     {
         std::vector<int> v;
         ccinfra::filter(arr, std::back_inserter(v), [](int e) { return e > 0; });
@@ -80,6 +85,7 @@ FIXTURE(AlgorithmTest)
         ASSERT_THAT(v[1], is(4));
     }
 
+    TEST("each")
     {
         auto sum = 0;
         ccinfra::each(arr, [&sum](int e) { sum += e; });
