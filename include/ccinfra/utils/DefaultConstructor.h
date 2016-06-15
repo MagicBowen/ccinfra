@@ -4,6 +4,8 @@
 #include <ccinfra/base/BaseTypes.h>
 #include <ccinfra/mem/Placement.h>
 
+CCINFRA_NS_BEGIN
+
 template<bool hasDefaultConstructor>
 struct DefaultConstructor
 {
@@ -31,5 +33,7 @@ template<> struct DefaultConstructor<true>
         }
     }
 };
+
+CCINFRA_NS_END
 
 #endif

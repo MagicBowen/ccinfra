@@ -29,13 +29,13 @@ ROLE_PROTO_TYPE(role)                                         \
 #define IMPL_ROLE_WITH_VAR(role, type)             \
 private:                                           \
    ROLE_PROTO_TYPE(role)                           \
-   { return const_cast<type&>(__TYPE_VAR(type)); }   \
+   { return const_cast<type&>(__TYPE_VAR(type)); } \
    type __TYPE_VAR(type)
 
 #define __ROLE_VAR(role) role##var
 
 //////////////////////////////////////////////////////////////////
-#define IMPL_ROLE_WITH_ROLE_VAR(role)   \
+#define IMPL_ROLE_WITH_ROLE_VAR(role)         \
 private:                                      \
    ROLE_PROTO_TYPE(role)                      \
    { return const_cast<role&>(role##var); }   \
@@ -50,11 +50,11 @@ private:                                      \
 
 #define EXPORT_ROLE(role) USE_ROLE(role)
 
-#define __ROLE_CAST_TO(role, obj) \
+#define __ROLE_CAST_TO(role, obj)       \
     return const_cast<role&>(static_cast<const role&>(obj))
 
 //////////////////////////////////////////////////////////////////////////
-#define IMPL_ROLE_WITH_OBJ(role, obj) \
+#define IMPL_ROLE_WITH_OBJ(role, obj)   \
     DECL_ROLE(role)  { __ROLE_CAST_TO(role, obj); }
 
 //////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ private:                                                      \
     RoleType& Object::get##RoleType() const 
 
 /////////////////////////////////////////////////////////////////////////////
-namespace details
+namespace dci
 {
    template<typename T>
    struct Role
@@ -81,7 +81,7 @@ namespace details
    };
 }
 
-#define DEFINE_ROLE(role)  struct role : ::details::Role<role>
+#define DEFINE_ROLE(role)  struct role : ::dci::Role<role>
 
 #define SELF(self, role) static_cast<role&>(self)
 #define SELF_P(self, role) SELF(*self, role)

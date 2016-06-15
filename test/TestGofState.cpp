@@ -6,6 +6,7 @@
 #include "ccinfra/gof/State.h"
 
 USING_HAMCREST_NS
+USING_CCINFRA_NS
 
 // Assume exit a singing robot:
 // It has 3 states:          { closed,  opened,  wait_charged }

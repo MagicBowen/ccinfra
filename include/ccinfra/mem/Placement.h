@@ -1,8 +1,11 @@
 #ifndef H05B2224D_B926_4FC0_A123_97B52B8A99DB
 #define H05B2224D_B926_4FC0_A123_97B52B8A99DB
 
+#include <ccinfra/ccinfra.h>
 #include <string.h>
 #include <new>
+
+CCINFRA_NS_BEGIN
 
 template <typename T>
 struct Placement
@@ -73,5 +76,7 @@ struct DefaultPlacement : Placement<T>
         return new(Placement<T>::alloc()) T();
     }
 };
+
+CCINFRA_NS_END
 
 #endif

@@ -1,8 +1,11 @@
 #ifndef H5E28F16B_BEA7_4E11_84A7_03E3D4C29B5A
 #define H5E28F16B_BEA7_4E11_84A7_03E3D4C29B5A
 
+#include <ccinfra/ccinfra.h>
 #include <tuple>
 #include <stddef.h>
+
+CCINFRA_NS_BEGIN
 
 template<typename T>
 struct function_traits
@@ -36,6 +39,8 @@ struct function_traits<ReturnType(ClassType::*)(Args...) const>
     };
 };
 
-#define ARG_TYPE(LAMDA) typename function_traits<LAMDA>::argument_type
+#define ARG_TYPE(LAMDA) typename ::CCINFRA_NS::function_traits<LAMDA>::argument_type
+
+CCINFRA_NS_END
 
 #endif

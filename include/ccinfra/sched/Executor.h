@@ -12,6 +12,8 @@
 #include <functional>
 #include <memory>
 
+CCINFRA_NS_BEGIN
+
 struct Executor
 {
     Executor(size_t);
@@ -49,5 +51,7 @@ private:
     std::condition_variable condition;
     bool stop;
 };
+
+CCINFRA_NS_END
 
 #endif

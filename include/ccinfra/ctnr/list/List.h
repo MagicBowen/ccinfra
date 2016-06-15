@@ -1,7 +1,10 @@
-#ifndef INCL_CCINFRA_LIST_H
-#define INCL_CCINFRA_LIST_H
+#ifndef H29B1191B_457B_4E80_8056_1233626F0A98
+#define H29B1191B_457B_4E80_8056_1233626F0A98
 
+#include <ccinfra/ccinfra.h>
 #include <ccinfra/ctnr/list/apr_ring.h>
+
+CCINFRA_NS_BEGIN
 
 template<typename T>
 struct List
@@ -462,6 +465,8 @@ private:
 
 #define LIST_FOREACH_SAFE(type, i, j, items) \
    LIST_FOREACH_FROM_SAFE(type, i, j, items.begin(), items)
+
+CCINFRA_NS_END
 
 #endif
 

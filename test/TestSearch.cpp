@@ -3,6 +3,7 @@
 #include <ccinfra/ctnr/array/ArraySize.h>
 
 USING_HAMCREST_NS
+USING_CCINFRA_NS
 
 namespace
 {
@@ -13,13 +14,13 @@ FIXTURE(BinarySearchTest)
 {
 	TEST("should find correct when key is in the middle position")
 	{
-		int *r = ccinfra_binary_search(begin_a(a), end_a(a), 5);
+		int *r = binary_search(begin_a(a), end_a(a), 5);
 		ASSERT_THAT(*r, eq(5));
 		ASSERT_THAT(position(a, r), eq(2));
 	}
 
 	TEST("should return the end when key not find")
 	{
-		ASSERT_THAT(ccinfra_binary_search(begin_a(a), end_a(a), 6), eq(end_a(a)));
+		ASSERT_THAT(binary_search(begin_a(a), end_a(a), 6), eq(end_a(a)));
 	}
 };

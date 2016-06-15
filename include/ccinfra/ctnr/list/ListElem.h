@@ -1,7 +1,10 @@
-#ifndef INCL_CCINFRA_LIST_ELEM_H
-#define INCL_CCINFRA_LIST_ELEM_H
+#ifndef HEAAB628E_761B_4552_BEFF_EE3AAA1F9A18
+#define HEAAB628E_761B_4552_BEFF_EE3AAA1F9A18
 
+#include <ccinfra/ccinfra.h>
 #include <ccinfra/ctnr/list/apr_ring.h>
+
+CCINFRA_NS_BEGIN
 
 template <typename T> struct List;
 
@@ -43,6 +46,13 @@ struct ListElem
 
    APR_RING_ENTRY(T) link; // __cacheline_aligned;
 };
+
+/////////////////////////////////////////////////////////////////
+
+#define DEFINE_LIST_BASED_INTERFACE(INTF) \
+    struct INTF : ListElem<INTF> , CCINFRA_NS::details::Interface
+
+CCINFRA_NS_END
 
 #endif
 

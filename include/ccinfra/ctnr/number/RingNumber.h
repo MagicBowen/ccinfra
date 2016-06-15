@@ -1,8 +1,10 @@
-#ifndef CCINFRA_RINGNUMBER_H_
-#define CCINFRA_RINGNUMBER_H_
+#ifndef H0CBC1D58_7346_4567_B281_358825C0504E
+#define H0CBC1D58_7346_4567_B281_358825C0504E
 
-#include "ccinfra/base/BaseTypes.h"
+#include <ccinfra/base/BaseTypes.h>
 #include <ccinfra/base/EqHelper.h>
+
+CCINFRA_NS_BEGIN
 
 template <typename VALUE_TYPE, VALUE_TYPE MAX_VALUE>
 struct RingNumber
@@ -82,5 +84,7 @@ struct RingNumber
 private:
 	VALUE_TYPE value;
 };
+
+CCINFRA_NS_END
 
 #endif

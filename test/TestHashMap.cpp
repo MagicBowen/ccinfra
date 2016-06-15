@@ -4,6 +4,7 @@
 #include <string>
 
 USING_HAMCREST_NS
+USING_CCINFRA_NS
 
 namespace
 {
@@ -82,14 +83,17 @@ namespace
     };
 }
 
-template<size_t HASH_SIZE>
-struct HashFn<Key, HASH_SIZE>
+namespace ccinfra
 {
-    size_t operator()(const Key& key) const
+    template<size_t HASH_SIZE>
+    struct HashFn<Key, HASH_SIZE>
     {
-        return key.hash();
-    }
-};
+        size_t operator()(const Key& key) const
+        {
+            return key.hash();
+        }
+    };
+}
 
 FIXTURE(HashMapTest)
 {

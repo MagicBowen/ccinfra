@@ -1,8 +1,6 @@
 #ifndef H05B2224D_B927_4FC0_A936_97B52B8A99DB
 #define H05B2224D_B927_4FC0_A936_97B52B8A99DB
 
-#include "ccinfra/dci/Role.h"
-
 //////////////////////////////////////////////////////////////
 #define __DECL_EQUALS(cls)                \
 bool operator!=(const cls& rhs) const;    \
@@ -13,8 +11,8 @@ bool operator==(const cls& rhs) const
 #define __FIELD_LT(name) this->name < rhs.name
 
 //////////////////////////////////////////////////////////////
-#define __SUPER_EQ(super) SELF_CONST(*this, super) == rhs
-#define __SUPER_LT(super) SELF_CONST(*this, super) < rhs
+#define __SUPER_EQ(super) static_cast<const super&>(*this) == rhs
+#define __SUPER_LT(super) static_cast<const super&>(*this) < rhs
 
 //////////////////////////////////////////////////////////////
 #define __DEF_EQUALS(cls)                                   \

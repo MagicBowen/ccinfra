@@ -1,11 +1,14 @@
 #ifndef H5C910113_6FE0_4972_8A42_F9CC943F5B74
 #define H5C910113_6FE0_4972_8A42_F9CC943F5B74
 
-#include "ccinfra/base/ConstExpr.h"
+#include <ccinfra/ccinfra.h>
+#include <ccinfra/base/ConstExpr.h>
 #include <ccinfra/base/StaticAssert.h>
-#include "ccinfra/base/EqHelper.h"
-#include "ccinfra/utils/DefaultConstructor.h"
+#include <ccinfra/base/EqHelper.h>
+#include <ccinfra/utils/DefaultConstructor.h>
 #include <type_traits>
+
+CCINFRA_NS_BEGIN
 
 template <typename T, size_t N>
 struct Array
@@ -148,5 +151,7 @@ private:
 
 #define ARRAY_FOREACH(type, i, items) \
    ARRAY_FOREACH_FROM(type, i, items.begin(), items)
+
+CCINFRA_NS_END
 
 #endif

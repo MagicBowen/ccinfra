@@ -1,9 +1,11 @@
 #ifndef H5712E60C_DEF5_4A3B_93C0_C074CD80C63C
 #define H5712E60C_DEF5_4A3B_93C0_C074CD80C63C
 
-#include "ccinfra/base/Status.h"
-#include "ccinfra/log/log.h"
-#include "ccinfra/base/NullPtr.h"
+#include <ccinfra/base/Status.h>
+#include <ccinfra/log/log.h>
+#include <ccinfra/base/NullPtr.h>
+
+CCINFRA_NS_BEGIN
 
 #define __FAILED_BOOL_ACTION      return false
 #define __FAILED_STATUS_ACTION    return CCINFRA_FAILURE;
@@ -202,7 +204,7 @@ do {                                                 \
 
 #define __CCINFRA_ASSERT_VALID_PTR(ptr, action)      \
 do {                                                 \
-    if ((ptr) == __null_ptr)                       \
+    if ((ptr) == __null_ptr)                         \
     {                                                \
         __NIL_PTR(ptr);                              \
         action;                                      \
@@ -228,17 +230,19 @@ do {                                                 \
   __CCINFRA_ASSERT_VALID_PTR(ptr, __NIL_ACTION)
 
 #define __CCINFRA_ASSERT_VALID_PTR_FINALLY(ptr, action, returnAction)  \
-    if ((ptr) == __null_ptr)                      \
+    if ((ptr) == __null_ptr)                        \
     {                                               \
         __NIL_PTR(ptr);                             \
         action;                                     \
         returnAction;                               \
     }
 
-#define CCINFRA_PEEK_VALID_PTR_FINALLY(ptr, action) \
+#define CCINFRA_PEEK_VALID_PTR_FINALLY(ptr, action)         \
     __CCINFRA_ASSERT_VALID_PTR_FINALLY(ptr, action, __PEEK_ACTION)
 
 #define CCINFRA_ASSERT_VALID_PTR_NIL_FINALLY(ptr, action)   \
     __CCINFRA_ASSERT_VALID_PTR_FINALLY(ptr, action, __NIL_ACTION)
+
+CCINFRA_NS_END
 
 #endif

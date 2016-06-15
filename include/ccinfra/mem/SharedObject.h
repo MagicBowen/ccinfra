@@ -1,6 +1,10 @@
 #ifndef CCINFRA_MEMORY_SHARED_OBJECT_H
 #define CCINFRA_MEMORY_SHARED_OBJECT_H
 
+#include <ccinfra/ccinfra.h>
+
+CCINFRA_NS_BEGIN
+
 struct SharedObject
 {
     SharedObject();
@@ -19,5 +23,7 @@ struct SharedObject
 private:
     unsigned int count;
 };
+
+CCINFRA_NS_END
 
 #endif

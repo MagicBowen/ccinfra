@@ -4,6 +4,8 @@
 #include <ccinfra/mem/TransData.h>
 #include <memory.h>
 
+CCINFRA_NS_BEGIN
+
 template <typename T>
 struct PlainObject
 {
@@ -162,6 +164,8 @@ private:
 };
 
 #define __plain_trans_data(type, name)  PlainTransData< type > name
+
+CCINFRA_NS_END
 
 #endif
 

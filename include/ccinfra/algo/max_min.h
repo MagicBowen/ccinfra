@@ -1,8 +1,11 @@
-#ifndef CCINFRA_MAX_MIN_H
-#define CCINFRA_MAX_MIN_H
+#ifndef H1BEBC79D_5BA8_1123_AD8C_94F820EC7D5B
+#define H1BEBC79D_5BA8_1123_AD8C_94F820EC7D5B
 
-#include "ccinfra/base/BaseTypes.h"
+#include <ccinfra/ccinfra.h>
+#include <ccinfra/base/BaseTypes.h>
 #include <algorithm>
+
+CCINFRA_NS_BEGIN
 
 #define __MIN(a,b)    std::min(a, b)
 #define __MAX(a,b)    std::max(a, b)
@@ -41,5 +44,7 @@ inline bool isBetween(const U8 value)
 {
     return __isBetween<U8, MIN, MAX>(value);
 }
+
+CCINFRA_NS_END
 
 #endif

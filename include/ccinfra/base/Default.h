@@ -1,6 +1,10 @@
 #ifndef H05B2224D_B926_4FC0_A936_77B52B8A98DB
 #define H05B2224D_B926_4FC0_A936_77B52B8A98DB
 
+#include <ccinfra/ccinfra.h>
+
+CCINFRA_NS_BEGIN
+
 namespace details
 {
    template <typename T>
@@ -40,7 +44,9 @@ namespace details
 }
 
 #define DEFAULT(type, method)  \
-    virtual type method { return ::details::DefaultValue<type>::value(); }
+    virtual type method { return ::CCINFRA_NS::details::DefaultValue<type>::value(); }
+
+CCINFRA_NS_END
 
 #endif
 

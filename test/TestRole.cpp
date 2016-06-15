@@ -4,6 +4,7 @@
 #include "ccinfra/base/Keywords.h"
 
 USING_HAMCREST_NS
+USING_CCINFRA_NS
 
 namespace
 {

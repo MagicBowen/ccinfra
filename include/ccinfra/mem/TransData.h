@@ -5,6 +5,8 @@
 #include <ccinfra/base/Uncloneable.h>
 #include "ccinfra/base/Assertions.h"
 
+CCINFRA_NS_BEGIN
+
 //
 // Events:
 // 1. update
@@ -363,6 +365,8 @@ private:
 };
 
 #define __trans_data(p_type, p_name)  TransData< p_type > p_name
+
+CCINFRA_NS_END
 
 #endif
 

@@ -3,6 +3,8 @@
 
 #include "ccinfra/base/Status.h"
 
+CCINFRA_NS_BEGIN
+
 template <typename K, typename V>
 struct MapVisitor
 {
@@ -17,5 +19,7 @@ struct ConstMapVisitor
     virtual Status visit(const K&, const V&) = 0;
     virtual ~ConstMapVisitor(){}
 };
+
+CCINFRA_NS_END
 
 #endif

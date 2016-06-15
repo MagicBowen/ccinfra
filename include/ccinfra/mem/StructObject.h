@@ -1,7 +1,10 @@
 #ifndef CCINFRA_STRUCT_OBJECT_H
 #define CCINFRA_STRUCT_OBJECT_H
 
+#include <ccinfra/ccinfra.h>
 #include <string.h>
+
+CCINFRA_NS_BEGIN
 
 template <typename OBJ>
 struct StructObject : OBJ
@@ -46,6 +49,8 @@ struct StructObject : OBJ
         return this;
     }
 };
+
+CCINFRA_NS_END
 
 #endif
 

@@ -3,6 +3,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+CCINFRA_NS_BEGIN
+
 ///////////////////////////////////////////////////////////
 #define __RED     "\033[1;31m"
 #define __GREEN   "\033[1;32m"
@@ -110,4 +112,6 @@ unsigned int Infra_Printf
 
     return 0;
 }
+
+CCINFRA_NS_END
 

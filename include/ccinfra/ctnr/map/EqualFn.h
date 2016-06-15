@@ -1,7 +1,10 @@
 #ifndef H4358042D_C5CA_48CF_82A6_05A9B0B3B8EA
 #define H4358042D_C5CA_48CF_82A6_05A9B0B3B8EA
 
+#include <ccinfra/ccinfra.h>
 #include <string.h>
+
+CCINFRA_NS_BEGIN
 
 template<typename KEY>
 struct EqualFn
@@ -29,5 +32,7 @@ struct EqualFn<const char*>
         return strcmp(x, y) == 0;
     }
 };
+
+CCINFRA_NS_END
 
 #endif

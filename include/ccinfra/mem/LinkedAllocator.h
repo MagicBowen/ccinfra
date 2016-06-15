@@ -3,9 +3,11 @@
 
 #include <ccinfra/ctnr/list/List.h>
 #include <ccinfra/ctnr/list/ListElem.h>
-#include "ccinfra/base/BaseTypes.h"
-#include "ccinfra/base/Assertions.h"
+#include <ccinfra/base/BaseTypes.h>
+#include <ccinfra/base/Assertions.h>
 #include <ccinfra/algo/max_min.h>
+
+CCINFRA_NS_BEGIN
 
 template<typename T> 
 struct AllocatorVisitor
@@ -109,6 +111,8 @@ private:
     T*    elements; 
     const U16 maxSize;
 };
+
+CCINFRA_NS_END
 
 #endif
 

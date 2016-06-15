@@ -12,6 +12,8 @@
 #include <ccinfra/algo/loop.h>
 #include <ccinfra/base/ConstExpr.h>
 
+CCINFRA_NS_BEGIN
+
 template < typename KEY
          , typename VALUE
          , size_t   ELEM_SIZE = 1024
@@ -350,5 +352,6 @@ private:
 #define MAP_FOREACH(map_type, i, items) \
    MAP_FOREACH_FROM(map_type, i, items.begin(), items)
 
+CCINFRA_NS_END
 
 #endif

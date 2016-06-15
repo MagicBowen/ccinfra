@@ -2,6 +2,7 @@
 #include <ccinfra/mem/Maybe.h>
 
 USING_HAMCREST_NS
+USING_CCINFRA_NS
 
 FIXTURE(MaybeTest)
 {

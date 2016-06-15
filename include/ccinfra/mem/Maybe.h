@@ -3,6 +3,8 @@
 
 #include <ccinfra/mem/Placement.h>
 
+CCINFRA_NS_BEGIN
+
 template <typename T>
 struct Maybe
 {
@@ -125,6 +127,8 @@ private:
     Placement<T> object;
     bool present;
 };
+
+CCINFRA_NS_END
 
 #endif
 

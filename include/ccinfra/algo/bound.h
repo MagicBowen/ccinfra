@@ -1,12 +1,15 @@
-#ifndef CCINFRA_ALGO_BOUND_H
-#define CCINFRA_ALGO_BOUND_H
+#ifndef H1BEBC79D_5BA8_1234_AD8C_94F820EC7D5B
+#define H1BEBC79D_5BA8_1234_AD8C_94F820EC7D5B
 
-#include "ccinfra/base/BaseTypes.h"
+#include <ccinfra/ccinfra.h>
+#include <ccinfra/base/BaseTypes.h>
+
+CCINFRA_NS_BEGIN
 
 namespace details
 {
     template <typename T, bool isLowBound>
-    size_t ccinfra_bound(const T* array, size_t len, T key)
+    size_t bound(const T* array, size_t len, T key)
     {
         size_t low  = 0;
         size_t high = len - 1;
@@ -44,15 +47,17 @@ namespace details
 }
 
 template<typename T>
-size_t ccinfra_lower_bound(const T* array, size_t len, T key)
+size_t lower_bound(const T* array, size_t len, T key)
 {
-    return details::ccinfra_bound<T, true>(array, len, key);
+    return details::bound<T, true>(array, len, key);
 }
 
 template<typename T>
-size_t ccinfra_upper_bound(const T* array, size_t len, T key)
+size_t upper_bound(const T* array, size_t len, T key)
 {
-    return details::ccinfra_bound<T, false>(array, len, key);
+    return details::bound<T, false>(array, len, key);
 }
+
+CCINFRA_NS_END
 
 #endif

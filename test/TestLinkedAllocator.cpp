@@ -3,6 +3,7 @@
 #include <ccinfra/ctnr/array/ArraySize.h>
 
 USING_HAMCREST_NS
+USING_CCINFRA_NS
 
 namespace
 {

@@ -1,7 +1,10 @@
 #ifndef H671141B2_B247_440B_8E83_476558110FE5
 #define H671141B2_B247_440B_8E83_476558110FE5
 
+#include <ccinfra/ccinfra.h>
 #include <mutex>
+
+CCINFRA_NS_BEGIN
 
 struct AutoLock
 {
@@ -31,6 +34,8 @@ private:
 };
 
 #define LOCKER(M) auto_##M
-#define SYNCHRONIZED(M)  for(AutoLock LOCKER(M)(M); LOCKER(M).isLocked(); LOCKER(M).setUnLock())
+#define SYNCHRONIZED(M)  for(::CCINFRA_NS::AutoLock LOCKER(M)(M); LOCKER(M).isLocked(); LOCKER(M).setUnLock())
+
+CCINFRA_NS_END
 
 #endif

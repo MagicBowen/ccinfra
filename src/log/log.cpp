@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdio.h>
 
+CCINFRA_NS_BEGIN
+
 ///////////////////////////////////////////////////////////////////////////
 #define DEBUG_LEVEL     (U8)0x01
 #define INFO_LEVEL      (U8)0x02
@@ -64,3 +66,4 @@ DEF_LOG_TRACE(warn,  WARN_LEVEL);
 DEF_LOG_TRACE(info,  INFO_LEVEL);
 DEF_LOG_TRACE(debug, DEBUG_LEVEL);
 
+CCINFRA_NS_END

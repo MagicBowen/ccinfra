@@ -1,12 +1,10 @@
 #ifndef H05B2224D_B926_4FC0_A936_67B52B8A98DD
 #define H05B2224D_B926_4FC0_A936_67B52B8A98DD
 
-typedef unsigned int InterfaceId;
-
-namespace dci {
-
-namespace details 
+namespace dci
 {
+    typedef unsigned int InterfaceId;
+
     struct Dummy {};
 
     template <typename T_B1, typename T_B2, typename T_B3>
@@ -53,10 +51,8 @@ namespace details
     };
 }
 
-}
-
 #define UNKNOWN_INTERFACE(iface, iid, ...) \
-struct iface : dci::details::UnknownInterface<iid, ##__VA_ARGS__>
+struct iface : ::dci::UnknownInterface<iid, ##__VA_ARGS__>
 
 #endif
 

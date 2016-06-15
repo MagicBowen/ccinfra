@@ -1,6 +1,8 @@
 #include "ccinfra/sched/Executor.h"
 #include "ccinfra/algo/loop.h"
 
+CCINFRA_NS_BEGIN
+
 Executor::Executor(size_t threadNum) : stop(false)
 {
     FOR_EACH_0(i, threadNum)
@@ -42,3 +44,5 @@ void Executor::threadRun()
         task();
     }
 }
+
+CCINFRA_NS_END

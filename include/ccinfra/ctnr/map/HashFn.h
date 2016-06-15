@@ -1,7 +1,10 @@
 #ifndef HEC29B2BD_30CA_438A_B2EB_8309ED632ECA
 #define HEC29B2BD_30CA_438A_B2EB_8309ED632ECA
 
+#include <ccinfra/ccinfra.h>
 #include <stddef.h>
+
+CCINFRA_NS_BEGIN
 
 template < typename KEY, size_t HASH_SIZE>
 struct HashFn
@@ -57,5 +60,7 @@ DEF_HASH_FN(unsigned int)
 
 DEF_HASH_FN(long)
 DEF_HASH_FN(unsigned long)
+
+CCINFRA_NS_END
 
 #endif

@@ -3,6 +3,7 @@
 #include "ccinfra/base/BaseTypes.h"
 
 USING_HAMCREST_NS
+USING_CCINFRA_NS
 
 namespace
 {

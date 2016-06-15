@@ -1,8 +1,10 @@
 #ifndef CCINFRA_MEMORY_SMART_PTR_H
 #define CCINFRA_MEMORY_SMART_PTR_H
 
-#include "ccinfra/dci/Role.h"
+#include <ccinfra/dci/Role.h>
 #include <ccinfra/mem/SharedObject.h>
+
+CCINFRA_NS_BEGIN
 
 template <typename OBJ>
 struct SmartPtr
@@ -100,5 +102,7 @@ private:
 private:
     OBJ* p;
 };
+
+CCINFRA_NS_END
 
 #endif

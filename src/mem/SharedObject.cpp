@@ -1,5 +1,7 @@
 #include <ccinfra/mem/SharedObject.h>
 
+CCINFRA_NS_BEGIN
+
 SharedObject::SharedObject() : count(0)
 {
 }
@@ -35,3 +37,6 @@ void SharedObject::subRef()
         needDestroy() ?  destroy() : delete this;
     }
 }
+
+CCINFRA_NS_END
+

@@ -4,6 +4,8 @@
 #include <ccinfra/base/BaseTypes.h>
 #include <iostream>
 
+CCINFRA_NS_BEGIN
+
 ////////////////////////////////////////////////////////
 struct ConsoleState
 {
@@ -60,5 +62,7 @@ private:
     WarnState warn;
     DebugState debug;
 };
+
+CCINFRA_NS_END
 
 #endif
