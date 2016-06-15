@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
-#include <ccinfra/base/String.h>
+#include <ccinfra/algo/String.h>
 
 using namespace std;
 

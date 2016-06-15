@@ -8,8 +8,8 @@ CCINFRA_NS_BEGIN
 
 std::string source_file(const std::string& file, int line, bool absolute);
 
-#define SHORT_FILE() ccinfra::source_file(__FILE__, __LINE__, false)
-#define FULL_FILE()  ccinfra::source_file(__FILE__, __LINE__, true)
+#define SHORT_FILE() ::CCINFRA_NS::source_file(__FILE__, __LINE__, false)
+#define FULL_FILE()  ::CCINFRA_NS::source_file(__FILE__, __LINE__, true)
 
 CCINFRA_NS_END
 

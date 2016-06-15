@@ -2,7 +2,7 @@
 #define HAC57EDDB_4C76_4370_876A_05C7A7318E09
 
 #include <ccinfra/ccinfra.h>
-#include <ccinfra/base/Symbol.h>
+#include <ccinfra/utils/Symbol.h>
 
 CCINFRA_NS_BEGIN
 

@@ -1,4 +1,4 @@
-#include <ccinfra/base/TypeName.h>
+#include <ccinfra/utils/TypeName.h>
 
 #if defined(__GNUC__)
 #include <cxxabi.h>

@@ -2,11 +2,8 @@
 #define HA980B189_62DA_454B_B213_0905ED542E61
 
 #include <ccinfra/ccinfra.h>
-#include <ccinfra/base/ExternC.h>
 #include <utility>
 #include <algorithm>
-#include <numeric>
-#include <sstream>
 
 CCINFRA_NS_BEGIN
 
@@ -77,30 +74,6 @@ template <typename Container, typename OutputIterator, typename Predicate>
 inline OutputIterator filter(Container&& c, OutputIterator result, Predicate pred)
 {
     return details::do_filter(RANG(c), result, pred);
-}
-
-namespace details
-{
-    template <typename Iterator>
-    std::string do_join(Iterator first, Iterator last, const std::string& separator)
-    {
-        std::ostringstream ss;
-
-        if (first != last)
-            ss << *first++;
-
-        while (first != last)
-            ss << separator << *first++;
-
-        return ss.str();
-    }
-}
-
-
-template <typename Container>
-std::string join(Container&& c, const std::string& separator)
-{
-    return details::do_join(RANG(c), separator);
 }
 
 CCINFRA_NS_END

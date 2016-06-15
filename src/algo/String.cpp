@@ -1,5 +1,5 @@
-#include <ccinfra/base/String.h>
-#include <ccinfra/base/Algorithm.h>
+#include <ccinfra/algo/String.h>
+#include <ccinfra/algo/range.h>
 
 CCINFRA_NS_BEGIN
 

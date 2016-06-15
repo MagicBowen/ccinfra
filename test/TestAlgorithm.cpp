@@ -1,5 +1,5 @@
 #include <magellan/magellan.hpp>
-#include <ccinfra/base/Algorithm.h>
+#include <ccinfra/algo/range.h>
 #include <ccinfra/base/StaticAssert.h>
 #include <type_traits>
 
