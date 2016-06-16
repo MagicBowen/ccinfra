@@ -281,15 +281,15 @@ TEST(...)
     Shape2D *rectangle = new Rectangle(2, 3);
     Shape2D *triangle = new Triangle();
 
-    ASSERT_THAT(25, square->getArea());
-    ASSERT_THAT(6,  rectangle->getArea());
-    ASSERT_THAT(0,  triangle->getArea());
+    ASSERT_THAT(square->getArea(), eq(25));
+    ASSERT_THAT(rectangle->getArea(), eq(6));
+    ASSERT_THAT(triangle->getArea(), eq(0));
 
     Shape *r = rectangle;
     Shape *c = new Circle();
 
-    ASSERT_FALSE(r->isCentrosymmetry());
-    ASSERT_TRUE(c->isCentrosymmetry());
+    ASSERT_THAT(r->isCentrosymmetry(), be_false());
+    ASSERT_THAT(c->isCentrosymmetry(), be_true());
 
     delete r;
     delete c;
@@ -380,14 +380,14 @@ __DEF_COMP(Complex)
 //TestComplex.h
 TEST(...)
 {
-    ASSERT_TRUE(Complex(3, 1) == Complex(3, 1));
-    ASSERT_TRUE(Complex(3, 0) != Complex(3, 1));
-    ASSERT_TRUE(Complex(3, 0) < Complex(3, 1));
-    ASSERT_TRUE(Complex(2, 8) < Complex(3, 0));
-    ASSERT_TRUE(Complex(2, 8) <= Complex(3, 0));
-    ASSERT_TRUE(Complex(2, 8) > Complex(1, 10));
-    ASSERT_TRUE(Complex(2, 8) >= Complex(2, 7));
-    ASSERT_TRUE(Complex(2, 8) >= Complex(2, 8));
+    ASSERT_THAT(Complex(3, 1) == Complex(3, 1), be_true());
+    ASSERT_THAT(Complex(3, 0) != Complex(3, 1), be_true());
+    ASSERT_THAT(Complex(3, 0) < Complex(3, 1),  be_true());
+    ASSERT_THAT(Complex(2, 8) < Complex(3, 0),  be_true());
+    ASSERT_THAT(Complex(2, 8) <= Complex(3, 0), be_true());
+    ASSERT_THAT(Complex(2, 8) > Complex(1, 10), be_true());
+    ASSERT_THAT(Complex(2, 8) >= Complex(2, 7), be_true());
+    ASSERT_THAT(Complex(2, 8) >= Complex(2, 8), be_true());
 }
 ~~~
 
@@ -552,7 +552,7 @@ TEST(...)
 {
     Human human;
     SELF(human, Worker).produce();
-    ASSERT_THAT(1, SELF(human, Worker).getProduceNum());
+    ASSERT_THAT(SELF(human, Worker).getProduceNum(), eq(1));
 
     Robot robot;
     SELF(robot, ChargeEnergy).charge();
@@ -560,7 +560,7 @@ TEST(...)
     {
         SELF(robot, Worker).produce();
     }
-    ASSERT_THAT(100, SELF(robot, Worker).getProduceNum());
+    ASSERT_THAT(SELF(robot, Worker).getProduceNum(), eq(100));
 }
 ~~~
 
@@ -615,7 +615,7 @@ TEST(...)
 
     human->ROLE(Worker).produce();
 
-    ASSERT_THAT(1, human->ROLE(Worker).getProduceNum());
+    ASSERT_THAT(human->ROLE(Worker).getProduceNum(), eq(1));
 
     delete human;
 }
@@ -652,11 +652,11 @@ TEST(...)
 
     Worker* worker = dynamic_cast<Worker*>(actor);
 
-    ASSERT_TRUE(__NOT_NULL(worker));
+    ASSERT_THAT(__NOT_NULL(worker), be_true());
 
     worker->produce();
 
-    ASSERT_THAT(1, worker->getProduceNum());
+    ASSERT_THAT(worker->getProduceNum(), eq(1));
 
     delete actor;
 }
@@ -700,11 +700,11 @@ TEST(...)
 
     Worker* worker = dci::unknown_cast<Worker>(unknown);
 
-    ASSERT_TRUE(__NOT_NULL(worker));
+    ASSERT_THAT(__NOT_NULL(worker), be_true());
 
     worker->produce();
 
-    ASSERT_THAT(1, worker->getProduceNum());
+    ASSERT_THAT(worker->getProduceNum(), eq(1));
 
     delete unknown;
 }
@@ -753,10 +753,10 @@ TEST(...)
 
     Student *student = new (studentMemory.alloc()) Student(5);
 
-    ASSERT_THAT(5, student->getId());
-    ASSERT_THAT(5, studentMemory.getRef().getId());
-    ASSERT_THAT(5, studentMemory->getId());
-    ASSERT_THAT(5, (*studentMemory).getId());
+    ASSERT_THAT(student->getId(), eq(5));
+    ASSERT_THAT(studentMemory.getRef().getId(), eq(5));
+    ASSERT_THAT(studentMemory->getId(), eq(5));
+    ASSERT_THAT((*studentMemory).getId(), eq(5));
 
     studentMemory.destroy();
 }
@@ -781,7 +781,7 @@ TEST(...)
 
     for(int i = 0; i < MAX_NUM; i++)
     {
-        ASSERT_THAT(i, students[i]->getId());
+        ASSERT_THAT(students[i]->getId(), eq(i));
     }
 }
 ~~~
@@ -989,16 +989,16 @@ TEST(...)
     }
 
     Foo* foo = new Foo(0);
-    ASSERT_TRUE(__IS_NULL(foo));
+    ASSERT_THAT(__IS_NULL(foo), be_true());
 
     for(int i = 0; i < MAX_SLOT_NUM; i++)
     {
-        ASSERT_TRUE(__NOT_NULL(foos[i]));
+        ASSERT_THAT(__NOT_NULL(foos[i]), be_true());
         delete foos[i];
     }
 
     foo = new Foo(0);
-    ASSERT_TRUE(__NOT_NULL(foo));
+    ASSERT_THAT(__NOT_NULL(foo), be_true());
     delete foo;
 }
 ~~~
@@ -1017,25 +1017,25 @@ const static int MAX_ALLOC_NUM = 3;
 LinkedAllocator<int, ARR_SIZE(array)> allocator(MAX_ALLOC_NUM);
 
 const int* x0 = allocator.alloc();
-ASSERT_TRUE(__NOT_NULL(x0));
-ASSERT_THAT(0, *x0);
+ASSERT_THAT(__NOT_NULL(x0), be_true());
+ASSERT_THAT(*x0, eq(0));
 
 const int* x1 = allocator.alloc();
-ASSERT_TRUE(__NOT_NULL(x1));
-ASSERT_THAT(1, *x1);
+ASSERT_THAT(__NOT_NULL(x1), be_true());
+ASSERT_THAT(*x1, eq(1));
 
 const int* x2 = allocator.alloc();
-ASSERT_TRUE(__NOT_NULL(x2));
-ASSERT_THAT(2, *x2);
+ASSERT_THAT(__NOT_NULL(x2), be_true());
+ASSERT_THAT(*x2, eq(2));
 
 const int* x3 = allocator.alloc();
-ASSERT_TRUE(__IS_NULL(x3));
+ASSERT_THAT(__IS_NULL(x3), be_true());
 
 allocator.dealloc(*x2);
 
 const int* x3 = allocator.alloc();
-ASSERT_TRUE(__NOT_NULL(x3));
-ASSERT_THAT(2, *x3);
+ASSERT_THAT(__NOT_NULL(x3), be_true());
+ASSERT_THAT(*x3, eq(2));
 ~~~
 
 #### AutoMsg
@@ -1098,10 +1098,10 @@ private:
 ~~~cpp
 SmartPtr<Foo> pf(new Foo(3));
 
-ASSERT_THAT(3, pf->getId());
+ASSERT_THAT(pf->getId(), eq(3));
 
 SmartPtr<Foo> pf1 = pf;
-ASSERT_THAT(3, pf1->getId());
+ASSERT_THAT(pf1->getId(), eq(3));
 ~~~
 
 默认在引用计数变为0后，会调用delete操作符删除对象。如果对象有自定义的销毁方式，需要继承SharedObject后覆写`bool needDestroy()`和`void destroy()`接口。例如上例可以改为：
@@ -1155,24 +1155,25 @@ struct Msg
 TEST(...)
 {
     StructObject<Msg> msg;
-    ASSERT_THAT(0, msg.id);
-    ASSERT_THAT(0, msg.transNum);
+    ASSERT_THAT(msg.id, eq(0));
+    ASSERT_THAT(msg.transNum, eq(0));
 
     memset(&msg, 0xff, sizeof(msg));
-    ASSERT_THAT(0xffffffff, msg.id);
-    ASSERT_THAT(0xffffffff, msg.transNum);}
+    ASSERT_THAT(msg.id, eq(0xffffffff));
+    ASSERT_THAT(msg.transNum, eq(0xffffffff));
+}
 ~~~
 
 当然StructObject提供的其它接口也支持你像指针一样地去使用它：
 
 ~~~cpp
     StructObject<Msg> msg;
-    ASSERT_THAT(0, msg->id);
-    ASSERT_THAT(0, msg->transNum);
+    ASSERT_THAT(msg->id, eq(0));
+    ASSERT_THAT(msg->transNum, eq(0));
 
     memset(msg.getPointer(), 0x0ff, sizeof(msg));
-    ASSERT_THAT(0xffffffff, (*msg).id);
-    ASSERT_THAT(0xffffffff, (*msg).transNum);
+    ASSERT_THAT((*msg).id, eq(0xffffffff));
+    ASSERT_THAT((*msg).transNum, eq(0xffffffff));
 ~~~
 
 #### StructWrapper
@@ -1210,8 +1211,8 @@ TEST(...)
 
     DomainEvent& event = DomainEvent::by(msg);
 
-    ASSERT_TRUE(event.isValid());
-    ASSERT_THAT(4, event.transNum);
+    ASSERT_THAT(event.isValid(), be_true());
+    ASSERT_THAT(event.transNum, eq(4));
 }
 ~~~
 
@@ -1222,12 +1223,12 @@ Maybe类模板用于将另外一个类型进行封装，将其扩展成为一个
 ~~~cpp
 Maybe<int> x;
 
-ASSERT_FALSE(x.isPresent());
+ASSERT_THAT(x.isPresent(), be_false());
 
 x.update(5);
 
-ASSERT_TRUE(x.isPresent());
-ASSERT_THAT(5, *x);
+ASSERT_THAT(x.isPresent(), be_true());
+ASSERT_THAT(*x, eq(5));
 ~~~
 
 如上当用Maybe封装后，新的类型支持update和isPresent操作。如果执行过update操作，则isPresent为真，否则为假。除了增加上面的接口外，Maybe的其它用法和使用被封装类型的指针一样，但是需要注意两点：
@@ -1295,10 +1296,10 @@ TEST(...)
     data.confirm();
 
     data.update(ObjectInfo(3));
-    ASSERT_THAT(3, data->getValue());
+    ASSERT_THAT(data->getValue(), eq(3));
 
     data.revert();
-    ASSERT_THAT(2, data->getValue());
+    ASSERT_THAT(data->getValue(), eq(2));
 }
 ~~~
 
@@ -1346,16 +1347,16 @@ TEST(...)
 {
     Array<Object, 2> objects;
 
-    ASSERT_THAT(Object::INVALID_VALUE, objects[0].getValue());
-    ASSERT_THAT(Object::INVALID_VALUE, objects[1].getValue());
+    ASSERT_THAT(objects[0].getValue(), eq(Object::INVALID_VALUE));
+    ASSERT_THAT(objects[1].getValue(), eq(Object::INVALID_VALUE));
 }
 
 TEST(...)
 {
     Array<Object, 2> objects(5);
 
-    ASSERT_THAT(5, objects[0].getValue());
-    ASSERT_THAT(5, objects[1].getValue());
+    ASSERT_THAT(objects[0].getValue(), eq(5));
+    ASSERT_THAT(objects[1].getValue(), eq(5));
 }
 
 TEST(...)
@@ -1364,8 +1365,8 @@ TEST(...)
 
     objects.emplace(1, 5);
 
-    ASSERT_THAT(Object::INVALID_VALUE, objects[0].getValue());
-    ASSERT_THAT(5, objects[1].getValue());
+    ASSERT_THAT(objects[0].getValue(), eq(Object::INVALID_VALUE));
+    ASSERT_THAT(objects[1].getValue(), eq(5));
 }
 
 TEST(...)
@@ -1375,17 +1376,17 @@ TEST(...)
 
 
     ThisArray::Iterator i = objects.begin();
-    ASSERT_THAT(Object::INVALID_VALUE, i->getValue());
+    ASSERT_THAT(i->getValue(), eq(Object::INVALID_VALUE));
 
     objects[1].update(5);
     i++;
-    ASSERT_THAT(5, i->getValue());
+    ASSERT_THAT(i->getValue(), eq(5));
 
     i->update(10);
-    ASSERT_THAT(10, objects[1].getValue());
+    ASSERT_THAT(objects[1].getValue(), eq(10));
 
-    ASSERT_NE(objects.end(), i);
-    ASSERT_THAT(objects.end(), ++i);
+    ASSERT_THAT(i, ne(objects.end()));
+    ASSERT_THAT(++i, eq(objects.end()));
 }
 
 TEST(...)
@@ -1400,7 +1401,7 @@ TEST(...)
     {
         sum += i->getValue();
     }
-    ASSERT_THAT(15, sum);
+    ASSERT_THAT(sum, eq(15));
 }
 ~~~
 
@@ -1461,8 +1462,8 @@ TEST(...)
 {
     List<Foo> elems;
 
-	ASSERT_TRUE(elems.isEmpty());
-    ASSERT_THAT(0, elems.size());
+	ASSERT_THAT(elems.isEmpty(), be_true());
+    ASSERT_THAT(elems.size(), eq(0));
 
 	Foo elem1(1), elem2(2), elem3(3);
 
@@ -1470,18 +1471,18 @@ TEST(...)
     elems.pushBack(elem2);
     elems.pushBack(elem3);
 
-    ASSERT_THAT(&elem1, elems.getFirst());
-    ASSERT_THAT(&elem3, elems.getLast());
-    ASSERT_THAT(3, elems.size());
+    ASSERT_THAT(elems.getFirst(), eq(&elem1));
+    ASSERT_THAT(elems.getLast(),  eq(&elem3));
+    ASSERT_THAT(elems.size(), eq(3));
 
     Foo* first = elems.popFront();
-    ASSERT_THAT(1, first->getValue());
-    ASSERT_THAT(2, elems.size());
+    ASSERT_THAT(first->getValue(), eq(1));
+    ASSERT_THAT(elems.size(), eq(2));
 
 	int i = 2;
     LIST_FOREACH(Foo, elem, elems)
     {
-        ASSERT_THAT(i++, elem->getValue());
+        ASSERT_THAT(elem->getValue(), eq(i++));
     }
 }
 ~~~
@@ -1580,9 +1581,9 @@ TEST(...)
     map.put(Key(1, 3), Value("four"));
     map[Key(2, 3)] = Value("five");
 
-    ASSERT_THAT(Value("four"), map[Key(1, 3)]);
-    ASSERT_THAT(Value("five"), *map.get(Key(2, 3)));
-    ASSERT_THAT(__null_ptr,  map.get(Key(2, 4)));
+    ASSERT_THAT(map[Key(1, 3)], eq(Value("four")));
+    ASSERT_THAT(*map.get(Key(2, 3)), eq(Value("five")));
+    ASSERT_THAT( map.get(Key(2, 4)), eq(__null_ptr));
 }
 ~~~
 
@@ -1596,7 +1597,7 @@ RingNumber是一个循环数模板类。所谓循环数即一个从在[0, max)�
 RingNumber<U8, 10> r1(4);
 RingNumber<U8, 10> r2(11);
 
-ASSERT_TRUE((r1 << 2) == (r2 >> 11));
+ASSERT_THAT((r1 << 2) == (r2 >> 11), be_true());
 ~~~
 
 ### Algo
@@ -1651,9 +1652,9 @@ TEST()
     auto result2 = executor.execute(Fib(6));
     auto result3 = executor.execute([](){ return fib(7); });
 
-    ASSERT_THAT(15, result1.get());
-    ASSERT_THAT(21, result2.get());
-    ASSERT_THAT(28, result2.get());
+    ASSERT_THAT(result1.get(), eq(15));
+    ASSERT_THAT(result2.get(), eq(21));
+    ASSERT_THAT(result2.get(), eq(28));
 }
 ~~~
 
@@ -1719,12 +1720,12 @@ TEST(...)
 	ThreadData<int, ThreadInfoStub> data;
 
     *data = 2;
-    ASSERT_THAT(2, *data);
+    ASSERT_THAT(*data, eq(2));
 
 	ThreadInfoStub::setCurrentId(1);
 
     *data = 5;
-    ASSERT_THAT(5, *data);
+    ASSERT_THAT(*data, eq(5));
 }
 ~~~
 
@@ -2126,10 +2127,13 @@ Utils包含一些辅助的工具，例如lambda的参数萃取类模板、repeat
 
 ## Finally
 
-ccinfra是[Thoughtworks](https://www.thoughtworks.com)咨询师[袁英杰](https://github.com/godsme)指导我们用C\++重构大型电信级系统软件时积累下来的基础库。由于电信级设备开发属于在高可靠的专有硬件上的嵌入式开发，对性能、内存等都有特殊要求。另外由于电信业务的复杂性多变性，又要求软件能够对业务进行很好的抽象以提高灵活性和表达力。
+ccinfra是我们用C\++开发和重构大型电信级系统软件时积累下来的基础库。由于电信级系统软件开发属于在高可靠的专有硬件上的嵌入式开发，对性能、内存等都有特殊要求。另外由于电信业务的复杂性多变性，又要求软件能够对业务进行很好的抽象以提高灵活性和表达力。
 
-基于上述条件，C\++基本成了最好的选择！但是由于C\++自身过于灵活，所以必须要有一套最佳实践来约束，使得大家的代码能够一致化；另外用C\++来建模，需要有一套建模技术和工具的支持；最后为了让建模能够容易落地，我们需要各种常用的内存管理、数据结构、算发、设计模式等的嵌入式版本的替代实现。以上其实就是ccinfra在做的事情。
+基于上述条件，C\++基本成了最好的选择！但是由于C\++自身过于灵活，所以必须要有一套最佳实践来约束，使得大家的代码能够一致化；另外用C\++来建模，需要有一套建模技术和工具的支持；最后为了让建模能够容易落地，我们需要各种常用的内存管理、数据结构、算法、设计模式等的嵌入式版本的替代实现。以上其实就是ccinfra在做的事情。
 
-ccinfra还在不断的完善中，如果发现错误或者有更好的建议，欢迎联系作者！
 
+***
+
+> ccinfra的主要组件是[Thoughtworks](https://www.thoughtworks.com)咨询师[袁英杰](https://github.com/godsme)在指导我们重构两个大型电信系统软件的过程中形成的，经过补充完善现在将其独立了出来。ccinfra还在不断的完善中，如果发现存在错误或者有更好的建议，欢迎联系本文作者！
+> 
 > 作者：MagicBowen；Email：e.bowen.wang@icloud.com； 转载本文请注明作者信息，谢谢！
