@@ -18,13 +18,13 @@ To learn more, visit the doc folder! View the source code of tests of ccinfra in
 
 ## Install and Test
 
-- Get ccinfra
+### Get ccinfra
 
 ~~~ bash
 git clone git@github.com:MagicBowen/ccinfra.git
 ~~~
 
-- Build ccinfra
+### Build ccinfra
 
 ~~~ bash
 cd ccinfra
@@ -34,7 +34,7 @@ cmake ..
 make
 ~~~
 
-- Install ccinfra
+### Install ccinfra
 
 ~~~ bash
 sudo make install
@@ -42,25 +42,31 @@ sudo make install
 
 You can also install ccinfra manually, just copy "ccinfra/include" and "ccinfra/build/src/libccinfra.a" to your special installation path.
 
-- Test ccinfra
+### Test ccinfra
 
-To test ccinfra, you need install [gtest](https://github.com/google/googletest). Gtest do not support auto installation now, so you need compile gtest, and manually put the include folder and lib like below:
+To test ccinfra, you need install [magellan](https://github.com/horance-liu/magellan) which is an elegant C\++ xUnit framework. Try to intall magellan by following the [magellan tutoral](https://github.com/horance-liu/magellan/blob/master/README.md)!
 
-> 1. Download gtest source code, and compile to generate the gtest library.
-> 2. Select a path for manually installation of gtest. For example choose to manually install gtest to folder "/home/shared", enter "/home/shared" and create a folder named "gtest";
-> 3. Copy the "gtest/incude" to "/home/shared/gtest", the folder will like "/home/shared/gtest/include/gtest";
-> 4. Copy the "libgtest.a" which you compiled out before to "/home/shared/gtest/lib"
-> 5. Now the path "/home/shared/gtest" will be your gtest root path.
+Following the below instructions to test ccinfra:
 
 ~~~ bash
 cd build
-cmake -DGTEST_ROOT="/home/shared/gtest" ..
+cmake -DENABLE_TEST=1 ..
 make
 ./test/ccinfra-test
 ~~~
 
-The "~/project/gtest" should be replaced to your gtest installed path.
+### Supported Platform:
+
+- [MAC OS X] supported
+- [Linux] supported
+- [Windows] not supported
+
+### Supported Compilers:
+
+- [CLANG] 3.4 or later.
+- [GCC] 4.8 or later.
+- [MSVC] not supported.
 
 ## Finally
 
-The ccinfra now only be supported on Linux platform, all the tests run passed on Unbuntu14.04. Other OS such as Windows or Mac has not been tested! Some features in ccinfra such as "sched" which including thread need C++11 suport, therefor compile all the components of ccinfra should enable the C++11 flag of you compiler!  
+Some features of ccinfra such as "sched" which based on std::thread need C\++11 suport, therefor compile all the components of ccinfra should enable the C\++11 compiling flag and link with pthread!

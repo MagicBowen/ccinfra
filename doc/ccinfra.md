@@ -43,29 +43,33 @@ ccinfra提供了自动安装，编译成功后在build目录下执行`sudo make 
 
 ccinfra中的一些组件使用了C\++11特性（每个组件的介绍中会专门说明），如果你的项目使用了这些组件，请确保你的编译器支持C\++11并且编译选项开启了c\++11。最后，使用ccinfra的sched组件还需要在你的链接库中增加pthread。
 
-可以尝试运行ccinfra的测试，看看ccinfra在你的系统下是否可以存在错误。
-ccinfra的测试需要依赖[gtest](https://github.com/google/googletest)，下载gtest的源码，编译出gtest的库后，手动进行gtest的安装（最新的gtest不支持自动安装）。选择一个目录，例如“/home/shared”下，创建一个gtest目录，将gtest源码下的include目录拷贝进去。在“/home/shared/gtest”目录下新建lib目录，将编译好的gtest库拷贝进去。最后目录结构如下：
+可以尝试运行ccinfra的测试，看看ccinfra在你的系统下是否存在错误。
+ccinfra的测试使用了[magellan](https://github.com/horance-liu/magellan)，magellan是一款基于C\++11的非常简单优雅的开源xUnit测试框架。下载magellan的源码，按照手册安装后就可以使用了。
 
-~~~bash
-/home/shared/gtest
-                ├── include
-                │    └── gtest
-                │          └── ...
-                └── lib
-                     └── libgtest.a
-~~~
-
-安装好gtest后，在ccinfra的源码目录下执行：
+按以下方式执行ccinfra的测试：
 
 ~~~bash
 mkdir build
 cd build
-cmake -DGTEST_ROOT="/home/shared/gtest" ..
+cmake -DENABLE_TEST=1 ..
 make
 ./test/ccinfra-test
 ~~~
 
-在ubuntu14.04系统下，gcc版本4.8.4，ccinfra测试一切OK。别的linux系统理论上应该可以正常运行ccinfra，windows和mac系统未经测试。
+目前ccinfra支持的平台和编译器如下：
+
+- Supported Platform:
+
+    - [MAC OS X] supported
+    - [Linux] supported
+    - [Windows] not supported
+
+- Supported Compilers:
+
+    - [CLANG] 3.4 or later.
+    - [GCC] 4.8 or later.
+    - [MSVC] not supported.
+
 
 ## Usage
 
