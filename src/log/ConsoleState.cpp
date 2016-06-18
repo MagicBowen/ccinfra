@@ -3,7 +3,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 ///////////////////////////////////////////////////////////
 #define __RED     "\033[1;31m"
@@ -113,5 +113,5 @@ unsigned int Infra_Printf
     return 0;
 }
 
-CCINFRA_NS_END
+CUB_NS_END
 

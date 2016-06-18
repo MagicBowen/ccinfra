@@ -3,7 +3,7 @@
 #include "ccinfra/options/program_options/OptionsDescription.hpp"
 #include <iostream>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 inline void VariablesMap::store(const ParsedOptions& options)
 {
@@ -51,4 +51,4 @@ void VariablesMap::dump() const
     }
 }
 
-CCINFRA_NS_END
+CUB_NS_END

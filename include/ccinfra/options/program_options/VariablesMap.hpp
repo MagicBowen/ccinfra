@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 struct OptionsDescription;
 struct ParsedOptions;
@@ -29,6 +29,6 @@ private:
     std::map<std::string, std::string> options;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

@@ -8,7 +8,7 @@
 #include <ccinfra/utils/DefaultConstructor.h>
 #include <type_traits>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template <typename T, size_t N>
 struct Array
@@ -152,6 +152,6 @@ private:
 #define ARRAY_FOREACH(type, i, items) \
    ARRAY_FOREACH_FROM(type, i, items.begin(), items)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

@@ -5,7 +5,7 @@
 #include <ccinfra/base/BaseTypes.h>
 #include <algorithm>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 #define __MIN(a,b)    std::min(a, b)
 #define __MAX(a,b)    std::max(a, b)
@@ -45,6 +45,6 @@ inline bool isBetween(const U8 value)
     return __isBetween<U8, MIN, MAX>(value);
 }
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

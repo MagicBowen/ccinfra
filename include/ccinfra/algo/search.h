@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <algorithm>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template <typename ForwardIterator, typename T>
 ForwardIterator binary_search(ForwardIterator first, ForwardIterator last, const T& val)
@@ -14,7 +14,7 @@ ForwardIterator binary_search(ForwardIterator first, ForwardIterator last, const
     else return last;
 }
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

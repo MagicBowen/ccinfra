@@ -7,7 +7,7 @@
 #include <ccinfra/base/Assertions.h>
 #include <ccinfra/algo/max_min.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template<typename T> 
 struct AllocatorVisitor
@@ -112,7 +112,7 @@ private:
     const U16 maxSize;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

@@ -3,7 +3,7 @@
 
 #include <ccinfra/ccinfra.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 struct SharedObject
 {
@@ -24,6 +24,6 @@ private:
     unsigned int count;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

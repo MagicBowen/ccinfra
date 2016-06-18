@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 struct Args
 {
@@ -20,6 +20,6 @@ private:
     const char** m_argv;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

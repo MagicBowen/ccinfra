@@ -5,7 +5,7 @@
 #include <utility>
 #include <algorithm>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 #define RANG(c) std::begin(std::forward<Container>(c)), std::end(std::forward<Container>(c))
 
@@ -76,6 +76,6 @@ inline OutputIterator filter(Container&& c, OutputIterator result, Predicate pre
     return details::do_filter(RANG(c), result, pred);
 }
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

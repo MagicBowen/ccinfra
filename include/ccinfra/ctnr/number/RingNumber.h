@@ -4,7 +4,7 @@
 #include <ccinfra/base/BaseTypes.h>
 #include <ccinfra/base/EqHelper.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template <typename VALUE_TYPE, VALUE_TYPE MAX_VALUE>
 struct RingNumber
@@ -85,6 +85,6 @@ private:
 	VALUE_TYPE value;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

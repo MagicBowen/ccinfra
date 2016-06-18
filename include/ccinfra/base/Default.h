@@ -3,7 +3,7 @@
 
 #include <ccinfra/ccinfra.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 namespace details
 {
@@ -44,9 +44,9 @@ namespace details
 }
 
 #define DEFAULT(type, method)  \
-    virtual type method { return ::CCINFRA_NS::details::DefaultValue<type>::value(); }
+    virtual type method { return ::CUB_NS::details::DefaultValue<type>::value(); }
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

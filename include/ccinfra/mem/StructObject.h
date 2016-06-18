@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <string.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template <typename OBJ>
 struct StructObject : OBJ
@@ -50,7 +50,7 @@ struct StructObject : OBJ
     }
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

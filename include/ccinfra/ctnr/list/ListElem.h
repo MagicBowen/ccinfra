@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <ccinfra/ctnr/list/apr_ring.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template <typename T> struct List;
 
@@ -50,9 +50,9 @@ struct ListElem
 /////////////////////////////////////////////////////////////////
 
 #define DEFINE_LIST_BASED_INTERFACE(INTF) \
-    struct INTF : ListElem<INTF> , CCINFRA_NS::details::Interface
+    struct INTF : ListElem<INTF> , CUB_NS::details::Interface
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

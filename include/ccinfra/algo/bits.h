@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <ccinfra/base/BaseTypes.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template <typename T>
 T bit_mask(U32 bitNum)
@@ -30,6 +30,6 @@ bool is_bit_on(T target, U32 offset)
 
 #define IS_BIT_ON(target, offset) (GET_BITS_VALUE(target, offset, 1) > 0)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

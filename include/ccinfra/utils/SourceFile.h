@@ -4,13 +4,13 @@
 #include <string>
 #include <ccinfra/ccinfra.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 std::string source_file(const std::string& file, int line, bool absolute);
 
-#define SHORT_FILE() ::CCINFRA_NS::source_file(__FILE__, __LINE__, false)
-#define FULL_FILE()  ::CCINFRA_NS::source_file(__FILE__, __LINE__, true)
+#define SHORT_FILE() ::CUB_NS::source_file(__FILE__, __LINE__, false)
+#define FULL_FILE()  ::CUB_NS::source_file(__FILE__, __LINE__, true)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

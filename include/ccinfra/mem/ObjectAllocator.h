@@ -5,7 +5,7 @@
 #include "ccinfra/base/Assertions.h"
 #include <ccinfra/base/NullPtr.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template<typename T, U16 MAX_NUM>
 struct ObjectAllocator
@@ -155,11 +155,11 @@ void operator delete(void* p)
 //////////////////////////////////////////////////////////////////////////
 #define DEF_OBJ_ALLOCATOR(p_type, p_num)                        \
 namespace {                                                     \
-  ::CCINFRA_NS::ObjectAllocator<p_type, p_num> p_type##Allocator;\
+  ::CUB_NS::ObjectAllocator<p_type, p_num> p_type##Allocator;\
 }                                                               \
 DEF_OPERATOR_NEW(p_type, p_type##Allocator)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

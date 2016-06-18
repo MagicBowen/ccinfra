@@ -4,7 +4,7 @@
 #include "ccinfra/base/Assertions.h"
 #include "ccinfra/log/log.h"
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template<typename T> 
 struct ConstThreadDataVisitor
@@ -83,7 +83,7 @@ private:
     T  t[THREAD_NUM];
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

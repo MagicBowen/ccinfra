@@ -5,7 +5,7 @@
 #include <string>
 #include <typeinfo>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 ///////////////////////////////////////////////////////////////
 std::string getDemangledName(const std::type_info& typeInfo);
@@ -34,6 +34,6 @@ struct TypeName<std::nullptr_t>
     static std::string value() { return "std::nullptr_t"; }
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

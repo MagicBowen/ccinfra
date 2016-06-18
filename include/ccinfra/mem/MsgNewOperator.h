@@ -5,7 +5,7 @@
 #include <string.h>
 #include "ccinfra/base/Assertions.h"
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template<typename MSG_ALLOCATOR>
 struct MsgNewOperator
@@ -29,7 +29,7 @@ struct MsgNewOperator
     virtual ~MsgNewOperator() {}
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

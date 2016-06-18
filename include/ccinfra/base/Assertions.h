@@ -5,7 +5,7 @@
 #include <ccinfra/log/log.h>
 #include <ccinfra/base/NullPtr.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 #define __FAILED_BOOL_ACTION      return false
 #define __FAILED_STATUS_ACTION    return CCINFRA_FAILURE;
@@ -243,6 +243,6 @@ do {                                                 \
 #define CCINFRA_ASSERT_VALID_PTR_NIL_FINALLY(ptr, action)   \
     __CCINFRA_ASSERT_VALID_PTR_FINALLY(ptr, action, __NIL_ACTION)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

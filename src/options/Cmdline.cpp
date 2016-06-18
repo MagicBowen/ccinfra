@@ -5,7 +5,7 @@
 
 using namespace std;
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 Cmdline::Cmdline(const vector<string>& args)
   : args(args), desc(0)
@@ -198,4 +198,4 @@ vector<Option> Cmdline::parseShortOption(const string& tok)
     return parser.result;
 }
 
-CCINFRA_NS_END
+CUB_NS_END

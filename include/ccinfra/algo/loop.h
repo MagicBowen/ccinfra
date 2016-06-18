@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <ccinfra/base/BaseTypes.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 #define FOR_EACH(i, begin, end)   for(U32 i = begin; i< end; ++i)
 
@@ -12,6 +12,6 @@ CCINFRA_NS_BEGIN
 
 #define ALWAYS_LOOP()  while(true)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif 

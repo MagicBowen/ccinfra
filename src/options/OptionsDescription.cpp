@@ -7,19 +7,19 @@
 
 using namespace std;
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 inline void OptionDescription::setName(const std::string& name)
 {
     auto n = name.find(',');
     if (n != string::npos)
     {
-        longName = ccinfra::trim(name.substr(0, n));
-        shortName = '-' + ccinfra::trim(name.substr(n+1));
+        longName = CUB_NS::trim(name.substr(0, n));
+        shortName = '-' + CUB_NS::trim(name.substr(n+1));
     }
     else
     {
-        longName = ccinfra::trim(name);
+        longName = CUB_NS::trim(name);
     }
 }
 
@@ -106,5 +106,5 @@ ostream& operator<<(ostream& os, const OptionsDescription& desc)
 
 }
 
-CCINFRA_NS_END
+CUB_NS_END
 

@@ -1,7 +1,7 @@
 #include <ccinfra/algo/String.h>
 #include <ccinfra/algo/range.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 namespace
 {
@@ -173,13 +173,13 @@ std::string toString(long double d)
 
 std::string to_upper(const std::string& str)
 {
-    return ccinfra::reduce(str, std::string(),
+    return CUB_NS::reduce(str, std::string(),
             [](std::string& result, char c) { return result += toupper(c); });
 }
 
 std::string to_lower(const std::string& str)
 {
-    return ccinfra::reduce(str, std::string(),
+    return CUB_NS::reduce(str, std::string(),
             [](std::string& result, char c) { return result += tolower(c); });
 }
 
@@ -209,4 +209,4 @@ std::string trim(const std::string& str)
     return rtrim(ltrim(str));
 }
 
-CCINFRA_NS_END
+CUB_NS_END

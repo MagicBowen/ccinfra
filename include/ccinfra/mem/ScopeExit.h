@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <ccinfra/utils/Symbol.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template <typename F>
 struct ScopeExit
@@ -26,8 +26,8 @@ ScopeExit<F> make_scope_exit(F f)
 };
 
 #define SCOPE_EXIT(code) \
-    auto UNIQUE_NAME(scope_exit_) = CCINFRA_NS::make_scope_exit(code)
+    auto UNIQUE_NAME(scope_exit_) = CUB_NS::make_scope_exit(code)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <mutex>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 struct AutoLock
 {
@@ -34,8 +34,8 @@ private:
 };
 
 #define LOCKER(M) auto_##M
-#define SYNCHRONIZED(M)  for(::CCINFRA_NS::AutoLock LOCKER(M)(M); LOCKER(M).isLocked(); LOCKER(M).setUnLock())
+#define SYNCHRONIZED(M)  for(::CUB_NS::AutoLock LOCKER(M)(M); LOCKER(M).isLocked(); LOCKER(M).setUnLock())
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

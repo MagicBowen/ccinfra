@@ -14,7 +14,7 @@
 
 #include <ccinfra/ccinfra.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template<typename Head, typename... Args>
 struct TypePack
@@ -65,6 +65,6 @@ struct Lambda<Ret (*)(Args...)>
     typedef TypePack<Ret, Args...> Result;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

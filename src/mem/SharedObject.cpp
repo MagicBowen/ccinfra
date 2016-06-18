@@ -1,6 +1,6 @@
 #include <ccinfra/mem/SharedObject.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 SharedObject::SharedObject() : count(0)
 {
@@ -38,5 +38,5 @@ void SharedObject::subRef()
     }
 }
 
-CCINFRA_NS_END
+CUB_NS_END
 

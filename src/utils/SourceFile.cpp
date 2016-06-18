@@ -1,7 +1,7 @@
 #include "ccinfra/utils/SourceFile.h"
 #include <sstream>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 namespace
 {
@@ -32,4 +32,4 @@ std::string source_file(const std::string& name, int line, bool absolute)
     return ss.str();
 }
 
-CCINFRA_NS_END
+CUB_NS_END

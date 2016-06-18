@@ -2,7 +2,7 @@
 #include "ccinfra/ctnr/array/Array.h"
 
 USING_HAMCREST_NS
-USING_CCINFRA_NS
+USING_CUB_NS
 
 namespace
 {

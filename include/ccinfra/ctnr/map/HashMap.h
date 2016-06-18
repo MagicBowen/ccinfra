@@ -12,7 +12,7 @@
 #include <ccinfra/algo/loop.h>
 #include <ccinfra/base/ConstExpr.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template < typename KEY
          , typename VALUE
@@ -352,6 +352,6 @@ private:
 #define MAP_FOREACH(map_type, i, items) \
    MAP_FOREACH_FROM(map_type, i, items.begin(), items)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

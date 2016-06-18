@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <string.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template<typename KEY>
 struct EqualFn
@@ -33,6 +33,6 @@ struct EqualFn<const char*>
     }
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

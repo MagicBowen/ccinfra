@@ -4,7 +4,7 @@
 #include <ccinfra/mem/MsgNewOperator.h>
 #include <ccinfra/mem/MsgAllocator.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template <typename MSG, typename MSG_ALLOCATOR>
 struct GenericMsg : MSG, MsgNewOperator<MSG_ALLOCATOR>
@@ -57,7 +57,7 @@ private:
     GenericMsg<MSG, MSG_ALLOCATOR>* msg;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

@@ -1,7 +1,7 @@
 #include "ccinfra/options/program_options/Option.hpp"
 #include <iostream>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 using namespace std;
     
@@ -28,4 +28,4 @@ const string& Option::key() const
     return _key;
 }       
 
-CCINFRA_NS_END
+CUB_NS_END

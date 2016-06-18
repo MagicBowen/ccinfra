@@ -7,7 +7,7 @@
 #include <map>
 #include <memory>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 struct OptionDescription
 {
@@ -45,6 +45,6 @@ private:
     std::vector<DescPtr> m_options;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

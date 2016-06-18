@@ -3,7 +3,7 @@
 
 #include "ccinfra/options/program_options/OptionsDescription.hpp"
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 struct Option;
 
@@ -26,7 +26,7 @@ private:
     const OptionsDescription* desc;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

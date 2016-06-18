@@ -5,7 +5,7 @@
 #include <ccinfra/base/Default.h>
 #include <ccinfra/base/Config.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 namespace details
 {
@@ -16,7 +16,7 @@ namespace details
    };
 }
 
-#define DEF_INTERFACE(Intf)  struct Intf : ::CCINFRA_NS::details::Interface<Intf>
+#define DEF_INTERFACE(Intf)  struct Intf : ::CUB_NS::details::Interface<Intf>
 
 #define ABSTRACT(...) virtual __VA_ARGS__ = 0
 
@@ -29,7 +29,7 @@ namespace details
 #define EXTENDS(...) , ##__VA_ARGS__
 #define IMPLEMENTS(...) EXTENDS(__VA_ARGS__)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

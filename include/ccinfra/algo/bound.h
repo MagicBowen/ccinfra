@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <ccinfra/base/BaseTypes.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 namespace details
 {
@@ -58,6 +58,6 @@ size_t upper_bound(const T* array, size_t len, T key)
     return details::bound<T, false>(array, len, key);
 }
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

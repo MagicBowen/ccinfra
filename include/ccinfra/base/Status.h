@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <ccinfra/base/BaseTypes.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 typedef U32 Status;
 
@@ -17,6 +17,6 @@ const Status CCINFRA_FAILURE = INVALID_U32;
 #define __CCINFRA_FAILED(result)  (result != CCINFRA_SUCCESS)
 #define __CCINFRA_SUCCESS(result)  (result == CCINFRA_SUCCESS)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

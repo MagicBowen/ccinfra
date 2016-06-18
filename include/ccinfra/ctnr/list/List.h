@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <ccinfra/ctnr/list/apr_ring.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template<typename T>
 struct List
@@ -466,7 +466,7 @@ private:
 #define LIST_FOREACH_SAFE(type, i, j, items) \
    LIST_FOREACH_FROM_SAFE(type, i, j, items.begin(), items)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

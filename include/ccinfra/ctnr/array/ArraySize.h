@@ -3,7 +3,7 @@
 
 #include <ccinfra/base/BaseTypes.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 #define ARR_SIZE(arr) (sizeof(arr)/sizeof(arr[0]))
 
@@ -31,6 +31,6 @@ inline size_t position(T(&arr)[N], const T* p)
     return p - arr;
 }
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <stddef.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 ////////////////////////////////////////////////////////////////////////////////
 template<typename T>
@@ -100,6 +100,6 @@ std::string trim(const std::string& str);
 std::string ltrim(const std::string& str);
 std::string rtrim(const std::string& str);
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

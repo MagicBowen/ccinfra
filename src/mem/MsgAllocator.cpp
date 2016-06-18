@@ -1,7 +1,7 @@
 #include <ccinfra/mem/MsgAllocator.h>
 #include <ccinfra/mem/ObjectAllocator.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 #if PERFORMANCE_OPTIMIZE
 
@@ -140,7 +140,7 @@ bool MsgAllocator::withIn(void* p)
     return false;
 }
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

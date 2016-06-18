@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <ccinfra/base/Uncloneable.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template<typename T>
 struct Singleton
@@ -21,9 +21,9 @@ protected:
     Singleton() {}
 };
 
-#define DEF_SINGLETON(object) struct object : ::CCINFRA_NS::Singleton<object>
+#define DEF_SINGLETON(object) struct object : ::CUB_NS::Singleton<object>
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

@@ -1,7 +1,7 @@
 #include "ccinfra/options/Args.h"
 #include <string.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 Args::Args(const std::vector<std::string>& options)
   : m_argc(options.size()), m_argv(new const char*[m_argc])
@@ -32,4 +32,4 @@ const char** Args::argv() const
     return m_argv;
 }
 
-CCINFRA_NS_END
+CUB_NS_END

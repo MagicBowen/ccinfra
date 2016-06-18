@@ -5,7 +5,7 @@
 #include <string.h>
 #include <new>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template <typename T>
 struct Placement
@@ -77,6 +77,6 @@ struct DefaultPlacement : Placement<T>
     }
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

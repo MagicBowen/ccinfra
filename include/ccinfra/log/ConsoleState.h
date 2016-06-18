@@ -4,7 +4,7 @@
 #include <ccinfra/base/BaseTypes.h>
 #include <iostream>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 ////////////////////////////////////////////////////////
 struct ConsoleState
@@ -63,6 +63,6 @@ private:
     DebugState debug;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

@@ -4,7 +4,7 @@
 #include <ccinfra/ccinfra.h>
 #include <stddef.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template < typename KEY, size_t HASH_SIZE>
 struct HashFn
@@ -61,6 +61,6 @@ DEF_HASH_FN(unsigned int)
 DEF_HASH_FN(long)
 DEF_HASH_FN(unsigned long)
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

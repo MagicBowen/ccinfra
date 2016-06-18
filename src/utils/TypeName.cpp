@@ -6,7 +6,7 @@
 
 #include <stdlib.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 std::string getDemangledName(const std::type_info& type)
 {
@@ -25,4 +25,4 @@ std::string getDemangledName(const std::type_info& type)
 #endif
 }
 
-CCINFRA_NS_END
+CUB_NS_END

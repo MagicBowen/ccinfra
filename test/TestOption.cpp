@@ -2,7 +2,7 @@
 #include "ccinfra/options/ProgramOptions.hpp"
 #include "ccinfra/options/Args.h"
 
-USING_CCINFRA_NS
+USING_CUB_NS
 
 using namespace hamcrest;
 

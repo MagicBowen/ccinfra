@@ -1,7 +1,7 @@
 #include "ccinfra/sched/Executor.h"
 #include "ccinfra/algo/loop.h"
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 Executor::Executor(size_t threadNum) : stop(false)
 {
@@ -45,4 +45,4 @@ void Executor::threadRun()
     }
 }
 
-CCINFRA_NS_END
+CUB_NS_END

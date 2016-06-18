@@ -3,7 +3,7 @@
 
 #include <ccinfra/mem/Placement.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template <typename T>
 struct Maybe
@@ -128,7 +128,7 @@ private:
     bool present;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 

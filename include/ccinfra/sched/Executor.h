@@ -12,7 +12,7 @@
 #include <functional>
 #include <memory>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 struct Executor
 {
@@ -52,6 +52,6 @@ private:
     bool stop;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

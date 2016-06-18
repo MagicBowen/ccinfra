@@ -5,7 +5,7 @@
 #include <tuple>
 #include <stddef.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 template<typename T>
 struct function_traits
@@ -39,8 +39,8 @@ struct function_traits<ReturnType(ClassType::*)(Args...) const>
     };
 };
 
-#define ARG_TYPE(LAMDA) typename ::CCINFRA_NS::function_traits<LAMDA>::argument_type
+#define ARG_TYPE(LAMDA) typename ::CUB_NS::function_traits<LAMDA>::argument_type
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

@@ -4,7 +4,7 @@
 #include "ccinfra/ccinfra.h"
 #include <string>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 struct Option 
 {
@@ -20,6 +20,6 @@ private:
     std::string _value;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

@@ -3,7 +3,7 @@
 #include "ccinfra/options/program_options/Parsers.hpp"
 #include "ccinfra/options/program_options/VariablesMap.hpp"
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 CommandLineParser::	CommandLineParser
     ( int argc, const char** argv, const OptionsDescription& desc)
@@ -29,4 +29,4 @@ const OptionsDescription& CommandLineParser::description() const
     return desc;
 }
 
-CCINFRA_NS_END
+CUB_NS_END

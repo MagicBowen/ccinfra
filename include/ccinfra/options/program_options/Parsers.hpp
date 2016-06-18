@@ -6,7 +6,7 @@
 #include "ccinfra/options/program_options/Option.hpp"
 #include "ccinfra/dci/Role.h"
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 struct OptionsDescription;
 
@@ -32,6 +32,6 @@ private:
     const OptionsDescription& desc;
 };
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif

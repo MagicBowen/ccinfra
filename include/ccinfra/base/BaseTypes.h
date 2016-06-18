@@ -5,17 +5,17 @@
 #include <stddef.h>
 #include <stdint.h>
 
-CCINFRA_NS_BEGIN
+CUB_NS_BEGIN
 
 typedef unsigned char  U8;
 typedef unsigned short U16;
 typedef unsigned int   U32;
 typedef unsigned long  U64;
 
-typedef signed char  S8;
-typedef signed short S16;
-typedef signed int   S32;
-typedef signed long  S64;
+typedef signed char    S8;
+typedef signed short   S16;
+typedef signed int     S32;
+typedef signed long    S64;
 
 template<bool IS_64_BIT> struct PtrValueTraits
 {
@@ -27,9 +27,9 @@ template<> struct PtrValueTraits<false>
     typedef U32 PtrValue;
 };
 
-typedef typename PtrValueTraits<(sizeof(int*) > 4)>::PtrValue PTR_VALUE;
+typedef typename PtrValueTraits<(sizeof(int*) == 8)>::PtrValue PTR_VALUE;
 
-CCINFRA_NS_END
+CUB_NS_END
 
 #endif
 
