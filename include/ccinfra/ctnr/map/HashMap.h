@@ -214,10 +214,10 @@ struct HashMap
         if(__NOT_NULL(v))
         {
             *const_cast<VALUE*>(v) = value;
-            return CCINFRA_SUCCESS;
+            return CUB_SUCCESS;
         }
 
-        return __IS_NULL(insert(key ,value)) ? CCINFRA_FAILURE : CCINFRA_SUCCESS;
+        return __IS_NULL(insert(key ,value)) ? CUB_FAILURE : CUB_SUCCESS;
     }
 
     VALUE& operator[](const KEY& key)
@@ -275,11 +275,11 @@ private:
         {
             LIST_FOREACH(Node, node, buckets[i])
             {
-                CCINFRA_ASSERT_SUCC_CALL(visitor.visit(node->key, node->value));
+                CUB_ASSERT_SUCC_CALL(visitor.visit(node->key, node->value));
             }
         }
 
-        return CCINFRA_SUCCESS;
+        return CUB_SUCCESS;
     }
 
     size_t getIndex(const KEY &key) const

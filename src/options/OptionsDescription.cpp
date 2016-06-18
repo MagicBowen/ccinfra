@@ -84,23 +84,25 @@ using namespace std;
 ostream& operator<<(ostream& os, const OptionsDescription& desc)
 {
     const string usage("usage: ");
-    os<<setfill('=')<<setw(80)<<""<<endl<<setfill(' ');
-    os<<usage<<desc.m_caption<<" ";
+    os << setfill('=') << setw(80) << "" << endl << setfill(' ');
+
+    os<< usage << desc.m_caption <<" ";
+
     int i = 1;
     for (auto& var : desc.m_options)
     {
-        os<<var->format()<<" ";
+        os << var->format() << " ";
         if((i++)% 4 == 0 )
         {
-            os<<endl;
-            os<<setw(desc.m_caption.size() + usage.size())<<"";
+            os << endl;
+            os << setw(desc.m_caption.size() + usage.size()) <<"";
         }
     }
     os<<endl;
-    os<<setfill('=')<<setw(80)<<""<<endl<<setfill(' ');
+    os<<setfill('=') << setw(80) << "" << endl << setfill(' ');
     for (auto& var : desc.m_options)
     {
-        os<<"  "<<left<<setw(20)<<var->getLongName()<<setw(40)<<var->getDescription()<<endl;
+        os << "  " << left << setw(20) << var->getLongName() << setw(40) << var->getDescription() << endl;
     }
     return os;
 

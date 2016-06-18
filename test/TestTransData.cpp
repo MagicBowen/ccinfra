@@ -65,12 +65,12 @@ namespace
 
         Status copyTo(Object& rhs)
         {
-            CCINFRA_ASSERT_VALID_PTR(info);
+            CUB_ASSERT_VALID_PTR(info);
 
             if (rhs.info == 0) rhs.info = new ObjectInfo(*info);
             else *rhs.info = *info;
 
-            return CCINFRA_SUCCESS;
+            return CUB_SUCCESS;
         }
 
         void reset()
@@ -178,7 +178,7 @@ FIXTURE(TestInitTransData)
 
     TEST("should not allow to modify")
     {
-        ASSERT_THAT(data.modify(), ne(CCINFRA_SUCCESS));
+        ASSERT_THAT(data.modify(), ne(CUB_SUCCESS));
 
         assertInit();
     }
@@ -302,7 +302,7 @@ FIXTURE(TestActiveTransData)
 
 	TEST("should be able to modify")
 	{
-		ASSERT_THAT(data.modify(), eq(CCINFRA_SUCCESS));
+		ASSERT_THAT(data.modify(), eq(CUB_SUCCESS));
 
 		ASSERT_THAT(data.isStable(), be_false());
 
@@ -425,7 +425,7 @@ FIXTURE(TestTouchTransData)
 
 	TEST("should not allow modify")
 	{
-		ASSERT_THAT(data.modify(), ne(CCINFRA_SUCCESS));
+		ASSERT_THAT(data.modify(), ne(CUB_SUCCESS));
 
 		ASSERT_THAT(data.isStable(), be_false());
 
@@ -666,7 +666,7 @@ FIXTURE(TestReleaseTransData)
 
 	TEST("should not allow modify")
 	{
-		ASSERT_THAT(data.modify(), ne(CCINFRA_SUCCESS));
+		ASSERT_THAT(data.modify(), ne(CUB_SUCCESS));
 	}
 
 	TEST("should have no effect for touching")

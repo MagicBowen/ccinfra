@@ -6,6 +6,7 @@
 
 CUB_NS_BEGIN
 
+/////////////////////////////////////////////////////////////////
 template<bool hasDefaultConstructor>
 struct DefaultConstructor
 {
@@ -16,6 +17,7 @@ struct DefaultConstructor
     static void construct(Placement<T>(&elems)[N]);
 };
 
+/////////////////////////////////////////////////////////////////
 template<> struct DefaultConstructor<true>
 {
     template <typename T>

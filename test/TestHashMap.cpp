@@ -18,7 +18,7 @@ namespace
 		OVERRIDE(Status visit(const int& key, int& value))
 		{
 			value = times * key;
-			return CCINFRA_SUCCESS;
+			return CUB_SUCCESS;
 		}
 
 	private:
@@ -35,7 +35,7 @@ namespace
             std::stringstream ss;
             ss << "map[" << key <<"] = " << value << " \n";
             result += ss.str();
-            return CCINFRA_SUCCESS;
+            return CUB_SUCCESS;
         }
     }printVisitor;
 
@@ -177,7 +177,7 @@ FIXTURE(HashMapTest)
 	{
 		HashMap<int, int, 1> map;
 
-		ASSERT_THAT(__CCINFRA_SUCCESS(map.put(1, 2)), be_true());
+		ASSERT_THAT(__CUB_SUCCESS(map.put(1, 2)), be_true());
 
 		ASSERT_THAT(map.full(), be_true());
 	}
@@ -187,7 +187,7 @@ FIXTURE(HashMapTest)
 		HashMap<int, int, 1> map;
 
 		map.put(1, 2);
-		ASSERT_THAT(__CCINFRA_FAILED(map.put(2, 2)), be_true());
+		ASSERT_THAT(__CUB_FAILED(map.put(2, 2)), be_true());
 
 		ASSERT_THAT(map.size(), eq(1));
 		ASSERT_THAT(map[1], eq(2));
@@ -198,7 +198,7 @@ FIXTURE(HashMapTest)
 		HashMap<int, int, 1> map;
 
 		map.put(1, 2);
-		ASSERT_THAT(__CCINFRA_SUCCESS(map.put(1, 4)), be_true());
+		ASSERT_THAT(__CUB_SUCCESS(map.put(1, 4)), be_true());
 
 		ASSERT_THAT(map.size(), eq(1));
 		ASSERT_THAT(map[1], eq(4));

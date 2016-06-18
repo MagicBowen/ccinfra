@@ -53,9 +53,9 @@ struct ThreadData
     {
         for(unsigned int index = 0; index < THREAD_NUM; index++)
         {
-            CCINFRA_ASSERT_SUCC_CALL(visitor.visit(t[index]));
+            CUB_ASSERT_SUCC_CALL(visitor.visit(t[index]));
         }
-        return CCINFRA_SUCCESS;
+        return CUB_SUCCESS;
     }
 
 private:

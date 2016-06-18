@@ -234,13 +234,13 @@ public:
 
    Status modify()
    {
-        CCINFRA_ASSERT_TRUE(ACTIVE == state);
+        CUB_ASSERT_TRUE(ACTIVE == state);
 
-        CCINFRA_ASSERT_SUCC_CALL(getCurrentValue().copyTo(getAnotherValue()));
+        CUB_ASSERT_SUCC_CALL(getCurrentValue().copyTo(getAnotherValue()));
 
         state = MODIFIED;
 
-        return CCINFRA_SUCCESS;
+        return CUB_SUCCESS;
    }
 
    void touch()

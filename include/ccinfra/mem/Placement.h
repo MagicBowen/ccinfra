@@ -2,6 +2,7 @@
 #define H05B2224D_B926_4FC0_A123_97B52B8A99DB
 
 #include <ccinfra/ccinfra.h>
+
 #include <string.h>
 #include <new>
 
@@ -52,6 +53,7 @@ private:
         T* p = (T*)alloc();
         *p = rhs;
     }
+
 private:
     union
     {

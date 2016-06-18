@@ -50,8 +50,8 @@ struct ObjectAllocator
         if(p == __null_ptr) return;
         //if (isFree(p)) return; //important!, protect case :free a entity which has been freed
 
-        CCINFRA_ASSERT_TRUE_VOID(within(p));
-        CCINFRA_ASSERT_TRUE_VOID((((char*)p - (char*)entities) % sizeof(Entity)) == 0);
+        CUB_ASSERT_TRUE_VOID(within(p));
+        CUB_ASSERT_TRUE_VOID((((char*)p - (char*)entities) % sizeof(Entity)) == 0);
 
         freeEntity(*(Entity*)p);
     }
@@ -94,7 +94,7 @@ private:
         }
         else
         {
-            CCINFRA_ASSERT_VALID_PTR_VOID(freeTail);
+            CUB_ASSERT_VALID_PTR_VOID(freeTail);
             freeTail->next = &entity;
         }
 

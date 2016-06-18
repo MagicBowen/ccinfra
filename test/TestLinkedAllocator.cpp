@@ -49,7 +49,7 @@ FIXTURE(LinkedAllocatorTest)
         const int *y = allocator.alloc();
         ASSERT_THAT(__IS_NULL(y), be_true());
 
-        ASSERT_THAT(allocator.dealloc(*x), eq(CCINFRA_SUCCESS));
+        ASSERT_THAT(allocator.dealloc(*x), eq(CUB_SUCCESS));
 
         y = allocator.alloc();
         ASSERT_THAT(__NOT_NULL(y), be_true());

@@ -13,7 +13,7 @@ struct MsgNewOperator
     void* operator new(size_t size) throw()
     {
         void* p = MSG_ALLOCATOR::alloc(size);
-        CCINFRA_ASSERT_VALID_PTR_NIL(p);
+        CUB_ASSERT_VALID_PTR_NIL(p);
 
 #ifdef PERFORMANCE_OPTIMIZE
         ::memset(p, 0, size);

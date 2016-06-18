@@ -58,18 +58,18 @@ struct LinkedAllocator
     {
         U16 index = (U16)(&elem - elements);
 
-        CCINFRA_ASSERT_TRUE(index <  maxSize);
+        CUB_ASSERT_TRUE(index <  maxSize);
 
         if(!linkNodes[index].isUsed)
         {
-            return CCINFRA_FAILURE;
+            return CUB_FAILURE;
         }
 
         busyList.remove(linkNodes[index]);
         freeList.pushBack(linkNodes[index]);
         linkNodes[index].isUsed = false;      
         
-        return CCINFRA_SUCCESS;
+        return CUB_SUCCESS;
     }
 
     bool isBusyListEmpty() const
@@ -98,9 +98,9 @@ private:
     {
         LIST_FOREACH(LinkNode, node, busyList)
         {
-            CCINFRA_ASSERT_SUCC_CALL(visitor.visit(elements[&(*node) - &linkNodes[0]]));
+            CUB_ASSERT_SUCC_CALL(visitor.visit(elements[&(*node) - &linkNodes[0]]));
         }
-        return CCINFRA_SUCCESS;
+        return CUB_SUCCESS;
     }
 
 private:

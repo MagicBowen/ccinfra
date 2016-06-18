@@ -6,6 +6,8 @@
 #include <ccinfra/base/StaticAssert.h>
 #include <ccinfra/base/EqHelper.h>
 #include <ccinfra/utils/DefaultConstructor.h>
+#include <ccinfra/mem/Placement.h>
+
 #include <type_traits>
 
 CUB_NS_BEGIN

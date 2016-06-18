@@ -138,7 +138,7 @@ FIXTURE(PlainTransDataTest)
 	{
 		intData.update(10);
 
-		ASSERT_THAT(intData.modify(), ne(CCINFRA_SUCCESS));
+		ASSERT_THAT(intData.modify(), ne(CUB_SUCCESS));
 	}
 
 	TEST("a stable data should be able to be modified")
@@ -146,7 +146,7 @@ FIXTURE(PlainTransDataTest)
 		intData.update(10);
 		intData.confirm();
 
-		ASSERT_THAT(intData.modify(), eq(CCINFRA_SUCCESS));
+		ASSERT_THAT(intData.modify(), eq(CUB_SUCCESS));
 	}
 
 	TEST("after clone for modification it is value keep unchanged")
