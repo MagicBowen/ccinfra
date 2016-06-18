@@ -83,7 +83,7 @@ namespace
     };
 }
 
-namespace ccinfra
+namespace cub
 {
     template<size_t HASH_SIZE>
     struct HashFn<Key, HASH_SIZE>

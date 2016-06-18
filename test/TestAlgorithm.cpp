@@ -28,7 +28,7 @@ FIXTURE(AlgorithmTest)
 {
    TEST("find support non const container")
     {
-        auto found = ccinfra::find(v1, 3);
+        auto found = cub::find(v1, 3);
 
         STATIC_ASSERT_TYPE(std::vector<int>::iterator, found);
         ASSERT_THAT(*found, is(3));
@@ -36,7 +36,7 @@ FIXTURE(AlgorithmTest)
 
     TEST("find support const container")
     {
-        auto found = ccinfra::find(v2, 3);
+        auto found = cub::find(v2, 3);
 
         STATIC_ASSERT_TYPE(std::vector<int>::const_iterator, found);
         ASSERT_THAT(*found, is(3));
@@ -44,7 +44,7 @@ FIXTURE(AlgorithmTest)
 
     TEST("find_if support non const container")
     {
-        auto found = ccinfra::find_if(v1, [](int e) { return e > 0; });
+        auto found = cub::find_if(v1, [](int e) { return e > 0; });
 
         STATIC_ASSERT_TYPE(std::vector<int>::iterator, found);
         ASSERT_THAT(*found, is(3));
@@ -52,7 +52,7 @@ FIXTURE(AlgorithmTest)
 
     TEST("find_if support const container")
     {
-        auto found = ccinfra::find_if(v2, [](int e) { return e > 0; });
+        auto found = cub::find_if(v2, [](int e) { return e > 0; });
 
         STATIC_ASSERT_TYPE(std::vector<int>::const_iterator, found);
         ASSERT_THAT(*found, is(3));
@@ -61,7 +61,7 @@ FIXTURE(AlgorithmTest)
     TEST("map")
     {
         std::vector<int> v;
-        ccinfra::map(v1, std::back_inserter(v), [](int e) { return e > 0 ? e : -e; });
+        cub::map(v1, std::back_inserter(v), [](int e) { return e > 0 ? e : -e; });
 
         ASSERT_THAT(v[0], is(1));
         ASSERT_THAT(v[1], is(2));
@@ -71,7 +71,7 @@ FIXTURE(AlgorithmTest)
 
     TEST("reduce")
     {
-        auto sum = ccinfra::reduce(arr, 0, [](int& sum, int e) { sum += e; });
+        auto sum = cub::reduce(arr, 0, [](int& sum, int e) { sum += e; });
 
         ASSERT_THAT(sum, is(4));
     }
@@ -79,7 +79,7 @@ FIXTURE(AlgorithmTest)
     TEST("filter")
     {
         std::vector<int> v;
-        ccinfra::filter(arr, std::back_inserter(v), [](int e) { return e > 0; });
+        cub::filter(arr, std::back_inserter(v), [](int e) { return e > 0; });
 
         ASSERT_THAT(v[0], is(3));
         ASSERT_THAT(v[1], is(4));
@@ -88,7 +88,7 @@ FIXTURE(AlgorithmTest)
     TEST("each")
     {
         auto sum = 0;
-        ccinfra::each(arr, [&sum](int e) { sum += e; });
+        cub::each(arr, [&sum](int e) { sum += e; });
 
         ASSERT_THAT(sum, is(4));
     }
